@@ -14,6 +14,7 @@
   let source = 'file';
   let kit = 'home';
   let current = [];
+  let set = 'story';
 
   // ---------- prompt builder ----------
   function describeKit(desc) {
@@ -80,6 +81,31 @@
     ];
   }
 
+  // Grid set: flat-lay product shot → 6 white-studio e-commerce shots that fill a 3x3 detail grid.
+  function buildGridPrompts(club, kitType, model) {
+    const who = model.model.trim().replace(/\.+$/, '');
+    const bottoms = 'plain black athletic shorts';
+    const jersey = 'the EXACT ' + club.name + ' 2026/27 ' + KIT_WORD[kitType] + ' jersey from the reference image';
+    const flatlay = 'The reference image is a flat-lay product photo of the jersey: dress the model in exactly this jersey, translating the flat garment naturally onto the body with realistic drape, soft folds and slight stretch across the chest and shoulders, while keeping every stripe position, print texture, color, collar, cuff, hem, crest, sponsor and manufacturer mark exactly as in the reference — nothing redesigned, recolored, moved or invented.' + describeKit(club.kits[kitType].description);
+    const identity = 'Same model in every shot of this set: ' + who + ', identical skin tone, stubble, build and ' + bottoms + '.';
+    const studio = 'Pure white seamless e-commerce studio background, bright high-key soft key light from large softboxes, subtle rim light on the shoulders, clean soft shadows, true-to-life colors.';
+    const lens85 = 'Shot on a full-frame camera with an 85mm lens, shallow depth of field, crisp fabric detail, 8k resolution, editorial sports fashion product photography.';
+    const lensMacro = 'Shot with a 100mm macro lens, very shallow depth of field with soft bokeh fall-off, every knit fiber visible, 8k resolution, editorial sports fashion product photography.';
+    const frame = 'Vertical 9:16 composition, subject filling the frame edge to edge (the image becomes one cell of a 3x3 story grid).';
+    const shots = [
+      ['Front', 'Waist-up · face cropped at nose', 'FRONT VIEW: the model wearing ' + jersey + ' faces the camera straight on, framed from the bridge of the nose down to mid-thigh, arms relaxed at the sides, the full jersey front centered and unobstructed.', lens85],
+      ['Three-quarter', 'Hand on hip', 'THREE-QUARTER VIEW: the model wearing ' + jersey + ' turns about 25° toward camera-left with the right hand resting on the hip, framed from just below the eyes down to mid-thigh, jersey front and side seam clearly visible.', lens85],
+      ['Chest close-up', 'Collar + crest', 'CHEST CLOSE-UP: the model wearing ' + jersey + ', framed from the chin down to mid-torso, crew-neck collar and chest crest in sharp focus, print texture clearly readable.', lens85],
+      ['Crest macro', 'Diagonal detail', 'MACRO DETAIL: extreme close-up of the crest and the surrounding printed fabric of ' + jersey + ' worn on the model\'s chest, camera tilted about 30° so the stripes run diagonally across the frame, knit texture and crest stitching razor sharp.', lensMacro],
+      ['Sleeve', 'Shoulder + arm profile', 'SLEEVE DETAIL: side-profile close-up of the model\'s shoulder and short sleeve of ' + jersey + ', framed from the collarbone to just below the elbow, sleeve hem and seam stitching visible, white background beside the arm.', lens85],
+      ['Collar', 'Chin + neckline', 'COLLAR DETAIL: close-up of the model wearing ' + jersey + ', framed from the lower lip down to the upper chest, crew-neck collar ribbing and stitching in sharp focus, chin and light stubble visible above it.', lens85]
+    ];
+    return shots.map(([title, sub, shot, lens]) => ({
+      title, sub,
+      text: ['Ultra-realistic e-commerce sports fashion photograph.', shot, flatlay, identity, studio, lens, frame, CONSTRAINT].join(' ')
+    }));
+  }
+
   // ---------- UI ----------
   function loadModel() {
     try {
@@ -123,7 +149,9 @@
     if (document.activeElement !== $('kitDesc')) $('kitDesc').value = club.kits[kit].description || '';
     $('outTitle').textContent = club.name + ' — ' + kit.toUpperCase();
 
-    current = buildPrompts(club, kit, { model: $('modelDesc').value || DEFAULT_MODEL.model, bottoms: $('bottoms').value || DEFAULT_MODEL.bottoms });
+    const model = { model: $('modelDesc').value || DEFAULT_MODEL.model, bottoms: $('bottoms').value || DEFAULT_MODEL.bottoms };
+    current = set === 'grid' ? buildGridPrompts(club, kit, model) : buildPrompts(club, kit, model);
+    $('copyAll').textContent = 'Copy all ' + current.length;
     $('prompts').innerHTML = current.map((p, i) => {
       const body = escapeHtml(p.text.slice(0, -CONSTRAINT.length)) + '<span class="constraint">' + escapeHtml(CONSTRAINT) + '</span>';
       return '<article class="prompt-card">' +
@@ -164,6 +192,13 @@
   }
 
   function bind() {
+    $('setSeg').addEventListener('click', e => {
+      const b = e.target.closest('button[data-set]');
+      if (!b) return;
+      set = b.dataset.set;
+      [...$('setSeg').children].forEach(x => x.classList.toggle('on', x === b));
+      render();
+    });
     $('club').addEventListener('change', render);
     $('kitSeg').addEventListener('click', e => {
       const b = e.target.closest('button[data-kit]');
@@ -190,7 +225,7 @@
       const all = current.map((p, i) => (i + 1) + ') ' + p.title.toUpperCase() + '\n' + p.text).join('\n\n');
       await copyText(all);
       flash(e.currentTarget, 'Copied ✓');
-      toast('All 3 prompts copied');
+      toast('All ' + current.length + ' prompts copied');
     });
 
     $('importBtn').addEventListener('click', () => $('importFile').click());

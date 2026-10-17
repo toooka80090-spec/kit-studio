@@ -86,3 +86,22 @@ node tools/kit.mjs build zamalek --handle @yourhandle
 
 > أول مرة على جهاز جديد: `npm install` (بتنزّل html2canvas محليًا عشان التصدير يشتغل حتى من غير cdnjs).
 > أسماء الأندية (`club-id`): `arsenal`, `chelsea`, `tottenham-hotspur`, `psg`, `atletico-madrid`, `borussia-dortmund`, `napoli`, `aston-villa`, `bayer-leverkusen`, `al-ahly`, `zamalek`.
+
+---
+
+## 4) جريد التفاصيل 3×3 — `grid.html`
+
+ستوري 1080×1920 فيه 9 صور (كل خانة 9:16) بفواصل بيضاء 8px — نفس ستايل صور المنتجات.
+
+1. في `prompts.html` اختار **Grid · 6** — هيطلعلك 6 برومبتات (Front / Three-quarter / Chest / Crest macro / Sleeve / Collar)،
+   مكتوبة لصورة طقم **فلات (flat-lay)** يتلبس على موديل في استوديو أبيض.
+2. ولّد الـ 6 صور وارفعها في `grid.html` بالترتيب ← **Auto-fill grid**: بيملا الـ 9 خانات، وخانات القماش القريبة بتتعمل zoom/rotate من نفس الصور.
+3. عدّل أي خانة (Zoom / Pan / Rotate) ← **Export PNG**.
+
+من Claude Code:
+```bash
+# الصور في inbox/<club-id>/<kit>-grid/  (1-front.jpg, 2-threequarter.jpg, ... 6-collar.jpg)
+node tools/kit.mjs prompts zamalek home --set grid
+node tools/kit.mjs grid zamalek home
+```
+`recipe.json` اختياري في نفس الفولدر لتحديد كل خانة: `[{ "src": "1-front", "zoom": 100, "fx": 50, "fy": 50, "rot": 0 }, ...]`.

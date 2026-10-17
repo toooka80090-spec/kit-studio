@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 // Drives prompts.html / story.html in headless Chromium so the CLI output is identical to the browser tool.
 //
-//   node tools/kit.mjs prompts <club-id|all> [home|away|third|all]
+//   node tools/kit.mjs prompts <club-id|all> [home|away|third|all] [--set story|grid]
 //   node tools/kit.mjs build <club-id> [--layouts stacked,hero,swipe] [--no-clean] [--handle @name]
+//   node tools/kit.mjs grid <club-id> <home|away|third> [--gutter 8]
 //
 // build reads images from inbox/<club-id>/{home,away,third}.(jpg|jpeg|png|webp) and writes PNGs to out/<club-id>/.
+// grid reads every image in inbox/<club-id>/<kit>-grid/ (sorted by name: 1 front, 2 three-quarter, 3 chest,
+// 4 crest, 5 sleeve, 6 collar) plus an optional recipe.json (9 × { src, zoom, fx, fy, rot }) in that folder.
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
@@ -57,7 +60,7 @@ async function openPage(file) {
 }
 
 // ---------- prompts ----------
-async function prompts(clubArg, kitArg = 'all') {
+async function prompts(clubArg, kitArg = 'all', set = 'story') {
   const clubs = readClubs().clubs;
   const targets = clubArg === 'all' ? clubs : clubs.filter(c => c.id === clubArg);
   if (!targets.length) fail('Unknown club "' + clubArg + '". Use one of: ' + clubs.map(c => c.id).join(', '));
@@ -66,6 +69,7 @@ async function prompts(clubArg, kitArg = 'all') {
 
   const { browser, page } = await openPage('prompts.html');
   await page.waitForSelector('.prompt-card');
+  await page.click('[data-set="' + (set === 'grid' ? 'grid' : 'story') + '"]');
   for (const club of targets) {
     await page.selectOption('#club', club.id);
     const outDir = path.join(ROOT, 'out', club.id);
@@ -73,9 +77,9 @@ async function prompts(clubArg, kitArg = 'all') {
     for (const kit of kits) {
       await page.click('[data-kit="' + kit + '"]');
       const texts = await page.$$eval('.prompt-text', els => els.map(e => e.textContent));
-      const titles = ['FRONT VIEW', 'BACK VIEW', 'LIFESTYLE — STADIUM TUNNEL'];
+      const titles = await page.$$eval('.prompt-card .title', els => els.map(e => e.textContent.toUpperCase()));
       const body = texts.map((t, i) => (i + 1) + ') ' + titles[i] + '\n' + t).join('\n\n') + '\n';
-      const file = path.join(outDir, 'prompts-' + kit + '.txt');
+      const file = path.join(outDir, 'prompts-' + kit + (set === 'grid' ? '-grid' : '') + '.txt');
       fs.writeFileSync(file, body);
       console.log('# ' + club.name + ' — ' + kit.toUpperCase() + '  →  ' + path.relative(ROOT, file) + '\n\n' + body);
     }
@@ -150,6 +154,40 @@ async function build(clubId, flags) {
   return written;
 }
 
+// ---------- 3x3 detail grid ----------
+async function grid(clubId, kit, flags) {
+  if (!readClubs().clubs.some(c => c.id === clubId)) fail('Unknown club "' + clubId + '"');
+  if (!KITS.includes(kit)) fail('Kit must be home, away or third');
+  const dir = path.join(ROOT, 'inbox', clubId, kit + '-grid');
+  const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => /\.(jpe?g|png|webp)$/i.test(f)).sort() : [];
+  if (!files.length) fail('No images in ' + path.relative(ROOT, dir) + '/');
+  const recipeFile = path.join(dir, 'recipe.json');
+  const recipe = fs.existsSync(recipeFile) ? JSON.parse(fs.readFileSync(recipeFile, 'utf8')) : null;
+
+  const { browser, page } = await openPage('grid.html');
+  await page.waitForFunction(() => window.KitGrid);
+  if (flags.gutter !== undefined) await page.fill('#gutter', String(flags.gutter)).then(() => page.dispatchEvent('#gutter', 'input'));
+  for (const f of files) {
+    const b64 = fs.readFileSync(path.join(dir, f)).toString('base64');
+    const type = 'image/' + path.extname(f).slice(1).toLowerCase().replace('jpg', 'jpeg');
+    await page.evaluate(async ([name, data, t]) => {
+      const bin = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+      await window.KitGrid.addImage(name, new File([bin], name, { type: t }));
+    }, [f.replace(/\.[^.]+$/, ''), b64, type]);
+  }
+  await page.evaluate(r => window.KitGrid.applyRecipe(r || undefined), recipe);
+  const name = clubId + '-' + kit + '-grid-2627.png';
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.evaluate(n => window.KitGrid.exportPng(n), name)]);
+  const info = await page.evaluate(() => window.__lastExport);
+  const outDir = path.join(ROOT, 'out', clubId);
+  fs.mkdirSync(outDir, { recursive: true });
+  const file = path.join(outDir, name);
+  await dl.saveAs(file);
+  await browser.close();
+  if (!info || info.width !== 1080 || info.height !== 1920) fail('Export size wrong: ' + JSON.stringify(info));
+  console.log('✓ ' + path.relative(ROOT, file) + '  (' + info.width + '×' + info.height + ', ' + files.length + ' photos' + (recipe ? ', recipe.json' : ', auto recipe') + ')');
+}
+
 function fail(msg) {
   console.error('✗ ' + msg);
   process.exit(1);
@@ -157,9 +195,10 @@ function fail(msg) {
 
 const { flags, rest } = parseFlags(process.argv.slice(2));
 const [cmd, a, b] = rest;
-if (cmd === 'prompts' && a) await prompts(a, b);
+if (cmd === 'prompts' && a) await prompts(a, b, flags.set);
 else if (cmd === 'build' && a) await build(a, flags);
+else if (cmd === 'grid' && a && b) await grid(a, b, flags);
 else {
-  console.log('Usage:\n  node tools/kit.mjs prompts <club-id|all> [home|away|third|all]\n  node tools/kit.mjs build <club-id> [--layouts stacked,hero,swipe] [--no-clean] [--handle @name]');
+  console.log('Usage:\n  node tools/kit.mjs prompts <club-id|all> [home|away|third|all] [--set story|grid]\n  node tools/kit.mjs build <club-id> [--layouts stacked,hero,swipe] [--no-clean] [--handle @name]\n  node tools/kit.mjs grid <club-id> <home|away|third> [--gutter 8]');
   process.exit(cmd ? 1 : 0);
 }
