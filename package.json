@@ -1,0 +1,13 @@
+{
+  "name": "kit-studio",
+  "private": true,
+  "type": "module",
+  "description": "CLI helpers that drive prompts.html / story.html headlessly",
+  "scripts": {
+    "prompts": "node tools/kit.mjs prompts",
+    "build": "node tools/kit.mjs build"
+  },
+  "devDependencies": {
+    "html2canvas": "1.4.1"
+  }
+}

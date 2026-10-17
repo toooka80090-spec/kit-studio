@@ -60,3 +60,29 @@
 | `data/clubs.json` | بيانات الأندية (المصدر الأساسي) |
 | `data/clubs.js` | نسخة احتياطية للفتح بدون سيرفر |
 | `assets/` | التصميم والسكربتات |
+
+---
+
+## 3) التشغيل من Claude Code (بدون متصفح)
+
+نفس الصفحتين بتشتغلوا أوتوماتيك في Chromium مخفي — النتيجة مطابقة 100% للي بتطلع من المتصفح.
+
+### البرومبتات
+```bash
+node tools/kit.mjs prompts zamalek away     # طقم واحد
+node tools/kit.mjs prompts al-ahly all      # الثلاث أطقم
+```
+بيتحفظوا في `out/<club-id>/prompts-<kit>.txt`.
+
+### الستوريز
+1. حط الصور في `inbox/<club-id>/` بالأسماء دي بالظبط: `home.jpg` / `away.jpg` / `third.jpg` (أو png / webp).
+2. شغّل:
+```bash
+node tools/kit.mjs build zamalek --handle @yourhandle
+```
+بيطلّع في `out/<club-id>/`: Stacked + Hero + Swipe لكل طقم — كل واحدة بنسخة عادية ونسخة **clean**، وكلهم 1080×1920.
+
+خيارات: `--layouts stacked,swipe` لاختيار layouts معينة، و `--no-clean` لإلغاء النسخ النظيفة.
+
+> أول مرة على جهاز جديد: `npm install` (بتنزّل html2canvas محليًا عشان التصدير يشتغل حتى من غير cdnjs).
+> أسماء الأندية (`club-id`): `arsenal`, `chelsea`, `tottenham-hotspur`, `psg`, `atletico-madrid`, `borussia-dortmund`, `napoli`, `aston-villa`, `bayer-leverkusen`, `al-ahly`, `zamalek`.
