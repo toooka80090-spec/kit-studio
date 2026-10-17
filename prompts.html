@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kit Prompt Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .club-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+    .club-head .name { font-family: 'Anton', Impact, sans-serif; font-size: 28px; line-height: 1.1; text-transform: uppercase; }
+    .prompt-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    .prompt-card + .prompt-card { margin-top: 14px; }
+    .prompt-card header {
+      display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+      border-bottom: 1px solid var(--line); background: var(--panel-2);
+    }
+    .prompt-card header .num {
+      font-family: 'Anton', Impact, sans-serif; font-size: 22px; color: var(--accent); width: 28px;
+    }
+    .prompt-card header .title { font-weight: 700; }
+    .prompt-card header .sub { font-size: 12px; color: var(--muted); }
+    .prompt-card header .btn { margin-left: auto; }
+    .prompt-text {
+      margin: 0; padding: 16px; white-space: pre-wrap; word-break: break-word;
+      font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; line-height: 1.6;
+      color: #d9d9e3;
+    }
+    .prompt-text .constraint { color: var(--accent); }
+    .out-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    .out-head h1 { margin: 0; font-size: 18px; }
+    .out-head .btn { margin-left: auto; }
+    .data-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">KIT<span>/</span>STUDIO</a>
+    <nav class="nav">
+      <a href="prompts.html" class="active">Prompts</a>
+      <a href="story.html">Story</a>
+    </nav>
+  </header>
+
+  <main class="wrap grid">
+    <!-- controls -->
+    <section class="sticky">
+      <div class="card">
+        <h2>Selection</h2>
+        <label class="field"><span>Club</span>
+          <select id="club"></select>
+        </label>
+        <div class="field">
+          <span class="muted small" style="display:block;margin-bottom:6px;font-weight:600">Kit</span>
+          <div class="seg" id="kitSeg">
+            <button data-kit="home" class="on">Home</button>
+            <button data-kit="away">Away</button>
+            <button data-kit="third">Third</button>
+          </div>
+        </div>
+        <div class="club-head" style="margin-top:14px">
+          <span class="swatch" id="sw1"></span><span class="swatch" id="sw2"></span>
+          <span class="name" id="clubName"></span>
+        </div>
+        <div class="muted small" id="clubLeague"></div>
+      </div>
+
+      <div class="card">
+        <h2>Kit description</h2>
+        <label class="field" style="margin:0">
+          <textarea id="kitDesc" rows="4" placeholder="e.g. deep red body, white raglan sleeves, thin gold pinstripes, white V-neck collar"></textarea>
+        </label>
+        <p class="hint">Saved automatically in this browser. Leave as "EDIT: …" to rely only on the reference image.</p>
+      </div>
+
+      <div class="card">
+        <h2>Model (same in all 3 shots)</h2>
+        <label class="field"><span>Model identity</span>
+          <textarea id="modelDesc" rows="3"></textarea>
+        </label>
+        <label class="field" style="margin:0"><span>Bottoms / styling</span>
+          <input type="text" id="bottoms">
+        </label>
+      </div>
+
+      <div class="card">
+        <h2>Data</h2>
+        <div class="pill"><span class="dot"></span><span id="source">Loading…</span></div>
+        <div class="data-actions">
+          <button class="btn small" id="importBtn">Import</button>
+          <button class="btn small" id="exportBtn">Export</button>
+          <button class="btn small" id="resetBtn">Reset</button>
+        </div>
+        <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+        <div class="notice hidden" id="fileNotice">
+          Opened as a local file, so the browser can't read <b>data/clubs.json</b> directly.
+          If you edited it by hand, click <b>Import</b> and pick it once.
+        </div>
+      </div>
+    </section>
+
+    <!-- output -->
+    <section>
+      <div class="out-head">
+        <h1 id="outTitle">Prompts</h1>
+        <span class="pill">Nano Banana · Adobe Firefly · 9:16</span>
+        <button class="btn primary" id="copyAll">Copy all 3</button>
+      </div>
+      <div id="prompts"></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">Copied</div>
+
+  <script src="data/clubs.js"></script>
+  <script src="assets/clubs.js"></script>
+  <script src="assets/prompts.js"></script>
+</body>
+</html>

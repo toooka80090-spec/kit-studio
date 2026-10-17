@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kit Story Template</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    /* ---------- controls ---------- */
+    .kit-row { border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: var(--panel-2); }
+    .kit-row + .kit-row { margin-top: 10px; }
+    .kit-row .thumb {
+      width: 44px; height: 78px; border-radius: 8px; background: #0003 center/cover no-repeat;
+      border: 1px dashed #444456; flex: none;
+    }
+    .kit-row .thumb.has { border-style: solid; }
+    .kit-row .kname { font-weight: 700; letter-spacing: .6px; text-transform: uppercase; font-size: 13px; }
+    .kit-row details { margin-top: 8px; }
+    .kit-row summary { cursor: pointer; font-size: 12px; color: var(--muted); font-weight: 600; min-height: 28px; }
+    .slider { display: grid; grid-template-columns: 54px 1fr 40px; gap: 8px; align-items: center; font-size: 12px; color: var(--muted); }
+    .labels3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .colors { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .export-status { font-size: 13px; color: var(--muted); margin-top: 8px; min-height: 20px; }
+    .export-status.ok { color: var(--accent); }
+    .export-status.err { color: var(--danger); }
+
+    /* ---------- preview ---------- */
+    .preview { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .stage-box {
+      position: relative; overflow: hidden; border-radius: 18px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 1px var(--line);
+    }
+    .preview-meta { font-size: 12px; color: var(--muted); }
+    @media (max-width: 900px) { .preview { order: -1; } }
+
+    /* ---------- 1080x1920 stage (html2canvas-safe CSS only) ---------- */
+    #stage {
+      position: absolute; left: 0; top: 0;
+      width: 1080px; height: 1920px; overflow: hidden;
+      transform-origin: 0 0;
+      background: #060608;
+      color: #fff;
+      font-family: 'Anton', Impact, sans-serif;
+    }
+    #stage .abs { position: absolute; }
+    #stage .bg { left: 0; top: 0; width: 1080px; height: 1920px; }
+    #stage .band { left: -660px; width: 2400px; transform: rotate(-16deg); }
+    #stage .badge {
+      left: 70px; top: 150px; height: 64px; padding: 0 22px; border-radius: 32px;
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 50px; line-height: 64px; letter-spacing: 2px;
+      white-space: nowrap;
+    }
+    #stage .league {
+      right: 70px; top: 150px; height: 64px; line-height: 64px;
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 40px; letter-spacing: 4px;
+      color: rgba(255,255,255,.75); white-space: nowrap; text-align: right;
+    }
+    #stage .club {
+      left: 70px; top: 228px; width: 940px; height: 160px;
+      font-size: 150px; line-height: 160px; text-transform: uppercase; white-space: nowrap;
+      letter-spacing: 1px;
+    }
+    #stage .panel { overflow: hidden; border-radius: 40px; cursor: pointer; }
+    #stage .panel .img { left: 0; top: 0; background-repeat: no-repeat; }
+    #stage .panel .shade { left: 0; right: 0; bottom: 0; }
+    #stage .panel .frame { left: 0; top: 0; border-radius: 40px; box-sizing: border-box; }
+    #stage .panel .ph {
+      left: 0; right: 0; top: 50%; margin-top: -30px; height: 60px; line-height: 60px; text-align: center;
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 44px; letter-spacing: 4px; color: rgba(255,255,255,.35);
+    }
+    #stage .label { display: flex; flex-direction: column; justify-content: center; }
+    #stage .label .kitname { text-transform: uppercase; line-height: 1; white-space: nowrap; letter-spacing: 2px; }
+    #stage .label .bar { height: 10px; border-radius: 5px; margin-top: 14px; }
+    #stage .label svg { display: block; }
+    #stage .subtitle {
+      left: 70px; top: 1762px; height: 60px; line-height: 60px;
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 52px; letter-spacing: 6px; white-space: nowrap;
+    }
+    #stage .handle {
+      right: 70px; top: 1762px; height: 60px; line-height: 60px; text-align: right;
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 40px; letter-spacing: 3px;
+      color: rgba(255,255,255,.7); white-space: nowrap;
+    }
+    #stage .swipe { left: 0; width: 1080px; top: 1676px; height: 44px; text-align: center; }
+    #stage .swipe .d { display: inline-block; width: 14px; height: 14px; border-radius: 7px; margin: 15px 7px 0; vertical-align: top; }
+    #stage .swipe .d.on { width: 44px; }
+    #stage.clean .txt { display: none; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">KIT<span>/</span>STUDIO</a>
+    <nav class="nav">
+      <a href="prompts.html">Prompts</a>
+      <a href="story.html" class="active">Story</a>
+    </nav>
+  </header>
+
+  <main class="wrap grid">
+    <!-- controls -->
+    <section>
+      <div class="card">
+        <h2>Club &amp; layout</h2>
+        <label class="field"><span>Club</span><select id="club"></select></label>
+        <div class="field">
+          <span class="muted small" style="display:block;margin-bottom:6px;font-weight:600">Layout</span>
+          <div class="seg" id="layoutSeg">
+            <button data-layout="stacked" class="on">3 Stacked</button>
+            <button data-layout="hero">Hero + 2</button>
+            <button data-layout="swipe">Swipe</button>
+          </div>
+        </div>
+        <label class="field hidden" id="heroField"><span>Hero kit</span>
+          <select id="heroKit"><option value="home">Home</option><option value="away">Away</option><option value="third">Third</option></select>
+        </label>
+        <label class="field hidden" id="swipeField"><span>Kit on this slide</span>
+          <select id="swipeKit"><option value="home">Home</option><option value="away">Away</option><option value="third">Third</option></select>
+        </label>
+      </div>
+
+      <div class="card">
+        <h2>Images</h2>
+        <div id="kitRows"></div>
+        <button class="btn block" id="multiBtn" style="margin-top:10px">Upload 3 at once (home → away → third)</button>
+        <input type="file" id="multiFile" accept="image/*" multiple class="hidden">
+        <p class="hint">Tip: click or drop an image directly on a panel in the preview.</p>
+      </div>
+
+      <div class="card">
+        <h2>Text</h2>
+        <label class="field"><span>Club name</span><input type="text" id="clubName"></label>
+        <div class="field">
+          <span class="muted small" style="display:block;margin-bottom:6px;font-weight:600">Kit labels</span>
+          <div class="labels3">
+            <input type="text" id="lbl-home" value="HOME">
+            <input type="text" id="lbl-away" value="AWAY">
+            <input type="text" id="lbl-third" value="THIRD">
+          </div>
+        </div>
+        <div class="row">
+          <label class="field grow"><span>Season badge</span><input type="text" id="season" value="26/27"></label>
+          <label class="field grow"><span>Top-right text</span><input type="text" id="league"></label>
+        </div>
+        <div class="row">
+          <label class="field grow"><span>Bottom text</span><input type="text" id="subtitle" value="2026/27 KITS"></label>
+          <label class="field grow"><span>Handle</span><input type="text" id="handle" placeholder="@yourhandle"></label>
+        </div>
+        <label class="switch"><input type="checkbox" id="arrows" checked> Show arrows</label>
+        <label class="switch"><input type="checkbox" id="clean"> Hide all text (clean version)</label>
+      </div>
+
+      <div class="card">
+        <h2>Colors</h2>
+        <div class="colors">
+          <input type="color" id="c1" title="Primary">
+          <input type="color" id="c2" title="Secondary">
+          <button class="btn small" id="swap">Swap</button>
+          <button class="btn small" id="resetColors">Club colors</button>
+        </div>
+        <p class="hint">Loaded from clubs.json — override here for this export only.</p>
+      </div>
+
+      <div class="card">
+        <button class="btn primary block" id="exportBtn">Export PNG · 1080×1920</button>
+        <div class="export-status" id="exportStatus"></div>
+        <div class="notice hidden" id="fileNotice">
+          Opened as a local file — using the offline copy of the club list. Edits made on the Prompts page still apply.
+        </div>
+      </div>
+    </section>
+
+    <!-- preview -->
+    <section class="preview sticky">
+      <div class="stage-box" id="stageBox"><div id="stage"></div></div>
+      <div class="preview-meta" id="meta">1080 × 1920 preview</div>
+    </section>
+  </main>
+
+  <input type="file" id="oneFile" accept="image/*" class="hidden">
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="data/clubs.js"></script>
+  <script src="assets/clubs.js"></script>
+  <script src="assets/story.js"></script>
+</body>
+</html>
