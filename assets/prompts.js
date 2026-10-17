@@ -86,7 +86,7 @@
     const who = model.model.trim().replace(/\.+$/, '');
     const bottoms = 'plain black athletic shorts';
     const jersey = 'the EXACT ' + club.name + ' 2026/27 ' + KIT_WORD[kitType] + ' jersey from the reference image';
-    const flatlay = 'The reference image is a flat-lay product photo of the jersey: dress the model in exactly this jersey, translating the flat garment naturally onto the body with realistic drape, soft folds and slight stretch across the chest and shoulders, while keeping every stripe position, print texture, color, collar, cuff, hem, crest, sponsor and manufacturer mark exactly as in the reference — nothing redesigned, recolored, moved or invented.' + describeKit(club.kits[kitType].description);
+    const flatlay = 'The reference image is a flat-lay product photo of the jersey: dress the model in exactly this jersey, translating the flat garment naturally onto the body with realistic drape, soft folds and slight stretch across the chest and shoulders, while keeping every stripe position, print texture, color, collar, cuff, hem, crest, sponsor and manufacturer mark exactly as in the reference — nothing redesigned, recolored, moved or invented. Ignore the surface the jersey is lying on and any shop hang-tags or price tags in the reference — they are not part of the garment.' + describeKit(club.kits[kitType].description);
     const identity = 'Same model in every shot of this set: ' + who + ', identical skin tone, stubble, build and ' + bottoms + '.';
     const studio = 'Pure white seamless e-commerce studio background, bright high-key soft key light from large softboxes, subtle rim light on the shoulders, clean soft shadows, true-to-life colors.';
     const lens85 = 'Shot on a full-frame camera with an 85mm lens, shallow depth of field, crisp fabric detail, 8k resolution, editorial sports fashion product photography.';
@@ -95,10 +95,10 @@
     const shots = [
       ['Front', 'Waist-up · face cropped at nose', 'FRONT VIEW: the model wearing ' + jersey + ' faces the camera straight on, framed from the bridge of the nose down to mid-thigh, arms relaxed at the sides, the full jersey front centered and unobstructed.', lens85],
       ['Three-quarter', 'Hand on hip', 'THREE-QUARTER VIEW: the model wearing ' + jersey + ' turns about 25° toward camera-left with the right hand resting on the hip, framed from just below the eyes down to mid-thigh, jersey front and side seam clearly visible.', lens85],
-      ['Chest close-up', 'Collar + crest', 'CHEST CLOSE-UP: the model wearing ' + jersey + ', framed from the chin down to mid-torso, crew-neck collar and chest crest in sharp focus, print texture clearly readable.', lens85],
-      ['Crest macro', 'Diagonal detail', 'MACRO DETAIL: extreme close-up of the crest and the surrounding printed fabric of ' + jersey + ' worn on the model\'s chest, camera tilted about 30° so the stripes run diagonally across the frame, knit texture and crest stitching razor sharp.', lensMacro],
+      ['Chest close-up', 'Collar + crest', 'CHEST CLOSE-UP: the model wearing ' + jersey + ', framed from the chin down to mid-torso, collar exactly as in the reference and the chest crest in sharp focus, print texture clearly readable.', lens85],
+      ['Crest macro', 'Diagonal detail', 'MACRO DETAIL: extreme close-up of the crest and the surrounding printed fabric of ' + jersey + ' worn on the model\'s chest, camera tilted about 30° so the fabric pattern and weave run diagonally across the frame, knit texture and crest stitching razor sharp.', lensMacro],
       ['Sleeve', 'Shoulder + arm profile', 'SLEEVE DETAIL: side-profile close-up of the model\'s shoulder and short sleeve of ' + jersey + ', framed from the collarbone to just below the elbow, sleeve hem and seam stitching visible, white background beside the arm.', lens85],
-      ['Collar', 'Chin + neckline', 'COLLAR DETAIL: close-up of the model wearing ' + jersey + ', framed from the lower lip down to the upper chest, crew-neck collar ribbing and stitching in sharp focus, chin and light stubble visible above it.', lens85]
+      ['Collar', 'Chin + neckline', 'COLLAR DETAIL: close-up of the model wearing ' + jersey + ', framed from the lower lip down to the upper chest, collar shape, trim and stitching exactly as in the reference in sharp focus, chin and light stubble visible above it.', lens85]
     ];
     return shots.map(([title, sub, shot, lens]) => ({
       title, sub,

@@ -94,6 +94,24 @@ window.CLUBS_FALLBACK = {
       }
     },
     {
+      "id": "real-madrid",
+      "name": "Real Madrid",
+      "league": "LaLiga",
+      "primaryColor": "#FFFFFF",
+      "secondaryColor": "#FEBE10",
+      "kits": {
+        "home": {
+          "description": "clean white body with a fine tonal mesh knit texture; white retro Johnny collar (pointed polo-style collar with an open V-notch placket, no buttons) and light-grey label inside the neck; three thin light-grey stripes running along the top of each shoulder; light-grey ribbed trim on both sleeve cuffs; tonal light-grey 'Emirates FLY BETTER' sponsor printed across the chest in two lines; light-grey interlocking MCF monogram crest on the wearer's left chest; light-grey embroidered adidas Originals trefoil on the wearer's right chest; large light-grey circular badge print on the upper left sleeve; all details tone-on-tone white and light grey only"
+        },
+        "away": {
+          "description": "EDIT: describe kit"
+        },
+        "third": {
+          "description": "EDIT: describe kit"
+        }
+      }
+    },
+    {
       "id": "borussia-dortmund",
       "name": "Borussia Dortmund",
       "league": "Bundesliga",
