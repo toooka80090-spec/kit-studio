@@ -196,7 +196,7 @@ def riser(d):
         out[c0:c0 + 1200] = bp(n[c0:c0 + 1200], fc[k] * .7, min(fc[k] * 1.4, 20000))
     return out * (t / d) ** 2
 
-# intro: symbol drop + wordmark wipe + tagline, riser, phone landing
+# intro: symbol drop + wordmark wipe, riser, phone landing
 place(sfx, impact() * .6, .42, .30); place(sfx, pop(), .42, .25)
 place_st(sfx, whoosh_st(.5, .30), .42)
 place(sfx, chime([76, 83], .09, .3), .85, .10)
@@ -236,7 +236,6 @@ place_st(sfx, whoosh_st(.7, .35, l2r=False), 25.5)               # outro move
 place(sfx, impact() * .7, 26.3, .32); place(sfx, pop(), 26.3, .22)  # symbol lands
 place_st(sfx, whoosh_st(.5, .25), 26.2)                           # wordmark wipe
 place(sfx, chime([84, 91], .08, .4), 26.95, .14)                 # url pill
-place(sfx, chime([91, 96], .1, .5), 27.35, .07)                  # tagline
 
 # light room reverb on sfx (short multi-tap, cheap)
 rev = np.zeros_like(sfx)
