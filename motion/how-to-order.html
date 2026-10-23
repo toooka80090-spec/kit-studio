@@ -80,6 +80,7 @@
   .sym{display:block;margin:0 auto}
   .wm{display:block;margin:0 auto}
   #introSym{width:300px}#introWm{width:620px;margin-top:44px}
+  .tagline{font-family:Figtree,sans-serif;font-weight:500;font-size:34px;letter-spacing:12px;text-transform:uppercase;color:var(--accent);margin-top:34px;direction:ltr}
   #introLine{font-size:70px;font-weight:700;margin-top:80px}
   #introSub{font-size:38px;font-weight:500;color:rgba(255,255,255,.7);margin-top:8px}
   #outro{justify-content:flex-start;padding-top:120px}
@@ -136,6 +137,7 @@
 
   <div id="intro">
     <img class="sym" id="introSym" src="site/symbol-lime.png"><img class="wm" id="introWm" src="site/wordmark-white.png">
+    <div class="tagline" id="introTag">The Power Within.</div>
     <div id="introLine">إزاي تطلب تيشيرتك؟</div>
     <div id="introSub">في 5 خطوات بس من موبايلك</div>
   </div>
@@ -143,6 +145,7 @@
     <img class="sym" id="outroSym" src="site/symbol-lime.png"><img class="wm" id="outroWm" src="site/wordmark-white.png">
     <div id="outroT">اطلب تيشيرتك دلوقتي</div>
     <div id="outroUrl">www.vamos-kw.com</div>
+    <div class="tagline" id="outroTag">The Power Within.</div>
   </div>
 </div>
 
@@ -207,6 +210,8 @@ function render(t) {
   $('introSym').style.transform = `translateY(${(1 - sy) * -260}px) scale(${lerp(1.4, 1, sy)})`;
   $('introSym').style.opacity = clamp(sy * 2);
   $('introWm').style.clipPath = `inset(0 ${(1 - p(t, .45, .95, E.o)) * 100}% 0 0)`;
+  const tg = p(t, .8, 1.2, E.o);
+  $('introTag').style.cssText = `opacity:${tg};letter-spacing:${lerp(30, 12, tg)}px`;
   const il = p(t, 1.0, 1.4, E.o), is = p(t, 1.2, 1.6, E.o);
   $('introLine').style.cssText = `opacity:${il};transform:translateY(${(1 - il) * 40}px)`;
   $('introSub').style.cssText = `opacity:${is};transform:translateY(${(1 - is) * 40}px)`;
@@ -279,6 +284,8 @@ function render(t) {
   $('outroSym').style.transform = `translateY(${(1 - osy) * -200}px) scale(${lerp(1.4, 1, osy)})`;
   $('outroSym').style.opacity = clamp(osy * 2);
   $('outroWm').style.clipPath = `inset(0 ${(1 - p(t, 26.2, 26.7, E.o)) * 100}% 0 0)`;
+  const otg = p(t, 27.3, 27.8, E.o);
+  $('outroTag').style.cssText = `opacity:${otg};letter-spacing:${lerp(30, 12, otg)}px`;
   const ot = p(t, 26.4, 26.9, E.o), ou = p(t, 26.7, 27.2, E.back);
   $('outroT').style.cssText = `opacity:${ot};transform:translateY(${(1 - ot) * 40}px)`;
   $('outroUrl').style.cssText = `opacity:${clamp(ou)};transform:scale(${lerp(.6, 1, ou) * (1 + Math.sin(Math.max(0, t - 27.3) * 4) * .025)})`;
