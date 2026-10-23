@@ -9,8 +9,10 @@ from scipy.signal import butter, sosfilt
 
 SR = 48000
 DUR = 30.0
-HOLD_AT, HOLD = 1.6, 1.0  # intro hold (mirrors the HTML): SFX after HOLD_AT move later by HOLD
-def W(t): return t if t < HOLD_AT else t + HOLD
+# animation time -> video time (inverse of TIME_MAP in the HTML); SFX are written in animation time
+A_KNOTS = [0, 1.6 - 1e-6, 1.6, 2.6, 7.4, 14.2, 19.4, 22.6, 25.8, 28.0, 29]
+R_KNOTS = [0, 1.6 - 1e-6, 2.5, 3.5, 8.0, 14.2, 18.3, 20.9, 25.0, 27.6, 30]
+def W(t): return float(np.interp(t, A_KNOTS, R_KNOTS))
 N = int(SR * DUR)
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
 rng = np.random.default_rng(7)
@@ -54,7 +56,7 @@ def place_st(buf, st, t, gain=1.0):
 music = np.zeros((N, 2))
 beat = 60 / BPM
 bar = beat * 4
-DRUMS_IN, DRUMS_OUT = 3.75, 26.6
+DRUMS_IN, DRUMS_OUT = 3.65, 25.0
 
 def kick():
     t = tt(.35)
@@ -129,7 +131,7 @@ for bi in range(int(np.ceil(DUR / bar))):
             place(music, pl, t0 + k * beat / 2 + beat / 4, .05, .4 if k % 2 else -.4)
 
 # intro filter sweep on the pad, pumping while drums play
-cut = np.interp(np.arange(N) / SR, [0, 3.75, 26.6, 30], [300, 1400, 1400, 500])
+cut = np.interp(np.arange(N) / SR, [0, 3.65, 25.0, 30], [300, 1400, 1400, 500])
 pad_f = np.zeros_like(pad)
 for c0 in range(0, N, 2400):  # block-wise moving low-pass
     sos = butter(2, cut[c0], 'low', fs=SR, output='sos')
@@ -137,7 +139,7 @@ for c0 in range(0, N, 2400):  # block-wise moving low-pass
 music += pad_f * .55 * pump[:, None]
 
 # outro: final kick + reverse-ish swell, then fade
-place(music, K, 27.3, .5); place(music, C, 27.3, .12)
+place(music, K, W(26.3), .5); place(music, C, W(26.3), .12)
 fade = np.interp(np.arange(N) / SR, [0, .4, 28.4, 30], [0, 1, 1, 0])
 music *= fade[:, None]
 

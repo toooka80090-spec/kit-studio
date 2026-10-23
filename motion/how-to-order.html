@@ -151,9 +151,16 @@
 
 <script>
 const DURATION = 30;
-/* intro hold: freeze the intro once its text is in, so it can be read */
-const HOLD_AT = 1.6, HOLD = 1.0;
-const warp = t => t < HOLD_AT ? t : Math.max(HOLD_AT, t - HOLD);
+/* video time -> animation time, so each step lines up with the voiceover (vo/):
+   intro hold at 1.6, steps 3-4 a bit faster, step 5 and the outro a bit slower */
+const TIME_MAP = [[0, 0], [1.6, 1.6], [2.5, 1.6], [3.5, 2.6], [8.0, 7.4], [14.2, 14.2], [18.3, 19.4], [20.9, 22.6], [25.0, 25.8], [27.6, 28.0], [30, 29]];
+const warp = t => {
+  for (let i = 1; i < TIME_MAP.length; i++) {
+    const [r0, a0] = TIME_MAP[i - 1], [r1, a1] = TIME_MAP[i];
+    if (t <= r1) return a0 + (a1 - a0) * clamp((t - r0) / (r1 - r0));
+  }
+  return TIME_MAP[TIME_MAP.length - 1][1];
+};
 const K = 584 / 1080; // screenshot px -> phone px
 const FIRST = 'Ahmed', LAST = 'Mohamed', EMAIL = 'ahmed@gmail.com';
 
