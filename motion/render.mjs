@@ -1,4 +1,4 @@
-// Render motion/how-to-order.html to MP4 (1080x1920, 30fps).
+// Render motion/how-to-order.html to MP4 (1080x1920, 60fps; FPS=30 env to override).
 //   node motion/render.mjs [out.mp4] [--stills 1,5,12]
 import { createRequire } from 'module';
 import { spawn } from 'child_process';
@@ -12,7 +12,7 @@ const args = process.argv.slice(2);
 const stillsArg = args.indexOf('--stills');
 const stills = stillsArg >= 0 ? args[stillsArg + 1].split(',').map(Number) : null;
 const out = path.resolve(args.find(a => a.endsWith('.mp4')) || path.join(here, 'out', 'vamos-how-to-order.mp4'));
-const FPS = 30;
+const FPS = +(process.env.FPS || 60);
 
 const browser = await pw.chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
