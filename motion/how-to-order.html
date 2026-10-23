@@ -150,7 +150,10 @@
 </div>
 
 <script>
-const DURATION = 29;
+const DURATION = 30;
+/* intro hold: freeze the intro once its text is in, so it can be read */
+const HOLD_AT = 1.6, HOLD = 1.0;
+const warp = t => t < HOLD_AT ? t : Math.max(HOLD_AT, t - HOLD);
 const K = 584 / 1080; // screenshot px -> phone px
 const FIRST = 'Ahmed', LAST = 'Mohamed', EMAIL = 'ahmed@gmail.com';
 
@@ -206,10 +209,11 @@ const ct = document.createElement('div'); ct.id = 'cartTarget';
 Object.assign(ct.style, {position: 'absolute', left: 1000 * K - 25 + 'px', top: 90 * K - 25 + 'px', width: '50px', height: '50px'});
 $('hdr').appendChild(ct);
 
-function render(t) {
-  $('bigword').style.transform = `translateX(${-200 - t * 22}px)`;
-  $('b1').style.transform = `translate(${Math.sin(t * .4) * 80}px,${Math.cos(t * .3) * 120}px)`;
-  $('b2').style.transform = `translate(${Math.cos(t * .35) * 90}px,${Math.sin(t * .45) * 100}px)`;
+function render(t, rt = t) {
+  /* background keeps drifting on real time, even during the intro hold */
+  $('bigword').style.transform = `translateX(${-200 - rt * 22}px)`;
+  $('b1').style.transform = `translate(${Math.sin(rt * .4) * 80}px,${Math.cos(rt * .3) * 120}px)`;
+  $('b2').style.transform = `translate(${Math.cos(rt * .35) * 90}px,${Math.sin(rt * .45) * 100}px)`;
 
   /* intro */
   const iOut = p(t, 2.0, 2.6);
@@ -227,7 +231,7 @@ function render(t) {
 
   /* phone */
   const pin = p(t, 2.0, 2.9, E.o), pout = p(t, 25.6, 26.5, E.io);
-  $('phone').style.transform = `translateY(${(1 - pin) * 1300 + pout * 230}px) scale(${lerp(1, .78, pout) * lerp(.9, 1, pin)}) rotate(${(1 - pin) * -6}deg)`;
+  $('phone').style.transform = `translateY(${(1 - pin) * 1700 + pout * 230}px) scale(${lerp(1, .78, pout) * lerp(.9, 1, pin)}) rotate(${(1 - pin) * -6}deg)`;
 
   /* captions + progress */
   for (let i = 0; i < 5; i++) {
@@ -326,7 +330,7 @@ function renderTap(t) {
   ring.style.opacity = t >= TAPS[i].t ? (1 - rk) : 0;
   ring.style.transform = `scale(${1 + rk * 1.3})`;
 }
-function frame(t) { render(t); renderTap(t); }
+function frame(t) { const w = warp(t); render(w, t); renderTap(w); }
 
 window.__ready = (async () => {
   await Promise.all([...document.images].map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; })));

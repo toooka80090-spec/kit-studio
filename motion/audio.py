@@ -8,7 +8,9 @@ import numpy as np
 from scipy.signal import butter, sosfilt
 
 SR = 48000
-DUR = 29.0
+DUR = 30.0
+HOLD_AT, HOLD = 1.6, 1.0  # intro hold (mirrors the HTML): SFX after HOLD_AT move later by HOLD
+def W(t): return t if t < HOLD_AT else t + HOLD
 N = int(SR * DUR)
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
 rng = np.random.default_rng(7)
@@ -33,6 +35,7 @@ def mtof(m): return 440 * 2 ** ((m - 69) / 12)
 
 def place(buf, sig, t, gain=1.0, pan=0.0):
     """Mix mono `sig` into stereo `buf` at time t with equal-power pan (-1 L .. 1 R)."""
+    if buf is globals().get('sfx'): t = W(t)
     i = int(t * SR)
     if i >= len(buf): return
     sig = sig[:len(buf) - i]
@@ -41,6 +44,7 @@ def place(buf, sig, t, gain=1.0, pan=0.0):
     buf[i:i + len(sig), 1] += sig * gain * np.sin(a)
 
 def place_st(buf, st, t, gain=1.0):
+    if buf is globals().get('sfx'): t = W(t)
     i = int(t * SR)
     st = st[:len(buf) - i]
     buf[i:i + len(st)] += st * gain
@@ -50,7 +54,7 @@ def place_st(buf, st, t, gain=1.0):
 music = np.zeros((N, 2))
 beat = 60 / BPM
 bar = beat * 4
-DRUMS_IN, DRUMS_OUT = 2.75, 25.6
+DRUMS_IN, DRUMS_OUT = 3.75, 26.6
 
 def kick():
     t = tt(.35)
@@ -125,7 +129,7 @@ for bi in range(int(np.ceil(DUR / bar))):
             place(music, pl, t0 + k * beat / 2 + beat / 4, .05, .4 if k % 2 else -.4)
 
 # intro filter sweep on the pad, pumping while drums play
-cut = np.interp(np.arange(N) / SR, [0, 2.75, 25.6, 29], [300, 1400, 1400, 500])
+cut = np.interp(np.arange(N) / SR, [0, 3.75, 26.6, 30], [300, 1400, 1400, 500])
 pad_f = np.zeros_like(pad)
 for c0 in range(0, N, 2400):  # block-wise moving low-pass
     sos = butter(2, cut[c0], 'low', fs=SR, output='sos')
@@ -133,8 +137,8 @@ for c0 in range(0, N, 2400):  # block-wise moving low-pass
 music += pad_f * .55 * pump[:, None]
 
 # outro: final kick + reverse-ish swell, then fade
-place(music, K, 26.3, .5); place(music, C, 26.3, .12)
-fade = np.interp(np.arange(N) / SR, [0, .4, 27.4, 29], [0, 1, 1, 0])
+place(music, K, 27.3, .5); place(music, C, 27.3, .12)
+fade = np.interp(np.arange(N) / SR, [0, .4, 28.4, 30], [0, 1, 1, 0])
 music *= fade[:, None]
 
 
@@ -200,7 +204,7 @@ def riser(d):
 place(sfx, impact() * .6, .42, .30); place(sfx, pop(), .42, .25)
 place_st(sfx, whoosh_st(.5, .30), .42)
 place(sfx, chime([76, 83], .09, .3), .85, .10)
-place(sfx, riser(.9), 1.15, .18)
+place(sfx, riser(1.8), 1.15, .18)  # spans the intro hold
 place_st(sfx, whoosh_st(.55, .35, l2r=False), 1.95)
 place(sfx, impact(), 2.75, .35)
 
