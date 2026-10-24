@@ -183,7 +183,7 @@
         <div class="ov" id="cfBox" style="background:#fff;text-align:center;color:#888">
           <div style="color:#333;font-weight:500">Ahmed Mohamed</div><div>Email: ahmed@gmail.com</div><div>Phone: 50000000</div><div>Block 5, Street 10</div><div>Hawalli</div><div>Kuwait</div></div></div></div>
       <div class="scr full" id="sPortal"><div class="layer" id="lPortal"><img src="site/portal.jpg"><div class="hl" id="hKnet"></div>
-        <div class="ov" id="ptName" style="color:#8a8a8a">Ahmed Mohamed</div><div class="ov" id="ptDate" style="color:#8a8a8a">October 24, 2026 11:21 PM</div></div></div>
+        <div class="ov" id="ptName" style="color:#8a8a8a">Ahmed Mohamed</div><div class="ov" id="ptInv" style="color:#8a8a8a">238104562</div><div class="ov" id="ptRef" style="color:#8a8a8a">2026010473</div><div class="ov" id="ptCref" style="color:#8a8a8a">100245</div><div class="ov" id="ptDate" style="color:#8a8a8a">October 24, 2026 11:21 PM</div></div></div>
       <div class="scr full" id="sSuccess"><div id="okBox"><img id="okHdr" src="site/header0.jpg">
         <div class="tyTitle">Thank you</div>
         <div class="tyCard">
@@ -228,13 +228,14 @@ const BOX = {
   hNewSeason: [650, 610, 300, 300], hPremier: [640, 330, 330, 360], hLiverpool: [650, 320, 300, 360],
   hSalah: [30, 3058, 497, 498], hAdd: [298, 3064, 589, 117], hProceed: [40, 584, 970, 116], hGuest: [122, 1026, 498, 118],
   hShipNext: [428, 1164, 222, 116], hPayNext: [428, 1050, 222, 116], hConfirm: [393, 488, 294, 116], hKnet: [44, 1959, 1002, 104],
-  cfBox: [110, 970, 860, 395], ptName: [130, 972, 300, 40], ptDate: [622, 1283, 380, 40]
+  cfBox: [110, 970, 860, 395], ptName: [130, 972, 300, 40], ptDate: [622, 1283, 380, 40],
+  ptInv: [622, 972, 300, 40], ptRef: [622, 1130, 300, 40], ptCref: [130, 1448, 300, 40]
 };
 const $ = id => document.getElementById(id);
 Object.entries(BOX).forEach(([id, [x, y, w, h]]) => Object.assign($(id).style, {left: x * K + 'px', top: y * K + 'px', width: w * K + 'px', height: h * K + 'px'}));
 Object.assign($('rS').style, {left: 168 * K + 'px', top: 2357 * K + 'px'});
 Object.assign($('cfBox').style, {fontSize: '20.5px', lineHeight: 60 * K + 'px', paddingTop: '6px'});
-['ptName', 'ptDate'].forEach(id => Object.assign($(id).style, {fontSize: '16px', lineHeight: 40 * K + 'px'}));
+['ptName', 'ptDate', 'ptInv', 'ptRef', 'ptCref'].forEach(id => Object.assign($(id).style, {fontSize: '16px', lineHeight: 40 * K + 'px'}));
 
 const clamp = x => Math.min(1, Math.max(0, x));
 function bezier(x1, y1, x2, y2, x) {
