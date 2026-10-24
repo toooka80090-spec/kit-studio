@@ -231,14 +231,10 @@ place(sfx, pop(), M['badge'] + .1, .38, .3)                       # cart badge 0
 place_st(sfx, whoosh_st(.55, .32), M['drawerIn'])                 # mini cart slides in from the left
 for _, at, _ in TL['selects']: place(sfx, pop() * .7, at, .22)    # dropdown value picked
 place(sfx, pop(), M['formOpen'], .25)                             # address form opens
-place_st(sfx, whoosh_st(.5, .30, l2r=False), M['sheetIn'])        # step-5 sheet slides up
-for i, at in enumerate(M['sheetRows']):
-    place(sfx, pop() * .6, at, .22, -.2)
-    place(sfx, chime([84 + i * 3], .05, .12), at + .6, .08)
-place(sfx, chime([72, 76, 79, 84, 88], .075, .45), M['done'], .20)
+place(sfx, chime([72, 76, 79, 84, 88], .075, .45), M['success'], .20)  # order complete
 for k in range(12):
     tn = tt(.08); f = rng.uniform(5000, 9000)
-    place(sfx, np.sin(2 * np.pi * f * tn) * np.exp(-tn / .02), M['done'] + .15 + k * .06 + rng.uniform(0, .04), .05, rng.uniform(-.8, .8))
+    place(sfx, np.sin(2 * np.pi * f * tn) * np.exp(-tn / .02), M['success'] + .15 + k * .06 + rng.uniform(0, .04), .05, rng.uniform(-.8, .8))
 place_st(sfx, whoosh_st(.7, .35, l2r=False), M['phoneOut'] - .1)  # outro move
 place(sfx, impact() * .7, M['outro'] + .45, .32); place(sfx, pop(), M['outro'] + .45, .22)  # symbol lands
 place_st(sfx, whoosh_st(.5, .25), M['outro'] + .3)                 # wordmark wipe
