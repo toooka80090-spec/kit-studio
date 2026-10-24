@@ -3,3 +3,4 @@ out/
 inbox/*
 !inbox/.gitkeep
 __pycache__/
+motion/rec/
