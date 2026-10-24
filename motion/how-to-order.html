@@ -51,13 +51,11 @@
   #status{position:absolute;top:0;left:0;right:0;height:80px;display:flex;justify-content:space-between;align-items:center;padding:8px 52px 0;font-family:Roboto,sans-serif;font-weight:500;font-size:24px;z-index:40;background:#fff}
   /* site header = real screenshot crop (1080x171 -> 584 wide) */
   #hdr{position:absolute;top:80px;left:0;width:584px;height:92.5px;z-index:30;background:url(site/header0.jpg) 0 0/584px auto}
-  #badge1{position:absolute;left:543px;top:8px;width:33px;height:33px;border-radius:50%;background:url(site/header1.jpg) -543px -8px/584px auto;transform:scale(0)}
+  #badge1{position:absolute;left:546px;top:14px;width:24px;height:24px;border-radius:50%;background:url(site/header1.jpg) -546px -14px/584px auto;transform:scale(0)}
   .scr{position:absolute;top:172px;left:0;width:584px;bottom:0;overflow:hidden;background:#fff}
   .scr img{position:absolute;left:0;top:0;width:584px;display:block}
   .scr .layer{position:absolute;left:0;top:0;width:584px}
-  .typed{position:absolute;font-family:Roboto,sans-serif;font-size:22px;color:#333;white-space:nowrap;display:flex;align-items:center}
   .caret{display:inline-block;width:2px;height:26px;background:#333;margin-left:1px}
-  .focus{position:absolute;border:2px solid var(--accent);border-radius:3px;opacity:0}
   .hl{position:absolute;border-radius:4px;background:rgba(0,0,0,.12);opacity:0}
   .radio{position:absolute;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;border:2px solid var(--accent);background:#fff;transform:scale(0)}
   .radio::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--accent)}
@@ -87,6 +85,40 @@
   #outroSym{width:190px}#outroWm{width:420px;margin-top:28px}
   #outroT{font-size:78px;font-weight:700;margin-top:40px}
   #outroUrl{margin-top:26px;background:var(--accent);color:var(--accent-ink);font-family:Figtree,sans-serif;font-weight:800;font-size:52px;letter-spacing:1px;padding:12px 48px 18px;border-radius:80px;direction:ltr}
+
+  /* add-to-cart toast + mini-cart drawer (drawer slides in from the left over a dimmed page) */
+  #toast{position:absolute;left:0;right:0;bottom:0;height:86px;background:#a1c23d;color:#fff;font-family:Roboto,sans-serif;font-size:19px;line-height:1.35;padding:16px 70px 0 26px;z-index:35;transform:translateY(100%)}
+  #toast u{text-decoration:underline}
+  #toast b{position:absolute;right:26px;top:22px;font-weight:400;font-size:30px;line-height:1}
+  #dim{position:absolute;top:80px;left:0;right:0;bottom:0;background:rgba(0,0,0,.42);opacity:0;z-index:44}
+  #drawer{position:absolute;top:80px;left:0;width:567px;bottom:0;overflow:hidden;background:#fff;z-index:45;transform:translateX(-101%);box-shadow:8px 0 30px rgba(0,0,0,.25)}
+  #drawer img{width:567px;display:block}
+
+  /* billing address page (rebuilt from the site's checkout; 1 css px = 1.42 px here) */
+  #lBilling{font-family:Roboto,sans-serif;color:#333;padding:40px 22px 60px}
+  .stepper{display:flex;align-items:center;justify-content:center;gap:0;margin:6px 0 0}
+  .stepper i{width:15px;height:15px;border-radius:50%;background:#e4e4e4;flex:none}
+  .stepper i.cur{width:34px;height:34px;border:3px solid #e9e9e9;background:#f1f1f1;box-shadow:0 0 0 0 #fff}
+  .stepper s{width:46px;height:3px;background:#ececec;flex:none}
+  .bTitle{font-size:33px;font-weight:500;text-align:center;margin-top:46px;color:#333}
+  .ship{display:flex;align-items:center;justify-content:center;gap:12px;font-size:19px;color:#555;margin-top:22px}
+  .ship i{width:17px;height:17px;background:#9ad00c;border-radius:2px}
+  .bCard{border:1.5px solid #e8e8e8;margin-top:34px;padding:34px 30px 40px;text-align:center}
+  .pin{width:96px;height:96px;margin:0 auto}
+  .yb{display:inline-block;background:#edbe00;color:#fff;font-weight:500;font-size:18px;letter-spacing:.3px;padding:15px 26px}
+  .gb{display:inline-block;background:#ececec;color:#777;font-size:17px;padding:14px 26px}
+  #formWrap{overflow:hidden;height:0;text-align:left}
+  .fl{display:flex;justify-content:space-between;font-size:19px;font-weight:500;margin-top:26px;color:#333}
+  .fl span{font-weight:400}
+  .in{height:56px;border:1.5px solid #dedede;margin-top:12px;display:flex;align-items:center;padding:0 18px;font-size:20px;color:#333;background:#fff;white-space:nowrap;overflow:hidden}
+  .in.ph{color:#9a9a9a}
+  .in.sel{justify-content:space-between}
+  .in.sel::after{content:"";width:10px;height:10px;border-right:2px solid #888;border-bottom:2px solid #888;transform:rotate(45deg) translateY(-4px)}
+  .in.on{border-color:#9ad00c}
+  .caret{display:inline-block;width:2px;height:24px;background:#333;margin-left:1px;vertical-align:middle}
+  .flag{display:inline-block;width:28px;height:18px;margin-right:12px;background:linear-gradient(#007a3d 0 33%,#fff 33% 66%,#ce1126 66%);position:relative;flex:none}
+  .flag::before{content:"";position:absolute;left:0;top:0;border-left:9px solid #000;border-top:9px solid transparent;border-bottom:9px solid transparent;height:0}
+  .nextRow{text-align:center;margin-top:34px}
 </style>
 </head>
 <body>
@@ -95,37 +127,58 @@
   <div id="bigword">VAMOS VAMOS</div>
 
   <div id="cap">
-    <div class="capItem" id="c1"><div class="badge">الخطوة <b>1</b></div><div class="capTitle">سوّ لك حساب</div><div class="capSub warn">⚠ لازم يكون عندك حساب بالموقع</div></div>
-    <div class="capItem" id="c2"><div class="badge">الخطوة <b>2</b></div><div class="capTitle">اختار قميصك</div>
-      <div class="crumbs"><span id="k1">الموسم الجديد</span><i>←</i><span id="k2">الدوري الإسباني</span><i>←</i><span id="k3">ريال مدريد</span></div></div>
-    <div class="capItem" id="c3"><div class="badge">الخطوة <b>3</b></div><div class="capTitle">اختار مقاسك</div><div class="capSub">واضغط <span class="en">ADD TO CART</span></div></div>
-    <div class="capItem" id="c4"><div class="badge">الخطوة <b>4</b></div><div class="capTitle">روح للسلة</div><div class="capSub">واضغط <span class="en">PROCEED TO CHECKOUT</span></div></div>
-    <div class="capItem" id="c5"><div class="badge">الخطوة <b>5</b></div><div class="capTitle">أكّد طلبك</div><div class="capSub">عبّ العنوان واختار طريقة الدفع</div></div>
+    <div class="capItem" id="c1"><div class="badge">الخطوة <b>1</b></div><div class="capTitle">اختار قميصك</div>
+      <div class="crumbs"><span id="k1">الموسم الجديد</span><i>←</i><span id="k2">الدوري الإنجليزي</span><i>←</i><span id="k3">ليفربول</span></div></div>
+    <div class="capItem" id="c2"><div class="badge">الخطوة <b>2</b></div><div class="capTitle">اختار مقاسك</div><div class="capSub" style="position:relative;height:48px;width:700px"><div id="sub2a" style="position:absolute;inset:0">واضغط <span class="en">ADD TO CART</span></div><div id="sub2b" style="position:absolute;inset:0;opacity:0">وبعدين <span class="en">PROCEED TO CHECKOUT</span></div></div></div>
+    <div class="capItem" id="c3"><div class="badge">الخطوة <b>3</b></div><div class="capTitle">كمّل كـ Guest</div><div class="capSub warn">ما تحتاج تسوي حساب!</div></div>
+    <div class="capItem" id="c4"><div class="badge">الخطوة <b>4</b></div><div class="capTitle">عبّ بياناتك</div><div class="capSub">واضغط <span class="en">NEXT</span></div></div>
+    <div class="capItem" id="c5"><div class="badge">الخطوة <b>5</b></div><div class="capTitle">ادفع وأكّد طلبك</div><div class="capSub">اختار طريقة الدفع وخلاص!</div></div>
   </div>
 
   <div id="phone">
     <div id="screen">
       <div id="island"></div>
-      <div id="status"><span>11:20</span><span>▂▄▆ 48%</span></div>
-      <div id="hdr"><div id="badge1"></div></div>
+      <div id="status"><span>12:57</span><span>▂▄▆ 76%</span></div>
+      <div id="hdr"><div id="badge1"></div><div id="cartTarget" style="position:absolute;left:516px;top:22px;width:50px;height:50px"></div></div>
 
-      <div class="scr" id="sRegister"><div class="layer" id="lRegister"><img src="site/register.jpg">
-        <div class="focus" id="fx1"></div><div class="focus" id="fx2"></div><div class="focus" id="fx3"></div>
-        <div class="typed" id="ty1"></div><div class="typed" id="ty2"></div><div class="typed" id="ty3"></div>
+      <div class="scr" id="sHome"><div class="layer" id="lHome"><img src="site/home.jpg"><div class="hl" id="hNewSeason"></div></div></div>
+      <div class="scr" id="sSeason"><div class="layer"><img src="site/season.jpg"><div class="hl" id="hPremier"></div></div></div>
+      <div class="scr" id="sPremier"><div class="layer"><img src="site/premier.jpg"><div class="hl" id="hLiverpool"></div></div></div>
+      <div class="scr" id="sLiverpool"><div class="layer" id="lLiverpool"><img src="site/liverpool.jpg"><div class="hl" id="hSalah"></div></div></div>
+      <div class="scr" id="sProduct"><div class="layer" id="lProduct"><img src="site/product.jpg"><div class="radio" id="rL"></div><div class="hl" id="hAdd"></div></div>
+        <div id="toast">The product has been added to your <u>shopping cart</u><b>×</b></div></div>
+      <div class="scr" id="sSignin"><div class="layer"><img src="site/signin.jpg"><div class="hl" id="hGuest"></div></div></div>
+      <div class="scr" id="sBilling"><div class="layer" id="lBilling">
+        <div class="stepper"><i class="cur"></i><s></s><i></i><s></s><i></i><s></s><i></i><s></s><i></i><s></s><i></i></div>
+        <div class="bTitle">Billing address</div>
+        <div class="ship"><i></i>Ship to the same address</div>
+        <div class="bCard">
+          <svg class="pin" id="pin" viewBox="0 0 64 64" fill="none" stroke="#9a9a9a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M38 52s14-14 14-26a14 14 0 0 0-28 0c0 12 14 26 14 26z"/><circle cx="38" cy="26" r="5"/><path d="M14 30v12M8 36h12"/></svg>
+          <div id="addRow" style="margin-top:26px"><span class="yb" id="bAddNew">ADD NEW</span></div>
+          <div id="closeRow" style="margin-top:26px;display:none"><span class="gb">CLOSE</span></div>
+          <div id="formWrap"><div id="form">
+            <div class="fl">First name:<span>*</span></div><div class="in" id="fFirst"></div>
+            <div class="fl">Last name:<span>*</span></div><div class="in" id="fLast"></div>
+            <div class="fl">Email:<span>*</span></div><div class="in" id="fEmail"></div>
+            <div class="fl">Country:<span>*</span></div><div class="in sel ph" id="fCountry">Select country</div>
+            <div class="fl">Area name / province:</div><div class="in sel ph" id="fArea">Select state</div>
+            <div class="fl">Full Address:<span>*</span></div><div class="in" id="fAddress"></div>
+            <div class="fl">Phone number:<span>*</span></div><div class="in ph" id="fPhone"><i class="flag"></i><span id="fPhoneT">500 12345</span></div>
+            <div class="fl">Short Address (for KSA only):</div><div class="in"></div>
+            <div class="fl">Notes:</div><div class="in"></div>
+            <div class="nextRow"><span class="yb" id="bNext">NEXT</span></div>
+          </div></div>
+        </div>
       </div></div>
-      <div class="scr" id="sHome"><div class="layer" id="lHome"><img src="site/home.jpg"><div class="hl" id="hHome"></div></div></div>
-      <div class="scr" id="sSeason"><div class="layer" id="lSeason"><img src="site/season.jpg"><div class="hl" id="hSeason"></div></div></div>
-      <div class="scr" id="sLaliga"><div class="layer"><img src="site/laliga.jpg"><div class="hl" id="hLaliga"></div></div></div>
-      <div class="scr" id="sMadrid"><div class="layer"><img src="site/madrid.jpg"><div class="hl" id="hMadrid"></div></div></div>
-      <div class="scr" id="sProduct"><div class="layer" id="lProduct"><img src="site/product.jpg"><div class="radio" id="rL"></div><div class="hl" id="hAdd"></div></div></div>
-      <div class="scr" id="sCart"><div class="layer" id="lCart"><img src="site/cart.jpg"><div class="hl" id="hProceed"></div></div></div>
+
+      <div id="dim"></div>
+      <div id="drawer"><img src="site/drawer.jpg"><div class="hl" id="hProceed"></div></div>
 
       <div id="finale"><div id="sheet">
         <div id="okc"><svg viewBox="0 0 52 52" fill="none" stroke="#0b0b0e" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path id="okp" d="M14 27l8 8 16-17" stroke-dasharray="40" stroke-dashoffset="40"/></svg></div>
         <div class="t">آخر خطوة!</div>
-        <div class="li" id="li1"><div class="n">1</div>اكتب عنوانك</div>
-        <div class="li" id="li2"><div class="n">2</div>اختار طريقة الدفع</div>
-        <div class="li" id="li3"><div class="n">✓</div>اضغط تأكيد الطلب</div>
+        <div class="li" id="li1"><div class="n">1</div>اختار طريقة الدفع</div>
+        <div class="li" id="li2"><div class="n">✓</div>ادفع وأكّد طلبك</div>
       </div></div>
 
       <div id="tap"><div class="ring"></div><div class="dot"></div></div>
@@ -149,41 +202,21 @@
   </div>
 </div>
 
+<script src="timeline.js"></script>
 <script>
-const DURATION = 30;
-/* video time -> animation time, so each step lines up with the voiceover (vo/):
-   intro hold at 1.6, steps 3-4 a bit faster, step 5 and the outro a bit slower */
-const TIME_MAP = [[0, 0], [1.6, 1.6], [2.5, 1.6], [3.5, 2.6], [8.0, 7.4], [14.2, 14.2], [18.3, 19.4], [20.9, 22.6], [25.0, 25.8], [27.6, 28.0], [30, 29]];
-const warp = t => {
-  for (let i = 1; i < TIME_MAP.length; i++) {
-    const [r0, a0] = TIME_MAP[i - 1], [r1, a1] = TIME_MAP[i];
-    if (t <= r1) return a0 + (a1 - a0) * clamp((t - r0) / (r1 - r0));
-  }
-  return TIME_MAP[TIME_MAP.length - 1][1];
-};
+const DURATION = TL.duration, M = TL.moments;
 const K = 584 / 1080; // screenshot px -> phone px
-const FIRST = 'Ahmed', LAST = 'Mohamed', EMAIL = 'ahmed@gmail.com';
 
 /* hotspots in screenshot pixels (x, y, w, h) */
 const BOX = {
-  fx1: [80, 796, 918, 116], fx2: [80, 1046, 918, 116], fx3: [80, 1548, 918, 116],
-  hHome: [650, 640, 300, 300], hSeason: [130, 860, 300, 330], hLaliga: [120, 340, 320, 360],
-  hMadrid: [28, 560, 504, 520], hAdd: [297, 2920, 591, 118], hProceed: [80, 2684, 920, 116]
+  hNewSeason: [650, 610, 300, 300], hPremier: [640, 330, 330, 360], hLiverpool: [650, 320, 300, 360],
+  hSalah: [30, 3058, 497, 498], hAdd: [298, 3064, 589, 117], hProceed: [40, 584, 970, 116], hGuest: [122, 1026, 498, 118]
 };
 const $ = id => document.getElementById(id);
 Object.entries(BOX).forEach(([id, [x, y, w, h]]) => Object.assign($(id).style, {left: x * K + 'px', top: y * K + 'px', width: w * K + 'px', height: h * K + 'px'}));
-['ty1', 'ty2', 'ty3'].forEach((id, i) => { const b = BOX['fx' + (i + 1)]; Object.assign($(id).style, {left: (b[0] + 28) * K + 'px', top: b[1] * K + 'px', height: b[3] * K + 'px'}); });
-Object.assign($('rL').style, {left: 168 * K + 'px', top: 2369 * K + 'px'});
+Object.assign($('rL').style, {left: 168 * K + 'px', top: 2511 * K + 'px'});
 
-/* ===== engine ===== */
 const clamp = x => Math.min(1, Math.max(0, x));
-const E = {
-  o: x => 1 - Math.pow(1 - x, 3),
-  io: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
-  back: x => { const c = 1.70158; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); },
-  lin: x => x,
-  nav: x => bezier(.32, .72, 0, 1, x) // iOS-style navigation curve
-};
 function bezier(x1, y1, x2, y2, x) {
   if (x <= 0 || x >= 1) return x;
   const f = (a, b, s) => 3 * a * s * (1 - s) ** 2 + 3 * b * s * s * (1 - s) + s ** 3;
@@ -191,39 +224,37 @@ function bezier(x1, y1, x2, y2, x) {
   for (let i = 0; i < 30; i++) { s = (lo + hi) / 2; if (f(x1, x2, s) < x) lo = s; else hi = s; }
   return f(y1, y2, s);
 }
-const NAV = .75; // page transition length (s)
+const E = {
+  o: x => 1 - Math.pow(1 - x, 3),
+  io: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  back: x => { const c = 1.70158; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); },
+  lin: x => x,
+  nav: x => bezier(.32, .72, 0, 1, x) // iOS-style navigation curve
+};
+const NAV = .75;
 const p = (t, a, b, e = E.io) => e(clamp((t - a) / (b - a)));
 const lerp = (a, b, k) => a + (b - a) * k;
 const bump = (t, at, w = .22) => { const d = Math.abs(t - at); return d < w ? 1 - d / w : 0; };
 
-/* site is LTR: forward navigation pushes in from the right */
-const SCREENS = [
-  ['sRegister', -9, 7.4], ['sHome', 7.4, 9.4], ['sSeason', 9.4, 11.0], ['sLaliga', 11.0, 12.6],
-  ['sMadrid', 12.6, 14.2], ['sProduct', 14.2, 19.4], ['sCart', 19.4, 99]
-];
-const STEPS = [2.6, 7.4, 14.2, 19.4, 22.6, 25.8];
-/* taps: element hotspot, or screenshot point {x,y} in a scrolled layer */
-const TAPS = [
-  {t: 3.4, hs: 'fx1'}, {t: 4.7, hs: 'fx2'}, {t: 5.9, hs: 'fx3'},
-  {t: 8.9, hs: 'hHome'}, {t: 10.5, hs: 'hSeason'}, {t: 12.1, hs: 'hLaliga'}, {t: 13.7, hs: 'hMadrid'},
-  {t: 16.4, el: 'rL'}, {t: 17.6, hs: 'hAdd'}, {t: 18.9, el: 'cartTarget'},
-  {t: 21.9, hs: 'hProceed'}
-];
-const TAP_ON = 2.8, TAP_OFF = 22.5;
+const TAPS = TL.taps.map(([t, el]) => ({t, el}));
+const TAP_ON = TL.steps[0] - .2, TAP_OFF = M.sheetIn - .1;
 
-/* invisible target over the header cart icon */
-const ct = document.createElement('div'); ct.id = 'cartTarget';
-Object.assign(ct.style, {position: 'absolute', left: 1000 * K - 25 + 'px', top: 90 * K - 25 + 'px', width: '50px', height: '50px'});
-$('hdr').appendChild(ct);
+/* billing scroll targets are measured from the form layout once it is open */
+let BSCROLL = [];
+function measureBilling() {
+  $('formWrap').style.height = 'auto';
+  const base = $('lBilling').getBoundingClientRect().top;
+  BSCROLL = TL.billingScrolls.map(([a, b, id]) => [a, b, $(id).getBoundingClientRect().top - base - (id === 'bNext' ? 760 : 330)]);
+  $('formWrap').style.height = '';
+}
 
-function render(t, rt = t) {
-  /* background keeps drifting on real time, even during the intro hold */
-  $('bigword').style.transform = `translateX(${-200 - rt * 22}px)`;
-  $('b1').style.transform = `translate(${Math.sin(rt * .4) * 80}px,${Math.cos(rt * .3) * 120}px)`;
-  $('b2').style.transform = `translate(${Math.cos(rt * .35) * 90}px,${Math.sin(rt * .45) * 100}px)`;
+function render(t) {
+  $('bigword').style.transform = `translateX(${-200 - t * 22}px)`;
+  $('b1').style.transform = `translate(${Math.sin(t * .4) * 80}px,${Math.cos(t * .3) * 120}px)`;
+  $('b2').style.transform = `translate(${Math.cos(t * .35) * 90}px,${Math.sin(t * .45) * 100}px)`;
 
-  /* intro */
-  const iOut = p(t, 2.0, 2.6);
+  /* intro (text is in by 1.6s, then holds) */
+  const iOut = p(t, 2.6, 3.2);
   $('intro').style.opacity = 1 - iOut;
   $('intro').style.transform = `scale(${1 - iOut * .15}) translateY(${-iOut * 120}px)`;
   const sy = p(t, .05, .55, E.back);
@@ -237,27 +268,27 @@ function render(t, rt = t) {
   $('introSub').style.cssText = `opacity:${is};transform:translateY(${(1 - is) * 40}px)`;
 
   /* phone */
-  const pin = p(t, 2.0, 2.9, E.o), pout = p(t, 25.6, 26.5, E.io);
+  const pin = p(t, 2.6, 3.5, E.o), pout = p(t, M.phoneOut, M.phoneOut + .9, E.io);
   $('phone').style.transform = `translateY(${(1 - pin) * 1700 + pout * 230}px) scale(${lerp(1, .78, pout) * lerp(.9, 1, pin)}) rotate(${(1 - pin) * -6}deg)`;
 
   /* captions + progress */
+  const S = TL.steps;
   for (let i = 0; i < 5; i++) {
-    const a = STEPS[i], b = STEPS[i + 1];
+    const a = S[i], b = S[i + 1];
     const kin = p(t, a + .05, a + .5, E.o), kout = p(t, b - .3, b + .05, E.io);
     const c = $('c' + (i + 1));
     c.style.opacity = kin * (1 - kout);
     c.style.transform = `translateY(${(1 - kin) * 50 - kout * 40}px)`;
     $('prog').children[i].firstChild.style.width = (p(t, a, b, E.lin) * 100) + '%';
   }
-  [9.4, 11.0, 12.6].forEach((at, i) => $('k' + (i + 1)).className = t >= at ? 'on' : '');
-  const progOn = p(t, 2.4, 2.9) * (1 - p(t, 25.5, 25.9));
+  TL.crumbs.forEach((at, i) => $('k' + (i + 1)).className = t >= at ? 'on' : '');
+  const progOn = p(t, 2.9, 3.4) * (1 - p(t, M.phoneOut - .1, M.phoneOut + .3));
   $('prog').style.opacity = progOn; $('url').style.opacity = progOn;
 
-  /* screens */
-  SCREENS.forEach(([id, a, b], i) => {
+  /* pages: incoming slides over the outgoing one, which drifts back and dims */
+  TL.screens.forEach(([id, a, b], i) => {
     const kin = a < 0 ? 1 : p(t, a, a + NAV, E.nav), kout = p(t, b, b + NAV, E.nav);
     const el = $(id);
-    /* incoming page slides over the outgoing one, which drifts back with parallax and dims */
     el.style.transform = `translate3d(${(1 - kin) * 100 - kout * 28}%,0,0)`;
     el.style.filter = kout > 0 ? `brightness(${1 - kout * .18})` : '';
     el.style.boxShadow = kin < 1 ? `-18px 0 36px rgba(0,0,0,${.22 * kin})` : '';
@@ -265,59 +296,82 @@ function render(t, rt = t) {
     el.style.visibility = (kin > 0 && kout < 1) ? 'visible' : 'hidden';
   });
 
-  /* register typing */
-  const blink = Math.floor(t * 2.5) % 2 === 0;
-  const typ = [[FIRST, 3.55, 4.1, 3.4, 4.7], [LAST, 4.85, 5.5, 4.7, 5.9], [EMAIL, 6.05, 6.9, 5.9, 7.4]];
-  typ.forEach(([s, a, b, f0, f1], i) => {
-    const n = Math.floor(p(t, a, b, E.lin) * s.length), focused = t >= f0 && t < f1;
-    $('ty' + (i + 1)).innerHTML = s.slice(0, n) + (focused && blink ? '<span class="caret"></span>' : '');
-    $('fx' + (i + 1)).style.opacity = focused ? 1 : 0;
-  });
-  $('lRegister').style.transform = `translateY(${-p(t, 5.6, 6.0) * 300 * K}px)`;
-
   /* scrolls (screenshot px) */
-  $('lHome').style.transform = `translateY(${-p(t, 7.9, 8.5) * 150 * K}px)`;
-  $('lProduct').style.transform = `translateY(${-p(t, 14.9, 15.9) * 1320 * K}px)`;
-  $('lCart').style.transform = `translateY(${-p(t, 20.1, 21.1) * 1120 * K}px)`;
+  TL.scrolls.forEach(([id, a, b, d]) => $(id).style.transform = `translateY(${-p(t, a, b) * d * K}px)`);
 
-  /* size + cart */
-  $('rL').style.transform = `scale(${p(t, 16.42, 16.6, E.back)})`;
-  const b1 = p(t, 17.9, 18.25, E.back);
-  $('badge1').style.transform = `scale(${b1 * (1 + bump(t, 18.3, .25) * .45)})`;
+  /* size, toast, badge, drawer */
+  $('rL').style.transform = `scale(${p(t, M.size + .02, M.size + .2, E.back)})`;
+  const to = p(t, M.toastIn, M.toastIn + .35, E.o) * (1 - p(t, M.toastOut, M.toastOut + .3));
+  $('toast').style.transform = `translateY(${(1 - to) * 100}%)`;
+  const b1 = p(t, M.badge, M.badge + .35, E.back);
+  $('badge1').style.transform = `scale(${b1 * (1 + bump(t, M.badge + .4, .25) * .45)})`;
+  const dIn = p(t, M.drawerIn, M.drawerIn + .6, E.nav), dOut = p(t, M.drawerOut, M.drawerOut + .35, E.o);
+  $('drawer').style.transform = `translateX(${(dIn - 1) * 101}%)`;
+  $('drawer').style.opacity = 1 - dOut;
+  $('dim').style.opacity = dIn * (1 - dOut);
+  $('drawer').style.visibility = dIn > 0 && dOut < 1 ? 'visible' : 'hidden';
+
+  const sw = p(t, M.drawerIn + .3, M.drawerIn + .7, E.o);
+  $('sub2a').style.cssText = `position:absolute;inset:0;opacity:${1 - sw};transform:translateY(${-sw * 24}px)`;
+  $('sub2b').style.cssText = `position:absolute;inset:0;opacity:${sw};transform:translateY(${(1 - sw) * 24}px)`;
+
+  /* billing: ADD NEW opens the form, fields fill in */
+  const fo = p(t, M.formOpen, M.formOpen + .35, E.o);
+  $('addRow').style.display = t < M.formOpen ? '' : 'none';
+  $('closeRow').style.display = t < M.formOpen ? 'none' : '';
+  $('formWrap').style.height = fo >= 1 ? 'auto' : (fo * 1500) + 'px';
+  $('pin').setAttribute('stroke', t < M.formOpen ? '#9a9a9a' : '#9ad00c');
+  const blink = Math.floor(t * 2.5) % 2 === 0;
+  const focusAt = TAPS.filter(x => x.el[0] === 'f');
+  ['fFirst', 'fLast', 'fEmail', 'fCountry', 'fArea', 'fAddress', 'fPhone'].forEach(id => {
+    const i = focusAt.findIndex(x => x.el === id), f0 = focusAt[i].t, f1 = focusAt[i + 1] ? focusAt[i + 1].t : M.sheetIn;
+    $(id).classList.toggle('on', t >= f0 && t < f1);
+  });
+  TL.typing.forEach(([id, a, b, s]) => {
+    const n = Math.floor(p(t, a, b, E.lin) * s.length);
+    const focused = $(id).classList.contains('on');
+    const txt = s.slice(0, n) + (focused && blink ? '<span class="caret"></span>' : '');
+    if (id === 'fPhone') { $('fPhoneT').innerHTML = n ? txt : '500 12345'; $(id).classList.toggle('ph', !n); }
+    else $(id).innerHTML = txt;
+  });
+  TL.selects.forEach(([id, at, v]) => { $(id).textContent = t >= at ? v : (id === 'fCountry' ? 'Select country' : 'Select state'); $(id).classList.toggle('ph', t < at); });
+  const bs = BSCROLL.reduce((acc, [a, b, d], i) => lerp(acc, d, p(t, a, b)), 0);
+  $('lBilling').style.transform = `translateY(${-bs}px)`;
 
   /* press highlights */
-  TAPS.forEach(tp => { if (tp.hs && tp.hs[0] === 'h') $(tp.hs).style.opacity = bump(t, tp.t + .06, .2); });
+  TAPS.forEach(tp => { if (tp.el[0] === 'h') $(tp.el).style.opacity = bump(t, tp.t + .06, .2); });
+  ['bAddNew', 'bNext'].forEach(id => { const tp = TAPS.find(x => x.el === id); $(id).style.filter = `brightness(${1 - bump(t, tp.t + .06, .2) * .15})`; });
 
   /* step 5 sheet */
-  const fin = p(t, 22.5, 22.9);
-  $('finale').style.opacity = fin;
-  $('sheet').style.transform = `translateY(${(1 - p(t, 22.6, 23.1, E.o)) * 100}%)`;
-  $('okc').style.transform = `scale(${p(t, 24.6, 25.0, E.back)})`;
-  $('okp').style.strokeDashoffset = 40 * (1 - p(t, 24.8, 25.2, E.o));
-  ['li1', 'li2', 'li3'].forEach((id, i) => {
-    const k = p(t, 23.2 + i * .45, 23.6 + i * .45, E.o);
+  $('finale').style.opacity = p(t, M.sheetIn, M.sheetIn + .4);
+  $('sheet').style.transform = `translateY(${(1 - p(t, M.sheetIn + .1, M.sheetIn + .6, E.o)) * 100}%)`;
+  $('okc').style.transform = `scale(${p(t, M.done, M.done + .4, E.back)})`;
+  $('okp').style.strokeDashoffset = 40 * (1 - p(t, M.done + .2, M.done + .6, E.o));
+  ['li1', 'li2'].forEach((id, i) => {
+    const k = p(t, M.sheetRows[i], M.sheetRows[i] + .4, E.o);
     const el = $(id); el.style.opacity = k; el.style.transform = `translateX(${(1 - k) * -40}px)`;
-    el.className = 'li' + (t > 23.9 + i * .45 ? ' ok' : '');
+    el.className = 'li' + (t > M.sheetRows[i] + .6 ? ' ok' : '');
   });
 
   /* outro */
-  $('outro').style.opacity = p(t, 25.9, 26.5, E.o);
-  const osy = p(t, 25.9, 26.4, E.back);
+  const o0 = M.outro;
+  $('outro').style.opacity = p(t, o0, o0 + .6, E.o);
+  const osy = p(t, o0, o0 + .5, E.back);
   $('outroSym').style.transform = `translateY(${(1 - osy) * -200}px) scale(${lerp(1.4, 1, osy)})`;
   $('outroSym').style.opacity = clamp(osy * 2);
-  $('outroWm').style.clipPath = `inset(0 ${(1 - p(t, 26.2, 26.7, E.o)) * 100}% 0 0)`;
-  const otg = p(t, 27.3, 27.8, E.o);
+  $('outroWm').style.clipPath = `inset(0 ${(1 - p(t, o0 + .3, o0 + .8, E.o)) * 100}% 0 0)`;
+  const otg = p(t, M.tagline, M.tagline + .5, E.o);
   $('outroTag').style.cssText = `opacity:${otg};letter-spacing:${lerp(30, 12, otg)}px`;
-  const ot = p(t, 26.4, 26.9, E.o), ou = p(t, 26.7, 27.2, E.back);
+  const ot = p(t, o0 + .5, o0 + 1.0, E.o), ou = p(t, M.url, M.url + .5, E.back);
   $('outroT').style.cssText = `opacity:${ot};transform:translateY(${(1 - ot) * 40}px)`;
-  $('outroUrl').style.cssText = `opacity:${clamp(ou)};transform:scale(${lerp(.6, 1, ou) * (1 + Math.sin(Math.max(0, t - 27.3) * 4) * .025)})`;
+  $('outroUrl').style.cssText = `opacity:${clamp(ou)};transform:scale(${lerp(.6, 1, ou) * (1 + Math.sin(Math.max(0, t - M.url - .6) * 4) * .025)})`;
 }
 
 let TAP_POS = [];
 function measureTaps() {
   TAP_POS = TAPS.map(tp => {
     render(tp.t);
-    const r = $(tp.hs || tp.el).getBoundingClientRect(), s = $('screen').getBoundingClientRect();
+    const r = $(tp.el).getBoundingClientRect(), s = $('screen').getBoundingClientRect();
     const sc = s.width / $('screen').offsetWidth;
     return {x: (r.left + r.width / 2 - s.left) / sc, y: (r.top + r.height / 2 - s.top) / sc};
   });
@@ -337,13 +391,14 @@ function renderTap(t) {
   ring.style.opacity = t >= TAPS[i].t ? (1 - rk) : 0;
   ring.style.transform = `scale(${1 + rk * 1.3})`;
 }
-function frame(t) { const w = warp(t); render(w, t); renderTap(w); }
+function frame(t) { render(t); renderTap(t); }
 
 window.__ready = (async () => {
   await Promise.all([...document.images].map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; })));
   await document.fonts.ready;
   await Promise.all(['400', '500', '600', '700'].map(w => document.fonts.load(`${w} 40px "Readex Pro"`, 'اختار'))
     .concat(['500', '800', '900'].map(w => document.fonts.load(`${w} 40px Figtree`)), document.fonts.load('400 22px Roboto'), document.fonts.load('500 22px Roboto')));
+  measureBilling();
   measureTaps();
   frame(0);
   return true;

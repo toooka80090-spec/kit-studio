@@ -8,21 +8,20 @@ import numpy as np
 from scipy.signal import butter, sosfilt
 
 SR = 48000
-DUR = 30.0
-# animation time -> video time (inverse of TIME_MAP in the HTML); SFX are written in animation time
-A_KNOTS = [0, 1.6 - 1e-6, 1.6, 2.6, 7.4, 14.2, 19.4, 22.6, 25.8, 28.0, 29]
-R_KNOTS = [0, 1.6 - 1e-6, 2.5, 3.5, 8.0, 14.2, 18.3, 20.9, 25.0, 27.6, 30]
-def W(t): return float(np.interp(t, A_KNOTS, R_KNOTS))
+# ---- timeline: shared with the HTML via timeline.js ----
+import json
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'timeline.js'), encoding='utf-8') as f:
+    _js = f.read()
+TL = json.loads(_js[_js.index('{'):_js.rindex('}') + 1])
+M = TL['moments']
+DUR = float(TL['duration'])
 N = int(SR * DUR)
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
 rng = np.random.default_rng(7)
 
-# ---- timeline (keep in sync with the HTML) ----
-TAPS = [3.4, 4.7, 5.9, 8.9, 10.5, 12.1, 13.7, 16.4, 17.6, 18.9, 21.9]
-SCREEN_CHANGES = [7.4, 9.4, 11.0, 12.6, 14.2, 19.4]
-TYPE_FIRST = (3.55, 4.1, 5)   # start, end, chars
-TYPE_LAST = (4.85, 5.5, 7)
-TYPE_EMAIL = (6.05, 6.9, 15)
+TAPS = [t for t, _ in TL['taps']]
+SCREEN_CHANGES = [a for _, a, _ in TL['screens'] if a > 0]
+TYPING = [(a, b, len(txt)) for _, a, b, txt in TL['typing']]
 BPM = 120
 
 
@@ -37,7 +36,6 @@ def mtof(m): return 440 * 2 ** ((m - 69) / 12)
 
 def place(buf, sig, t, gain=1.0, pan=0.0):
     """Mix mono `sig` into stereo `buf` at time t with equal-power pan (-1 L .. 1 R)."""
-    if buf is globals().get('sfx'): t = W(t)
     i = int(t * SR)
     if i >= len(buf): return
     sig = sig[:len(buf) - i]
@@ -46,7 +44,6 @@ def place(buf, sig, t, gain=1.0, pan=0.0):
     buf[i:i + len(sig), 1] += sig * gain * np.sin(a)
 
 def place_st(buf, st, t, gain=1.0):
-    if buf is globals().get('sfx'): t = W(t)
     i = int(t * SR)
     st = st[:len(buf) - i]
     buf[i:i + len(st)] += st * gain
@@ -56,7 +53,7 @@ def place_st(buf, st, t, gain=1.0):
 music = np.zeros((N, 2))
 beat = 60 / BPM
 bar = beat * 4
-DRUMS_IN, DRUMS_OUT = 3.65, 25.0
+DRUMS_IN, DRUMS_OUT = TL['drums']
 
 def kick():
     t = tt(.35)
@@ -131,7 +128,7 @@ for bi in range(int(np.ceil(DUR / bar))):
             place(music, pl, t0 + k * beat / 2 + beat / 4, .05, .4 if k % 2 else -.4)
 
 # intro filter sweep on the pad, pumping while drums play
-cut = np.interp(np.arange(N) / SR, [0, 3.65, 25.0, 30], [300, 1400, 1400, 500])
+cut = np.interp(np.arange(N) / SR, [0, DRUMS_IN, DRUMS_OUT, DUR], [300, 1400, 1400, 500])
 pad_f = np.zeros_like(pad)
 for c0 in range(0, N, 2400):  # block-wise moving low-pass
     sos = butter(2, cut[c0], 'low', fs=SR, output='sos')
@@ -139,8 +136,8 @@ for c0 in range(0, N, 2400):  # block-wise moving low-pass
 music += pad_f * .55 * pump[:, None]
 
 # outro: final kick + reverse-ish swell, then fade
-place(music, K, W(26.3), .5); place(music, C, W(26.3), .12)
-fade = np.interp(np.arange(N) / SR, [0, .4, 28.4, 30], [0, 1, 1, 0])
+place(music, K, M['outro'] + .45, .5); place(music, C, M['outro'] + .45, .12)
+fade = np.interp(np.arange(N) / SR, [0, .4, DUR - 1.6, DUR], [0, 1, 1, 0])
 music *= fade[:, None]
 
 
@@ -202,47 +199,51 @@ def riser(d):
         out[c0:c0 + 1200] = bp(n[c0:c0 + 1200], fc[k] * .7, min(fc[k] * 1.4, 20000))
     return out * (t / d) ** 2
 
-# intro: symbol drop + wordmark wipe + tagline, riser, phone landing
+# intro: symbol drop + wordmark wipe + tagline, riser through the hold, phone landing
 place(sfx, impact() * .6, .42, .30); place(sfx, pop(), .42, .25)
 place_st(sfx, whoosh_st(.5, .30), .42)
 place(sfx, chime([76, 83], .09, .3), .85, .10)
-place(sfx, riser(1.8), 1.15, .18)  # spans the intro hold
-place_st(sfx, whoosh_st(.55, .35, l2r=False), 1.95)
-place(sfx, impact(), 2.75, .35)
+place(sfx, riser(1.6), 1.15, .18)
+place_st(sfx, whoosh_st(.55, .35, l2r=False), 2.6)
+place(sfx, impact(), 3.4, .35)
 
 # taps
 for k, t in enumerate(TAPS):
     place(sfx, tap_click(), t, .55, (-.15 if k % 2 else .15))
 
 # typing
-for (a, b, n), f0 in ((TYPE_FIRST, 1900), (TYPE_LAST, 1800), (TYPE_EMAIL, 1950)):
+for a, b, n in TYPING:
     for k in range(n):
-        tk = a + (b - a) * k / n + rng.uniform(-.012, .012)
-        place(sfx, type_tick(f0 + rng.uniform(-200, 200)), tk, .16, rng.uniform(-.2, .2))
+        tk = a + (b - a) * k / n + rng.uniform(-.008, .008)
+        place(sfx, type_tick(1850 + rng.uniform(-250, 250)), tk, .15, rng.uniform(-.2, .2))
 
 # page transitions (site is LTR: new page pushes in from the right)
 for t in SCREEN_CHANGES: place_st(sfx, whoosh_st(.42, .30, l2r=False), t - .05)
 
 # moments
-place(sfx, chime([79, 84], .08, .25), 7.15, .11)                 # form filled
-for t, d in ((7.9, .6), (14.9, 1.0), (20.1, 1.0)):              # page scrolls
-    place(sfx, whoosh(d, 300, 2500) * .25, t, .5)
-place(sfx, pop(), 16.45, .30)                                     # size L selected
-place(sfx, chime([84, 88], .06, .2), 17.7, .11)                   # add to cart
-place(sfx, pop(), 17.95, .38, .3)                                 # cart badge 0 -> 1
-place_st(sfx, whoosh_st(.5, .30, l2r=False), 22.5)                # step-5 sheet slides up
-for i in range(3):
-    place(sfx, pop() * .6, 23.2 + i * .45, .22, -.2)              # checklist rows
-    place(sfx, chime([84 + i * 3], .05, .12), 23.9 + i * .45, .08)
-place(sfx, chime([72, 76, 79, 84, 88], .075, .45), 24.65, .20)   # done
+for _, a, b, _ in TL['scrolls']:                                  # page scrolls
+    place(sfx, whoosh(b - a, 300, 2500) * .25, a, .5)
+for a, b, _ in TL['billingScrolls']:
+    place(sfx, whoosh(b - a, 300, 2500) * .22, a, .5)
+place(sfx, pop(), M['size'] + .03, .30)                           # size selected
+place(sfx, chime([84, 88], .06, .2), M['toastIn'], .11)           # added to cart
+place(sfx, pop(), M['badge'] + .1, .38, .3)                       # cart badge 0 -> 1
+place_st(sfx, whoosh_st(.55, .32), M['drawerIn'])                 # mini cart slides in from the left
+for _, at, _ in TL['selects']: place(sfx, pop() * .7, at, .22)    # dropdown value picked
+place(sfx, pop(), M['formOpen'], .25)                             # address form opens
+place_st(sfx, whoosh_st(.5, .30, l2r=False), M['sheetIn'])        # step-5 sheet slides up
+for i, at in enumerate(M['sheetRows']):
+    place(sfx, pop() * .6, at, .22, -.2)
+    place(sfx, chime([84 + i * 3], .05, .12), at + .6, .08)
+place(sfx, chime([72, 76, 79, 84, 88], .075, .45), M['done'], .20)
 for k in range(12):
     tn = tt(.08); f = rng.uniform(5000, 9000)
-    place(sfx, np.sin(2 * np.pi * f * tn) * np.exp(-tn / .02), 24.8 + k * .06 + rng.uniform(0, .04), .05, rng.uniform(-.8, .8))
-place_st(sfx, whoosh_st(.7, .35, l2r=False), 25.5)               # outro move
-place(sfx, impact() * .7, 26.3, .32); place(sfx, pop(), 26.3, .22)  # symbol lands
-place_st(sfx, whoosh_st(.5, .25), 26.2)                           # wordmark wipe
-place(sfx, chime([84, 91], .08, .4), 26.95, .14)                 # url pill
-place(sfx, chime([91, 96], .1, .5), 27.35, .07)                  # tagline
+    place(sfx, np.sin(2 * np.pi * f * tn) * np.exp(-tn / .02), M['done'] + .15 + k * .06 + rng.uniform(0, .04), .05, rng.uniform(-.8, .8))
+place_st(sfx, whoosh_st(.7, .35, l2r=False), M['phoneOut'] - .1)  # outro move
+place(sfx, impact() * .7, M['outro'] + .45, .32); place(sfx, pop(), M['outro'] + .45, .22)  # symbol lands
+place_st(sfx, whoosh_st(.5, .25), M['outro'] + .3)                 # wordmark wipe
+place(sfx, chime([84, 91], .08, .4), M['url'] + .1, .14)           # url pill
+place(sfx, chime([91, 96], .1, .5), M['tagline'], .07)             # tagline
 
 # light room reverb on sfx (short multi-tap, cheap)
 rev = np.zeros_like(sfx)
