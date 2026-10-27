@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1040" width="1000" height="1040">
+<defs><clipPath id="c"><path d="M 68 250 Q 500 92 932 250 C 940 480 790 805 500 978 C 210 805 60 480 68 250 Z"/></clipPath>
+<path id="arc" d="M 60 318 Q 500 158 940 318"/></defs>
+<path d="M 40 205 C 150 150 250 90 330 40 C 400 80 450 82 500 82 C 550 82 600 80 670 40 C 750 90 850 150 960 205 C 975 470 820 800 500 1015 C 180 800 25 470 40 205 Z" fill="#141414"/>
+<g clip-path="url(#c)">
+ <rect x="0" y="0" width="500" height="1040" fill="#E1352B"/>
+ <rect x="500" y="0" width="500" height="1040" fill="#1E9657"/>
+ <path d="M 0 0 H 1000 V 352 Q 500 190 0 352 Z" fill="#F3F1EA" stroke="#141414" stroke-width="7"/>
+ <path d="M 282 310 Q 500 250 718 310 L 672 405 Q 500 398 328 405 Z" fill="#141414"/>
+ <path d="M 328 405 Q 500 398 672 405 C 675 620 615 830 500 955 C 385 830 325 620 328 405 Z" fill="#F3F1EA" stroke="#141414" stroke-width="7" stroke-linejoin="round"/>
+</g>
+<path d="M 68 250 Q 500 92 932 250 C 940 480 790 805 500 978 C 210 805 60 480 68 250 Z" fill="none" stroke="#141414" stroke-width="6"/>
+<text font-family="Noto Naskh Arabic" font-weight="700" font-size="54" fill="#141414" text-anchor="middle"><textPath href="#arc" startOffset="50%">الاتحاد الكويتي لكرة القدم</textPath></text>
+<text x="500" y="384" font-family="Roboto Condensed" font-weight="800" font-size="70" fill="#F3F1EA" text-anchor="middle" letter-spacing="1">KUWAIT F.A</text>
+<circle cx="500" cy="660" r="118" fill="#141414"/>
+<polygon points="500.0,767.4 467.5,743.7 479.9,705.5 520.1,705.5 532.5,743.7" fill="#F3F1EA" stroke="#F3F1EA" stroke-width="18.9" stroke-linejoin="round"/><polygon points="397.9,693.2 410.3,654.9 450.5,654.9 463.0,693.2 430.4,716.8" fill="#F3F1EA" stroke="#F3F1EA" stroke-width="18.9" stroke-linejoin="round"/><polygon points="436.9,573.1 477.1,573.1 489.5,611.4 457.0,635.0 424.5,611.4" fill="#F3F1EA" stroke="#F3F1EA" stroke-width="18.9" stroke-linejoin="round"/><polygon points="563.1,573.1 575.5,611.4 543.0,635.0 510.5,611.4 522.9,573.1" fill="#F3F1EA" stroke="#F3F1EA" stroke-width="18.9" stroke-linejoin="round"/><polygon points="602.1,693.2 569.6,716.8 537.0,693.2 549.5,654.9 589.7,654.9" fill="#F3F1EA" stroke="#F3F1EA" stroke-width="18.9" stroke-linejoin="round"/>
+</svg>
