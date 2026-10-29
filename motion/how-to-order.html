@@ -172,7 +172,7 @@
     <div class="capItem" id="c4"><div class="badge">الخطوة <b>4</b></div><div class="capTitle">كمّل كـ Guest</div><div class="capSub warn">ما تحتاج تسوي حساب!</div></div>
     <div class="capItem" id="c5"><div class="badge">الخطوة <b>5</b></div><div class="capTitle">عبّ بياناتك</div><div class="capSub">واضغط <span class="en">NEXT</span></div></div>
     <div class="capItem" id="c6"><div class="badge">الخطوة <b>6</b></div><div class="capTitle">اختار التوصيل والدفع</div><div class="capSub">واضغط <span class="en">CONFIRM</span></div></div>
-    <div class="capItem" id="c7"><div class="badge">الخطوة <b>7</b></div><div class="capTitle">ادفع أونلاين</div><div class="capSub">بـ <span class="en">KNET</span> أو <span class="en">VISA / MASTER</span></div></div>
+    <div class="capItem" id="c7"><div class="badge">الخطوة <b>7</b></div><div class="capTitle" id="c7t">ادفع أونلاين</div><div class="capSub" id="c7s">بـ <span class="en">KNET</span> أو <span class="en">VISA / MASTER</span></div></div>
     <div class="capItem" id="c8"><div class="badge">✓</div><div class="capTitle">تم طلبك بنجاح!</div><div class="capSub warn">وطلبك بيوصلك لين باب بيتك</div></div>
   </div>
 
@@ -207,7 +207,7 @@
         </div>
         <div class="cTot">
           <div class="tRow"><span>Sub-Total:</span><span>12.000 KWD</span></div>
-          <div class="tRow" id="cDisc"><span id="cDiscLbl">Discount:</span><span>-1.200 KWD</span></div>
+          <div class="tRow" id="cDisc"><span id="cDiscLbl">Discount:</span><span id="cDiscVal">-1.200 KWD</span></div>
           <div class="tRow"><span>Shipping:</span><span>Calculated during<br>checkout</span></div>
           <div class="tRow"><span>Tax:</span><span>0.000 KWD</span></div>
           <div class="tRow total"><span>Total:</span><span>Calculated<br>during checkout</span></div>
@@ -333,6 +333,13 @@ if (VARIANT === 'gift') {
   $('cDiscLbl').textContent = 'Gift card:';
   $('c3t').textContent = 'حط رقم الـ Gift Card';
   $('c3s').innerHTML = 'اكتب الرقم واضغط <span class="en">ADD</span>';
+  /* the gift card covers the whole order, so the bill comes to zero */
+  $('cDiscVal').textContent = '-12.000 KWD';
+  $('ptAmt').textContent = '0.000 KD';
+  [['pa1', '0.000 <span>KD</span>'], ['pa2', '0.00 <span>KD</span>'], ['pa3', '0.00'], ['pa4', '0.00 <span>AED</span>'],
+   ['pa5', '0.00 <span>QR</span>'], ['pa6', '0.00 <span>RO</span>'], ['pa7', '0.00 <span>BD</span>']].forEach(([id, v]) => $(id).innerHTML = v);
+  $('c7t').textContent = 'الحساب صفر!';
+  $('c7s').innerHTML = 'الـ <span class="en">Gift Card</span> غطّى طلبك كامل';
 }
 const TAPS = TL.taps.map(([t, el]) => ({t, el}));
 const TAP_ON = TL.steps[0] - .2, TAP_OFF = M.success - .1;
