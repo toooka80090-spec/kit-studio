@@ -284,7 +284,11 @@
 </div>
 
 <script src="timeline.js"></script>
+<script src="timeline-cart.js"></script>
 <script>
+/* ?start=cart: shorter cut that opens straight on the cart (timeline-cart.js, made by make-cart-timeline.py) */
+const START_CART = new URLSearchParams(location.search).get('start') === 'cart';
+if (START_CART) window.TL = window.TL_CART;
 const DURATION = TL.duration, M = TL.moments;
 const K = 584 / 1080; // screenshot px -> phone px
 
@@ -325,6 +329,12 @@ const p = (t, a, b, e = E.io) => e(clamp((t - a) / (b - a)));
 const lerp = (a, b, k) => a + (b - a) * k;
 const bump = (t, at, w = .22) => { const d = Math.abs(t - at); return d < w ? 1 - d / w : 0; };
 
+if (START_CART) {
+  $('c1').style.display = $('c2').style.display = 'none';
+  [0, 1].forEach(i => $('prog').children[i].style.display = 'none');
+  for (let i = 3; i <= 7; i++) $('c' + i).querySelector('.badge b').textContent = i - 2;
+  $('introLine').textContent = new URLSearchParams(location.search).get('variant') === 'gift' ? 'شلون تستخدم الـ Gift Card؟' : 'شلون تستخدم كود الخصم؟';
+}
 /* ?variant=gift: the same step, but the code goes into the Gift Cards field and Discount Code stays empty */
 const VARIANT = new URLSearchParams(location.search).get('variant');
 if (VARIANT === 'gift') {
@@ -342,7 +352,7 @@ if (VARIANT === 'gift') {
   $('c7s').innerHTML = 'الـ <span class="en">Gift Card</span> غطّى طلبك كامل';
 }
 const TAPS = TL.taps.map(([t, el]) => ({t, el}));
-const TAP_ON = TL.steps[0] - .2, TAP_OFF = M.success - .1;
+const TAP_ON = TL.tapOn ?? TL.steps[0] - .2, TAP_OFF = M.success - .1;
 
 /* page scroll targets (billing form, cart) are measured once with every panel open */
 let LSCROLL = {};

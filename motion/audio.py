@@ -10,7 +10,9 @@ from scipy.signal import butter, sosfilt
 SR = 48000
 # ---- timeline: shared with the HTML via timeline.js ----
 import json
-with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'timeline.js'), encoding='utf-8') as f:
+import sys
+TL_FILE = sys.argv[1] if len(sys.argv) > 1 else 'timeline.js'   # e.g. timeline-cart.js
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), TL_FILE), encoding='utf-8') as f:
     _js = f.read()
 TL = json.loads(_js[_js.index('{'):_js.rindex('}') + 1])
 M = TL['moments']
@@ -36,6 +38,7 @@ def mtof(m): return 440 * 2 ** ((m - 69) / 12)
 
 def place(buf, sig, t, gain=1.0, pan=0.0):
     """Mix mono `sig` into stereo `buf` at time t with equal-power pan (-1 L .. 1 R)."""
+    if t < 0: return  # moment not in this cut
     i = int(t * SR)
     if i >= len(buf): return
     sig = sig[:len(buf) - i]
@@ -44,6 +47,7 @@ def place(buf, sig, t, gain=1.0, pan=0.0):
     buf[i:i + len(sig), 1] += sig * gain * np.sin(a)
 
 def place_st(buf, st, t, gain=1.0):
+    if t < 0: return
     i = int(t * SR)
     st = st[:len(buf) - i]
     buf[i:i + len(st)] += st * gain
@@ -264,4 +268,5 @@ def save(name, x):
         w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm.tobytes())
     print(os.path.join(OUT, name))
 
-save('music.wav', music); save('sfx.wav', sfx); save('mix.wav', mix)
+pre = '' if TL_FILE == 'timeline.js' else os.path.splitext(TL_FILE)[0].replace('timeline-', '') + '-'
+save(pre + 'music.wav', music); save(pre + 'sfx.wav', sfx); save(pre + 'mix.wav', mix)

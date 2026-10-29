@@ -1,5 +1,5 @@
 // Render motion/how-to-order.html to MP4 (1080x1920, 60fps; FPS=30 env to override).
-//   node motion/render.mjs [out.mp4] [--stills 1,5,12] [--variant gift]
+//   node motion/render.mjs [out.mp4] [--stills 1,5,12] [--variant gift] [--start cart]
 import { createRequire } from 'module';
 import { spawn } from 'child_process';
 import path from 'path';
@@ -12,12 +12,13 @@ const args = process.argv.slice(2);
 const stillsArg = args.indexOf('--stills');
 const stills = stillsArg >= 0 ? args[stillsArg + 1].split(',').map(Number) : null;
 const vi = args.indexOf('--variant'), variant = vi >= 0 ? args[vi + 1] : '';
-const out = path.resolve(args.find(a => a.endsWith('.mp4')) || path.join(here, 'out', `vamos-how-to-order${variant ? '-' + variant : ''}.mp4`));
+const si = args.indexOf('--start'), start = si >= 0 ? args[si + 1] : '';
+const out = path.resolve(args.find(a => a.endsWith('.mp4')) || path.join(here, 'out', `vamos-how-to-order${start ? '-' + start : ''}${variant ? '-' + variant : ''}.mp4`));
 const FPS = +(process.env.FPS || 60);
 
 const browser = await pw.chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
-await page.goto(pathToFileURL(path.join(here, 'how-to-order.html')).href + '?render' + (variant ? '&variant=' + variant : ''));
+await page.goto(pathToFileURL(path.join(here, 'how-to-order.html')).href + '?render' + (variant ? '&variant=' + variant : '') + (start ? '&start=' + start : ''));
 await page.evaluate(() => window.__ready);
 const duration = await page.evaluate(() => window.DURATION);
 
