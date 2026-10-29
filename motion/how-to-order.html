@@ -168,7 +168,7 @@
     <div class="capItem" id="c1"><div class="badge">الخطوة <b>1</b></div><div class="capTitle">اختار قميصك</div>
       <div class="crumbs"><span id="k1">الموسم الجديد</span><i>←</i><span id="k2">الدوري الإنجليزي</span><i>←</i><span id="k3">ليفربول</span></div></div>
     <div class="capItem" id="c2"><div class="badge">الخطوة <b>2</b></div><div class="capTitle">اختار مقاسك</div><div class="capSub" style="position:relative;height:48px;width:700px"><div id="sub2a" style="position:absolute;inset:0">واضغط <span class="en">ADD TO CART</span></div><div id="sub2b" style="position:absolute;inset:0;opacity:0">وبعدين <span class="en">GO TO CART</span></div></div></div>
-    <div class="capItem" id="c3"><div class="badge">الخطوة <b>3</b></div><div class="capTitle">حط كود الخصم</div><div class="capSub">اكتب الكود واضغط <span class="en">APPLY</span></div></div>
+    <div class="capItem" id="c3"><div class="badge">الخطوة <b>3</b></div><div class="capTitle" id="c3t">حط كود الخصم</div><div class="capSub" id="c3s">اكتب الكود واضغط <span class="en">APPLY</span></div></div>
     <div class="capItem" id="c4"><div class="badge">الخطوة <b>4</b></div><div class="capTitle">كمّل كـ Guest</div><div class="capSub warn">ما تحتاج تسوي حساب!</div></div>
     <div class="capItem" id="c5"><div class="badge">الخطوة <b>5</b></div><div class="capTitle">عبّ بياناتك</div><div class="capSub">واضغط <span class="en">NEXT</span></div></div>
     <div class="capItem" id="c6"><div class="badge">الخطوة <b>6</b></div><div class="capTitle">اختار التوصيل والدفع</div><div class="capSub">واضغط <span class="en">CONFIRM</span></div></div>
@@ -201,13 +201,13 @@
             <div class="pT">Discount Code</div><div class="pS">Enter your coupon here</div>
             <div class="pRow"><div class="pIn" id="cCode"></div><div class="pBtn" id="cApply">APPLY</div></div>
             <div class="pT" style="margin-top:34px">Gift Cards</div><div class="pS">Enter gift card code</div>
-            <div class="pRow"><div class="pIn"></div><div class="pBtn">ADD</div></div>
+            <div class="pRow"><div class="pIn" id="cGift"></div><div class="pBtn" id="cGiftAdd">ADD</div></div>
           </div></div>
           <div class="cBar" style="margin-top:22px"><i>»</i>Estimate shipping</div>
         </div>
         <div class="cTot">
           <div class="tRow"><span>Sub-Total:</span><span>12.000 KWD</span></div>
-          <div class="tRow" id="cDisc"><span>Discount:</span><span>-1.200 KWD</span></div>
+          <div class="tRow" id="cDisc"><span id="cDiscLbl">Discount:</span><span>-1.200 KWD</span></div>
           <div class="tRow"><span>Shipping:</span><span>Calculated during<br>checkout</span></div>
           <div class="tRow"><span>Tax:</span><span>0.000 KWD</span></div>
           <div class="tRow total"><span>Total:</span><span>Calculated<br>during checkout</span></div>
@@ -325,6 +325,15 @@ const p = (t, a, b, e = E.io) => e(clamp((t - a) / (b - a)));
 const lerp = (a, b, k) => a + (b - a) * k;
 const bump = (t, at, w = .22) => { const d = Math.abs(t - at); return d < w ? 1 - d / w : 0; };
 
+/* ?variant=gift: the same step, but the code goes into the Gift Cards field and Discount Code stays empty */
+const VARIANT = new URLSearchParams(location.search).get('variant');
+if (VARIANT === 'gift') {
+  [['cCode', 'cCodeIdle'], ['cApply', 'cApplyIdle'], ['cGift', 'cCode'], ['cGiftAdd', 'cApply']].forEach(([a, b]) => $(a).id = b);
+  TL.typing.find(x => x[0] === 'cCode')[3] = '65236-GB-3265';
+  $('cDiscLbl').textContent = 'Gift card:';
+  $('c3t').textContent = 'حط رقم الـ Gift Card';
+  $('c3s').innerHTML = 'اكتب الرقم واضغط <span class="en">ADD</span>';
+}
 const TAPS = TL.taps.map(([t, el]) => ({t, el}));
 const TAP_ON = TL.steps[0] - .2, TAP_OFF = M.success - .1;
 
