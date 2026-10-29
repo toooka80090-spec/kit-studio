@@ -39,7 +39,7 @@
   .crumbs i{font-style:normal;color:rgba(255,255,255,.35)}
 
   #prog{position:absolute;bottom:118px;left:50%;transform:translateX(-50%);display:flex;gap:14px;direction:rtl}
-  .seg{width:104px;height:10px;border-radius:10px;background:rgba(255,255,255,.14);overflow:hidden}
+  .seg{width:90px;height:10px;border-radius:10px;background:rgba(255,255,255,.14);overflow:hidden}
   .seg i{display:block;height:100%;width:0;background:var(--accent);border-radius:10px}
   #url{position:absolute;bottom:44px;left:0;right:0;text-align:center;font-family:Figtree,sans-serif;font-weight:800;font-size:38px;letter-spacing:6px;color:rgba(255,255,255,.55)}
 
@@ -111,9 +111,43 @@
   .flag::before{content:"";position:absolute;left:0;top:0;border-left:9px solid #000;border-top:9px solid transparent;border-bottom:9px solid transparent;height:0}
   .nextRow{text-align:center;margin-top:34px}
 
+  /* shopping cart page (rebuilt from the site's cart; 1 css px = 1.42 px here) */
+  #lCart{font-family:Roboto,sans-serif;color:#333;padding:40px 14px 0}
+  .stepper i.cart{width:48px;height:48px;border:3px solid #9ad00c;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+  .stepper i.cart svg{width:24px;height:24px}
+  .cTitle{font-size:33px;font-weight:500;text-align:center;margin-top:44px}
+  .cItem{border:1.5px solid #e8e8e8;margin-top:34px}
+  .cX{height:62px;border-bottom:1.5px solid #ededed;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:300;color:#444}
+  .cBody{display:flex;gap:16px;padding:8px}
+  .cBody img{position:static !important;width:112px !important;height:112px;object-fit:cover;display:block}
+  .cName{font-size:19px;margin-top:22px}.cSize{font-size:17px;color:#888;margin-top:12px}.cEdit{font-size:16px;font-weight:700;color:#8fbf10;margin-top:12px}
+  .cFoot{background:#f5f5f5;display:flex;justify-content:space-between;align-items:center;padding:14px 22px;font-size:18px}
+  .cQty{display:flex;align-items:center;gap:10px;color:#999}.cQty b{width:54px;height:54px;background:#fff;border:1.5px solid #e6e6e6;display:flex;align-items:center;justify-content:center;font-weight:400;color:#333}
+  .cPrice{text-align:right;font-weight:500;line-height:1.7}.cPrice span{color:#999}
+  .cBtn{width:362px;height:62px;margin:11px auto 0;background:#ececec;color:#8a8a8a;font-size:17px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:12px}
+  .cBar{height:86px;background:#f5f5f5;border:1.5px solid #ececec;display:flex;align-items:center;font-size:22px;color:#555;position:relative;justify-content:center}
+  .cBar i{position:absolute;left:30px;font-style:normal;color:#9ad00c;font-size:28px;transition:none}
+  .cBar.on{color:#8fbf10}
+  #cPanel{overflow:hidden;height:0;background:#fff;border:0 solid #ececec;border-width:0 1.5px;text-align:center}
+  .pT{font-size:20px;font-weight:500;margin-top:26px}.pS{font-size:16px;color:#888;margin-top:8px}
+  .pRow{display:flex;gap:10px;margin:16px 26px 0}
+  .pIn{flex:1;height:56px;border:1.5px solid #e2e2e2;display:flex;align-items:center;padding:0 16px;font-size:20px;color:#333;text-align:left}
+  .pIn.on{border-color:#9ad00c}
+  .pBtn{width:112px;height:56px;background:#e6e6e6;color:#888;font-size:16px;font-weight:500;display:flex;align-items:center;justify-content:center}
+  .cTot{background:#f5f5f5;margin-top:40px;padding:44px 36px 40px;font-size:20px}
+  .tRow{display:flex;justify-content:space-between;margin-bottom:22px;line-height:1.3}
+  .tRow span:last-child{text-align:right}
+  #cDisc{overflow:hidden;height:0;margin-bottom:0}
+  .tRow.total{color:#8fbf10;font-size:26px;font-weight:700;margin-top:10px}
+  #cProceed{height:64px;background:#edbe00;color:#fff;font-size:19px;font-weight:500;display:flex;align-items:center;justify-content:center;margin-top:40px}
+  .cLogo{display:block;position:static !important;width:540px !important;margin:90px auto 60px}
+  #cFlash{position:absolute;inset:0;background:rgba(255,255,255,.7);opacity:0;z-index:5}
+
   /* full-height pages: payment portal (off-site, no VAMOS header) and the order-complete page */
   .scr.full{top:80px}
   .ov{position:absolute;font-family:Roboto,sans-serif;white-space:nowrap}
+  .ov.amt{color:#3f9fc0;font-weight:500;text-align:right;font-size:16px}
+  .ov.amt span{font-weight:400}
   #okBox{background:#fff}
   #okHdr{width:584px;display:block;position:static}
   .tyTitle{font-family:Roboto,sans-serif;font-size:33px;font-weight:500;text-align:center;color:#333;margin-top:46px}
@@ -133,12 +167,13 @@
   <div id="cap">
     <div class="capItem" id="c1"><div class="badge">الخطوة <b>1</b></div><div class="capTitle">اختار قميصك</div>
       <div class="crumbs"><span id="k1">الموسم الجديد</span><i>←</i><span id="k2">الدوري الإنجليزي</span><i>←</i><span id="k3">ليفربول</span></div></div>
-    <div class="capItem" id="c2"><div class="badge">الخطوة <b>2</b></div><div class="capTitle">اختار مقاسك</div><div class="capSub" style="position:relative;height:48px;width:700px"><div id="sub2a" style="position:absolute;inset:0">واضغط <span class="en">ADD TO CART</span></div><div id="sub2b" style="position:absolute;inset:0;opacity:0">وبعدين <span class="en">PROCEED TO CHECKOUT</span></div></div></div>
-    <div class="capItem" id="c3"><div class="badge">الخطوة <b>3</b></div><div class="capTitle">كمّل كـ Guest</div><div class="capSub warn">ما تحتاج تسوي حساب!</div></div>
-    <div class="capItem" id="c4"><div class="badge">الخطوة <b>4</b></div><div class="capTitle">عبّ بياناتك</div><div class="capSub">واضغط <span class="en">NEXT</span></div></div>
-    <div class="capItem" id="c5"><div class="badge">الخطوة <b>5</b></div><div class="capTitle">اختار التوصيل والدفع</div><div class="capSub">واضغط <span class="en">CONFIRM</span></div></div>
-    <div class="capItem" id="c6"><div class="badge">الخطوة <b>6</b></div><div class="capTitle">ادفع أونلاين</div><div class="capSub">بـ <span class="en">KNET</span> أو <span class="en">VISA / MASTER</span></div></div>
-    <div class="capItem" id="c7"><div class="badge">✓</div><div class="capTitle">تم طلبك بنجاح!</div><div class="capSub warn">وطلبك بيوصلك لين باب بيتك</div></div>
+    <div class="capItem" id="c2"><div class="badge">الخطوة <b>2</b></div><div class="capTitle">اختار مقاسك</div><div class="capSub" style="position:relative;height:48px;width:700px"><div id="sub2a" style="position:absolute;inset:0">واضغط <span class="en">ADD TO CART</span></div><div id="sub2b" style="position:absolute;inset:0;opacity:0">وبعدين <span class="en">GO TO CART</span></div></div></div>
+    <div class="capItem" id="c3"><div class="badge">الخطوة <b>3</b></div><div class="capTitle">حط كود الخصم</div><div class="capSub">اكتب الكود واضغط <span class="en">APPLY</span></div></div>
+    <div class="capItem" id="c4"><div class="badge">الخطوة <b>4</b></div><div class="capTitle">كمّل كـ Guest</div><div class="capSub warn">ما تحتاج تسوي حساب!</div></div>
+    <div class="capItem" id="c5"><div class="badge">الخطوة <b>5</b></div><div class="capTitle">عبّ بياناتك</div><div class="capSub">واضغط <span class="en">NEXT</span></div></div>
+    <div class="capItem" id="c6"><div class="badge">الخطوة <b>6</b></div><div class="capTitle">اختار التوصيل والدفع</div><div class="capSub">واضغط <span class="en">CONFIRM</span></div></div>
+    <div class="capItem" id="c7"><div class="badge">الخطوة <b>7</b></div><div class="capTitle">ادفع أونلاين</div><div class="capSub">بـ <span class="en">KNET</span> أو <span class="en">VISA / MASTER</span></div></div>
+    <div class="capItem" id="c8"><div class="badge">✓</div><div class="capTitle">تم طلبك بنجاح!</div><div class="capSub warn">وطلبك بيوصلك لين باب بيتك</div></div>
   </div>
 
   <div id="phone">
@@ -153,6 +188,33 @@
       <div class="scr" id="sLiverpool"><div class="layer" id="lLiverpool"><img src="site/liverpool.jpg"><div class="hl" id="hSalah"></div></div></div>
       <div class="scr" id="sProduct"><div class="layer" id="lProduct"><img src="site/product.jpg"><div class="radio" id="rS"></div><div class="hl" id="hAdd"></div></div>
         <div id="toast">The product has been added to your <u>shopping cart</u><b>×</b></div></div>
+      <div class="scr" id="sCart"><div class="layer" id="lCart">
+        <div class="stepper"><i class="cart"><svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.6" stroke-linejoin="round"><path d="M3 4h3l2 11h10l2-8H7"/><circle cx="10" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg></i><s></s><i></i><s></s><i></i><s></s><i></i><s></s><i></i><s></s><i></i></div>
+        <div class="cTitle">Shopping cart</div>
+        <div class="cItem"><div class="cX">×</div>
+          <div class="cBody"><img src="site/cart-thumb.jpg"><div><div class="cName">Liverpool 26/27 Home M.Salah</div><div class="cSize">SIZE: S</div><div class="cEdit">EDIT</div></div></div>
+          <div class="cFoot"><div class="cQty">Qty.: <b>1</b></div><div class="cPrice"><span>Price: 12.000 KWD</span><br>Total: 12.000 KWD</div></div></div>
+        <div style="margin-top:28px"><div class="cBtn">⟳&nbsp; UPDATE SHOPPING CART</div><div class="cBtn">✓&nbsp; CLEAR SHOPPING CART</div><div class="cBtn">🛒&nbsp; CONTINUE SHOPPING</div></div>
+        <div style="margin-top:70px">
+          <div class="cBar" id="cDiscBar"><i id="cChev">»</i>Discount codes and Vouchers</div>
+          <div id="cPanel"><div style="padding-bottom:30px">
+            <div class="pT">Discount Code</div><div class="pS">Enter your coupon here</div>
+            <div class="pRow"><div class="pIn" id="cCode"></div><div class="pBtn" id="cApply">APPLY</div></div>
+            <div class="pT" style="margin-top:34px">Gift Cards</div><div class="pS">Enter gift card code</div>
+            <div class="pRow"><div class="pIn"></div><div class="pBtn">ADD</div></div>
+          </div></div>
+          <div class="cBar" style="margin-top:22px"><i>»</i>Estimate shipping</div>
+        </div>
+        <div class="cTot">
+          <div class="tRow"><span>Sub-Total:</span><span>12.000 KWD</span></div>
+          <div class="tRow" id="cDisc"><span>Discount:</span><span>-1.200 KWD</span></div>
+          <div class="tRow"><span>Shipping:</span><span>Calculated during<br>checkout</span></div>
+          <div class="tRow"><span>Tax:</span><span>0.000 KWD</span></div>
+          <div class="tRow total"><span>Total:</span><span>Calculated<br>during checkout</span></div>
+          <div id="cProceed">PROCEED TO CHECKOUT</div>
+        </div>
+        <img class="cLogo" src="site/logo-horizontal-light.png">
+      </div><div id="cFlash"></div></div>
       <div class="scr" id="sSignin"><div class="layer"><img src="site/signin.jpg"><div class="hl" id="hGuest"></div></div></div>
       <div class="scr" id="sBilling"><div class="layer" id="lBilling">
         <div class="stepper"><i class="cur"></i><s></s><i></i><s></s><i></i><s></s><i></i><s></s><i></i><s></s><i></i></div>
@@ -183,6 +245,9 @@
         <div class="ov" id="cfBox" style="background:#fff;text-align:center;color:#888">
           <div style="color:#333;font-weight:500">Ahmed Mohamed</div><div>Email: ahmed@gmail.com</div><div>Phone: 50000000</div><div>Block 5, Street 10</div><div>Hawalli</div><div>Kuwait</div></div></div></div>
       <div class="scr full" id="sPortal"><div class="layer" id="lPortal"><img src="site/portal.jpg"><div class="hl" id="hKnet"></div>
+        <div class="ov" id="ptAmt" style="color:#c90000;font-weight:700;text-align:center">11.800 KD</div>
+        <div class="ov amt" id="pa1">11.800 <span>KD</span></div><div class="ov amt" id="pa2">11.80 <span>KD</span></div><div class="ov amt" id="pa3">144.46</div>
+        <div class="ov amt" id="pa4">141.40 <span>AED</span></div><div class="ov amt" id="pa5">142.52 <span>QR</span></div><div class="ov amt" id="pa6">14.80 <span>RO</span></div><div class="ov amt" id="pa7">14.51 <span>BD</span></div>
         <div class="ov" id="ptName" style="color:#8a8a8a">Ahmed Mohamed</div><div class="ov" id="ptInv" style="color:#8a8a8a">238104562</div><div class="ov" id="ptRef" style="color:#8a8a8a">2026010473</div><div class="ov" id="ptCref" style="color:#8a8a8a">100245</div><div class="ov" id="ptDate" style="color:#8a8a8a">October 24, 2026 11:21 PM</div></div></div>
       <div class="scr full" id="sSuccess"><div id="okBox"><img id="okHdr" src="site/header0.jpg">
         <div class="tyTitle">Thank you</div>
@@ -195,13 +260,13 @@
         </div></div></div>
 
       <div id="dim"></div>
-      <div id="drawer"><img src="site/drawer.jpg"><div class="hl" id="hProceed"></div></div>
+      <div id="drawer"><img src="site/drawer.jpg"><div class="hl" id="hGoCart"></div></div>
 
       <div id="tap"><div class="ring"></div><div class="dot"></div></div>
     </div>
   </div>
 
-  <div id="prog"><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div></div>
+  <div id="prog"><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div></div>
   <div id="url">WWW.VAMOS-KW.COM</div>
 
   <div id="intro">
@@ -226,16 +291,19 @@ const K = 584 / 1080; // screenshot px -> phone px
 /* hotspots in screenshot pixels (x, y, w, h) */
 const BOX = {
   hNewSeason: [650, 610, 300, 300], hPremier: [640, 330, 330, 360], hLiverpool: [650, 320, 300, 360],
-  hSalah: [30, 3058, 497, 498], hAdd: [298, 3064, 589, 117], hProceed: [40, 584, 970, 116], hGuest: [122, 1026, 498, 118],
+  hSalah: [30, 3058, 497, 498], hAdd: [298, 3064, 589, 117], hGoCart: [40, 728, 970, 116], hGuest: [122, 1026, 498, 118],
   hShipNext: [428, 1164, 222, 116], hPayNext: [428, 1050, 222, 116], hConfirm: [393, 488, 294, 116], hKnet: [44, 1959, 1002, 104],
   cfBox: [110, 970, 860, 395], ptName: [130, 972, 300, 40], ptDate: [622, 1283, 380, 40],
-  ptInv: [622, 972, 300, 40], ptRef: [622, 1130, 300, 40], ptCref: [130, 1448, 300, 40]
+  ptInv: [622, 972, 300, 40], ptAmt: [380, 650, 320, 52],
+  pa1: [660, 1992, 300, 40], pa2: [660, 2118, 300, 40], pa3: [660, 2244, 300, 40], pa4: [660, 2370, 300, 40], pa5: [660, 2496, 300, 40], pa6: [660, 2622, 300, 40], pa7: [660, 2748, 300, 40], ptRef: [622, 1130, 300, 40], ptCref: [130, 1448, 300, 40]
 };
 const $ = id => document.getElementById(id);
 Object.entries(BOX).forEach(([id, [x, y, w, h]]) => Object.assign($(id).style, {left: x * K + 'px', top: y * K + 'px', width: w * K + 'px', height: h * K + 'px'}));
 Object.assign($('rS').style, {left: 168 * K + 'px', top: 2357 * K + 'px'});
 Object.assign($('cfBox').style, {fontSize: '20.5px', lineHeight: 60 * K + 'px', paddingTop: '6px'});
 ['ptName', 'ptDate', 'ptInv', 'ptRef', 'ptCref'].forEach(id => Object.assign($(id).style, {fontSize: '16px', lineHeight: 40 * K + 'px'}));
+for (let i = 1; i <= 7; i++) $('pa' + i).style.lineHeight = 40 * K + 'px';
+Object.assign($('ptAmt').style, {fontSize: '21px', lineHeight: 52 * K + 'px'});
 
 const clamp = x => Math.min(1, Math.max(0, x));
 function bezier(x1, y1, x2, y2, x) {
@@ -260,13 +328,15 @@ const bump = (t, at, w = .22) => { const d = Math.abs(t - at); return d < w ? 1 
 const TAPS = TL.taps.map(([t, el]) => ({t, el}));
 const TAP_ON = TL.steps[0] - .2, TAP_OFF = M.success - .1;
 
-/* billing scroll targets are measured from the form layout once it is open */
-let BSCROLL = [];
-function measureBilling() {
-  $('formWrap').style.height = 'auto';
-  const base = $('lBilling').getBoundingClientRect().top;
-  BSCROLL = TL.billingScrolls.map(([a, b, id]) => [a, b, $(id).getBoundingClientRect().top - base - (id === 'bNext' ? 760 : 330)]);
-  $('formWrap').style.height = '';
+/* page scroll targets (billing form, cart) are measured once with every panel open */
+let LSCROLL = {};
+function measureScrolls() {
+  $('formWrap').style.height = 'auto'; $('cPanel').style.height = 'auto'; $('cDisc').style.height = 'auto';
+  TL.layerScrolls.forEach(([layer, a, b, id, y]) => {
+    const base = $(layer).getBoundingClientRect().top;
+    (LSCROLL[layer] = LSCROLL[layer] || []).push([a, b, $(id).getBoundingClientRect().top - base - y]);
+  });
+  $('formWrap').style.height = ''; $('cPanel').style.height = ''; $('cDisc').style.height = '';
 }
 
 function render(t) {
@@ -294,13 +364,13 @@ function render(t) {
 
   /* captions + progress */
   const S = TL.steps;
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 8; i++) {
     const a = S[i], b = S[i + 1];
     const kin = p(t, a + .05, a + .5, E.o), kout = p(t, b - .3, b + .05, E.io);
     const c = $('c' + (i + 1));
     c.style.opacity = kin * (1 - kout);
     c.style.transform = `translateY(${(1 - kin) * 50 - kout * 40}px)`;
-    if (i < 6) $('prog').children[i].firstChild.style.width = (p(t, a, b, E.lin) * 100) + '%';
+    if (i < 7) $('prog').children[i].firstChild.style.width = (p(t, a, b, E.lin) * 100) + '%';
   }
   TL.crumbs.forEach((at, i) => $('k' + (i + 1)).className = t >= at ? 'on' : '');
   const progOn = p(t, 2.9, 3.4) * (1 - p(t, M.phoneOut - .1, M.phoneOut + .3));
@@ -356,12 +426,28 @@ function render(t) {
     else $(id).innerHTML = txt;
   });
   TL.selects.forEach(([id, at, v]) => { $(id).textContent = t >= at ? v : (id === 'fCountry' ? 'Select country' : 'Select state'); $(id).classList.toggle('ph', t < at); });
-  const bs = BSCROLL.reduce((acc, [a, b, d], i) => lerp(acc, d, p(t, a, b)), 0);
-  $('lBilling').style.transform = `translateY(${-bs}px)`;
+  Object.entries(LSCROLL).forEach(([layer, list]) => {
+    const y = list.reduce((acc, [a, b, d]) => lerp(acc, d, p(t, a, b)), 0);
+    $(layer).style.transform = `translateY(${-y}px)`;
+  });
+
+  /* cart: open the discount panel, type the code, APPLY reloads with the discount line */
+  const po = p(t, M.discOpen, M.discOpen + .35, E.o);
+  $('cPanel').style.height = po >= 1 ? 'auto' : (po * 330) + 'px';
+  $('cDiscBar').classList.toggle('on', t >= M.discOpen);
+  $('cChev').style.transform = `rotate(${po * 90}deg)`;
+  const codeTap = TAPS.find(x => x.el === 'cCode').t, applyTap = TAPS.find(x => x.el === 'cApply').t;
+  $('cCode').classList.toggle('on', t >= codeTap && t < applyTap);
+  const fl = p(t, applyTap + .05, applyTap + .15) * (1 - p(t, M.applied - .05, M.applied + .2));
+  $('cFlash').style.opacity = fl;
+  const dr = p(t, M.applied, M.applied + .35, E.o);
+  $('cDisc').style.height = dr >= 1 ? 'auto' : (dr * 26) + 'px';
+  $('cDisc').style.marginBottom = (dr * 22) + 'px';
+  $('cDisc').style.color = `rgb(${lerp(143, 51, p(t, M.applied + .8, M.applied + 1.6))},${lerp(191, 51, p(t, M.applied + .8, M.applied + 1.6))},${lerp(16, 51, p(t, M.applied + .8, M.applied + 1.6))})`;
 
   /* press highlights */
   TAPS.forEach(tp => { if (tp.el[0] === 'h') $(tp.el).style.opacity = bump(t, tp.t + .06, .2); });
-  ['bAddNew', 'bNext'].forEach(id => { const tp = TAPS.find(x => x.el === id); $(id).style.filter = `brightness(${1 - bump(t, tp.t + .06, .2) * .15})`; });
+  ['bAddNew', 'bNext', 'cDiscBar', 'cApply', 'cProceed'].forEach(id => { const tp = TAPS.find(x => x.el === id); $(id).style.filter = `brightness(${1 - bump(t, tp.t + .06, .2) * .15})`; });
 
   /* order complete */
   const ok = M.success;
@@ -418,7 +504,7 @@ window.__ready = (async () => {
   await document.fonts.ready;
   await Promise.all(['400', '500', '600', '700'].map(w => document.fonts.load(`${w} 40px "Readex Pro"`, 'اختار'))
     .concat(['500', '800', '900'].map(w => document.fonts.load(`${w} 40px Figtree`)), document.fonts.load('400 22px Roboto'), document.fonts.load('500 22px Roboto')));
-  measureBilling();
+  measureScrolls();
   measureTaps();
   frame(0);
   return true;

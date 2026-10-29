@@ -1,31 +1,314 @@
 window.TL = {
-  "duration": 37,
-  "steps": [3.3, 9.45, 14.65, 16.1, 23.75, 28.0, 30.4, 33.3],
-  "screens": [
-    ["sHome", -9, 5.1], ["sSeason", 5.1, 6.35], ["sPremier", 6.35, 7.55], ["sLiverpool", 7.55, 9.45],
-    ["sProduct", 9.45, 14.65], ["sSignin", 14.65, 16.1], ["sBilling", 16.1, 23.75],
-    ["sShipping", 23.75, 25.15], ["sPayMethod", 25.15, 26.55], ["sConfirm", 26.55, 28.0],
-    ["sPortal", 28.0, 30.4], ["sSuccess", 30.4, 99]
+  "duration": 39.73,
+  "steps": [
+    3.3,
+    9.45,
+    14.65,
+    18.95,
+    20.4,
+    26.902,
+    30.727,
+    33.127,
+    36.028
   ],
-  "crumbs": [5.1, 6.35, 7.55],
-  "scrolls": [["lHome", 3.9, 4.5, 150], ["lLiverpool", 8.0, 8.9, 1700], ["lProduct", 10.0, 11.0, 1500], ["lPortal", 28.75, 29.6, 900]],
+  "screens": [
+    [
+      "sHome",
+      -9,
+      5.1
+    ],
+    [
+      "sSeason",
+      5.1,
+      6.35
+    ],
+    [
+      "sPremier",
+      6.35,
+      7.55
+    ],
+    [
+      "sLiverpool",
+      7.55,
+      9.45
+    ],
+    [
+      "sProduct",
+      9.45,
+      14.65
+    ],
+    [
+      "sCart",
+      14.65,
+      18.95
+    ],
+    [
+      "sSignin",
+      18.95,
+      20.4
+    ],
+    [
+      "sBilling",
+      20.4,
+      26.902
+    ],
+    [
+      "sShipping",
+      26.902,
+      28.162
+    ],
+    [
+      "sPayMethod",
+      28.162,
+      29.422
+    ],
+    [
+      "sConfirm",
+      29.422,
+      30.727
+    ],
+    [
+      "sPortal",
+      30.727,
+      33.127
+    ],
+    [
+      "sSuccess",
+      33.127,
+      99
+    ]
+  ],
+  "crumbs": [
+    5.1,
+    6.35,
+    7.55
+  ],
+  "scrolls": [
+    [
+      "lHome",
+      3.9,
+      4.5,
+      150
+    ],
+    [
+      "lLiverpool",
+      8.0,
+      8.9,
+      1700
+    ],
+    [
+      "lProduct",
+      10.0,
+      11.0,
+      1500
+    ],
+    [
+      "lPortal",
+      31.477,
+      32.328,
+      900
+    ]
+  ],
   "taps": [
-    [4.9, "hNewSeason"], [6.15, "hPremier"], [7.35, "hLiverpool"], [9.25, "hSalah"],
-    [11.4, "rS"], [12.3, "hAdd"], [14.45, "hProceed"], [15.9, "hGuest"],
-    [17.1, "bAddNew"], [17.6, "fFirst"], [18.25, "fLast"], [19.0, "fEmail"], [19.95, "fCountry"],
-    [20.95, "fArea"], [21.35, "fAddress"], [22.15, "fPhone"], [23.55, "bNext"],
-    [24.95, "hShipNext"], [26.35, "hPayNext"], [27.8, "hConfirm"], [30.2, "hKnet"]
+    [
+      4.9,
+      "hNewSeason"
+    ],
+    [
+      6.15,
+      "hPremier"
+    ],
+    [
+      7.35,
+      "hLiverpool"
+    ],
+    [
+      9.25,
+      "hSalah"
+    ],
+    [
+      11.4,
+      "rS"
+    ],
+    [
+      12.3,
+      "hAdd"
+    ],
+    [
+      14.45,
+      "hGoCart"
+    ],
+    [
+      15.85,
+      "cDiscBar"
+    ],
+    [
+      16.55,
+      "cCode"
+    ],
+    [
+      17.45,
+      "cApply"
+    ],
+    [
+      18.75,
+      "cProceed"
+    ],
+    [
+      20.2,
+      "hGuest"
+    ],
+    [
+      21.25,
+      "bAddNew"
+    ],
+    [
+      21.675,
+      "fFirst"
+    ],
+    [
+      22.227,
+      "fLast"
+    ],
+    [
+      22.865,
+      "fEmail"
+    ],
+    [
+      23.672,
+      "fCountry"
+    ],
+    [
+      24.522,
+      "fArea"
+    ],
+    [
+      24.863,
+      "fAddress"
+    ],
+    [
+      25.542,
+      "fPhone"
+    ],
+    [
+      26.732,
+      "bNext"
+    ],
+    [
+      27.982,
+      "hShipNext"
+    ],
+    [
+      29.242,
+      "hPayNext"
+    ],
+    [
+      30.547,
+      "hConfirm"
+    ],
+    [
+      32.927,
+      "hKnet"
+    ]
   ],
   "typing": [
-    ["fFirst", 17.7, 18.05, "Ahmed"], ["fLast", 18.35, 18.8, "Mohamed"], ["fEmail", 19.1, 19.7, "ahmed@gmail.com"],
-    ["fAddress", 21.45, 21.95, "Block 5, Street 10"], ["fPhone", 22.25, 22.65, "5000 0000"]
+    [
+      "fFirst",
+      21.76,
+      22.057,
+      "Ahmed"
+    ],
+    [
+      "fLast",
+      22.312,
+      22.695,
+      "Mohamed"
+    ],
+    [
+      "fEmail",
+      22.95,
+      23.46,
+      "ahmed@gmail.com"
+    ],
+    [
+      "fAddress",
+      24.947,
+      25.372,
+      "Block 5, Street 10"
+    ],
+    [
+      "fPhone",
+      25.627,
+      25.967,
+      "5000 0000"
+    ],
+    [
+      "cCode",
+      16.65,
+      17.15,
+      "BRH-26"
+    ]
   ],
-  "selects": [["fCountry", 20.1, "Kuwait"], ["fArea", 21.1, "Hawalli"]],
-  "billingScrolls": [[20.25, 20.75, "fArea"], [22.8, 23.3, "bNext"]],
+  "selects": [
+    [
+      "fCountry",
+      23.8,
+      "Kuwait"
+    ],
+    [
+      "fArea",
+      24.65,
+      "Hawalli"
+    ]
+  ],
   "moments": {
-    "size": 11.4, "toastIn": 12.45, "toastOut": 13.6, "badge": 12.6,
-    "drawerIn": 13.0, "drawerOut": 14.65, "formOpen": 17.2,
-    "success": 30.9, "phoneOut": 33.2, "outro": 33.5, "url": 34.3, "tagline": 34.9
+    "size": 11.4,
+    "toastIn": 12.45,
+    "toastOut": 13.6,
+    "badge": 12.6,
+    "drawerIn": 13.0,
+    "drawerOut": 14.65,
+    "formOpen": 21.335,
+    "success": 33.627,
+    "phoneOut": 35.928,
+    "outro": 36.228,
+    "url": 37.028,
+    "tagline": 37.627,
+    "discOpen": 15.95,
+    "applied": 17.6
   },
-  "drums": [3.5, 33.2]
+  "drums": [
+    3.5,
+    35.928
+  ],
+  "layerScrolls": [
+    [
+      "lBilling",
+      23.927,
+      24.352,
+      "fArea",
+      330
+    ],
+    [
+      "lBilling",
+      26.095,
+      26.52,
+      "bNext",
+      760
+    ],
+    [
+      "lCart",
+      15.1,
+      15.6,
+      "cDiscBar",
+      300
+    ],
+    [
+      "lCart",
+      18.0,
+      18.5,
+      "cProceed",
+      760
+    ]
+  ]
 };

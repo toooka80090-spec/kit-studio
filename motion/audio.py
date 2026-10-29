@@ -223,8 +223,10 @@ for t in SCREEN_CHANGES: place_st(sfx, whoosh_st(.42, .30, l2r=False), t - .05)
 # moments
 for _, a, b, _ in TL['scrolls']:                                  # page scrolls
     place(sfx, whoosh(b - a, 300, 2500) * .25, a, .5)
-for a, b, _ in TL['billingScrolls']:
+for _, a, b, _, _ in TL['layerScrolls']:
     place(sfx, whoosh(b - a, 300, 2500) * .22, a, .5)
+place(sfx, pop(), M['discOpen'], .25)                             # discount panel opens
+place(sfx, chime([79, 86, 91], .06, .25), M['applied'], .12)      # coupon applied
 place(sfx, pop(), M['size'] + .03, .30)                           # size selected
 place(sfx, chime([84, 88], .06, .2), M['toastIn'], .11)           # added to cart
 place(sfx, pop(), M['badge'] + .1, .38, .3)                       # cart badge 0 -> 1
