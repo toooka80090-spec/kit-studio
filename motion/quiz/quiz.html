@@ -12,22 +12,41 @@
   html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
   body{font-family:'Readex Pro',sans-serif;color:#fff}
   #stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+  /* competition backdrop: rotating light rays, LED dots, floating question marks, sweeping spotlights */
+  #rays{position:absolute;left:50%;top:38%;width:2600px;height:2600px;margin:-1300px 0 0 -1300px;
+        background:repeating-conic-gradient(from 0deg,rgba(154,208,12,.13) 0deg 7deg,transparent 7deg 20deg);
+        -webkit-mask:radial-gradient(circle,#000 0,rgba(0,0,0,.55) 30%,transparent 62%);mask:radial-gradient(circle,#000 0,rgba(0,0,0,.55) 30%,transparent 62%)}
+  #dots{position:absolute;inset:0;background-image:radial-gradient(rgba(154,208,12,.22) 2.2px,transparent 2.6px);background-size:30px 30px;
+        -webkit-mask:linear-gradient(to top,#000 0,transparent 32%,transparent 75%,rgba(0,0,0,.6) 100%);mask:linear-gradient(to top,#000 0,transparent 32%,transparent 75%,rgba(0,0,0,.6) 100%)}
+  .qm{position:absolute;font-family:Figtree,sans-serif;font-weight:900;color:transparent;-webkit-text-stroke:3px rgba(154,208,12,.35);line-height:1}
+  .beam{position:absolute;top:-200px;width:420px;height:2400px;transform-origin:50% 0;
+        background:linear-gradient(to bottom,rgba(154,208,12,.42),rgba(154,208,12,.08) 55%,transparent);clip-path:polygon(44% 0,56% 0,100% 100%,0 100%);filter:blur(6px);mix-blend-mode:screen}
+  #beamL{left:-60px}#beamR{right:-60px}
+  #flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 38%,rgba(214,255,120,.85),rgba(154,208,12,.25) 40%,transparent 70%);opacity:0}
   .blob{position:absolute;border-radius:50%;filter:blur(120px);background:var(--accent)}
+  .lock{display:inline-flex;align-items:center;gap:26px;direction:ltr}
+  .lock img{display:block}
+  .lock i{width:3px;background:rgba(255,255,255,.35);align-self:stretch}
+  .lock span{background:var(--accent);color:#000;font-family:'Readex Pro',sans-serif;font-weight:700;border-radius:60px;direction:rtl}
+  #bigQ{position:absolute;left:50%;top:40%;font-family:Figtree,sans-serif;font-weight:900;font-size:520px;line-height:1;color:var(--accent);
+        text-shadow:0 0 60px rgba(154,208,12,.7),0 20px 0 #3d5404;width:600px;margin-left:-300px;text-align:center;transform-origin:50% 60%}
+  #ring{position:absolute;left:50%;top:44%;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;border:14px solid var(--accent);opacity:0}
+  .cf{position:absolute;left:540px;top:820px;width:18px;height:30px;border-radius:4px}
   #b1{width:760px;height:760px;left:-300px;top:120px;opacity:.20}
   #b2{width:640px;height:640px;right:-300px;top:1250px;opacity:.12}
-  #bigword{position:absolute;top:720px;left:0;white-space:nowrap;font-family:Figtree,sans-serif;font-weight:900;font-size:500px;line-height:1;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.06)}
+  #bigword{display:none;position:absolute;top:720px;left:0;white-space:nowrap;font-family:Figtree,sans-serif;font-weight:900;font-size:500px;line-height:1;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.06)}
 
   /* hook */
   #hook{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;direction:rtl}
-  #hSym{width:250px}
-  #hBadge{margin-top:46px;background:var(--accent);color:#000;font-weight:700;font-size:40px;padding:8px 36px 14px;border-radius:80px}
+  #hLock img{height:96px}#hLock i{height:96px}#hLock span{font-size:48px;padding:8px 34px 16px}
+  #hLock{margin-top:430px}
   #hQ{font-size:78px;font-weight:700;line-height:1.25;margin-top:34px;padding:0 60px}
   #hQ em{font-style:normal;color:var(--accent)}
   #hSub{font-size:38px;font-weight:500;color:rgba(255,255,255,.7);margin-top:22px}
 
   /* quiz screen */
   #top{position:absolute;top:150px;left:0;right:0;text-align:center;direction:rtl}
-  #tBadge{display:inline-block;background:var(--accent);color:#000;font-weight:700;font-size:34px;padding:6px 30px 11px;border-radius:60px}
+  #tLock img{height:62px}#tLock span{font-size:32px;padding:5px 24px 11px}
   #tTitle{font-size:64px;font-weight:700;margin-top:18px;line-height:1.2}
   #tTitle em{font-style:normal;color:var(--accent)}
   #tv{position:absolute;left:40px;top:470px;width:1000px;height:760px;border-radius:44px;overflow:hidden;background:#0b0c0f;
@@ -58,10 +77,13 @@
 </head>
 <body>
 <div id="stage">
+  <div id="rays"></div><div id="dots"></div><div id="qms"></div>
   <div class="blob" id="b1"></div><div class="blob" id="b2"></div>
+  <div class="beam" id="beamL"></div><div class="beam" id="beamR"></div>
+  <div id="flash"></div>
   <div id="bigword">VAMOS VAMOS</div>
 
-  <div id="top"><div id="tBadge">مسابقة VAMOS 🏆</div><div id="tTitle">اسمع <em>التعليق</em> زين 🎧</div></div>
+  <div id="top"><div class="lock" id="tLock"><img src="../site/logo-horizontal-dark.png"><i></i><span>مسابقات</span></div><div id="tTitle">اسمع <em>التعليق</em> زين 🎧</div></div>
 
   <div id="tv">
     <!-- scene A: coach in a dark suit, front view, on the bench -->
@@ -162,8 +184,9 @@
   <div id="url">WWW.VAMOS-KW.COM</div>
 
   <div id="hook">
-    <img id="hSym" src="../site/symbol-lime.png">
-    <div id="hBadge">مسابقة VAMOS 🏆</div>
+    <div id="ring"></div><div id="cfs"></div>
+    <div id="bigQ">؟</div>
+    <div class="lock" id="hLock"><img src="../site/logo-horizontal-dark.png"><i></i><span>مسابقات</span></div>
     <div id="hQ">في أي مباراة<br>قال المعلّق <em>هذا التعليق</em>؟</div>
     <div id="hSub">اسمع زين وجاوب بالتعليقات 👇</div>
   </div>
@@ -180,7 +203,7 @@
 <script src="env.js"></script>
 <script>
 /* audio (commentary) starts at A0 in the video; scene cuts follow the source clip */
-const A0 = 2.8, CUT_B = A0 + 8.5, CUT_C = A0 + 15.3, ASK = A0 + 17.2, DURATION = ASK + 6;
+const A0 = 3.6, CUT_B = A0 + 8.5, CUT_C = A0 + 15.3, ASK = A0 + 17.2, DURATION = ASK + 6;
 const $ = id => document.getElementById(id);
 const clamp = x => Math.min(1, Math.max(0, x));
 const E = {
@@ -193,6 +216,21 @@ const lerp = (a, b, k) => a + (b - a) * k;
 
 /* equaliser bars driven by the commentary loudness */
 const BARS = 34;
+/* floating outline question marks */
+const QMS = [];
+for (let i = 0; i < 12; i++) {
+  const d = document.createElement('div'); d.className = 'qm'; d.textContent = '؟';
+  const q = {d, x: (i * 97) % 1080 - 60, y: (i * 389) % 1920, s: 90 + (i * 53) % 220, v: 18 + (i * 7) % 30, r: (i % 2 ? 1 : -1) * (6 + i % 5 * 3), ph: i * 1.3};
+  d.style.fontSize = q.s + 'px'; $('qms').appendChild(d); QMS.push(q);
+}
+/* confetti burst when the big question mark lands */
+const CF = [];
+for (let i = 0; i < 40; i++) {
+  const d = document.createElement('i'); d.className = 'cf'; d.style.background = ['#9ad00c', '#ffffff', '#d6ff78', '#3d5404'][i % 4]; $('cfs').appendChild(d);
+  const a = (i / 40) * Math.PI * 2 + (i % 3) * .2, sp = 900 + (i * 137) % 700;
+  CF.push({d, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 500, r: (i * 47) % 720 - 360});
+}
+const LAND = .95;
 for (let i = 0; i < BARS; i++) $('eq').appendChild(document.createElement('i'));
 const env = t => { const i = Math.floor((t - A0) * 60); return i >= 0 && i < ENV.length ? ENV[i] : 0; };
 
@@ -210,7 +248,15 @@ for (let i = 0; i < 16; i++) {
 const BALL = [[380, 420], [520, 360], [610, 470], [720, 390], [860, 380]];
 
 function render(t) {
-  $('bigword').style.transform = `translateX(${-200 - t * 22}px)`;
+  $('rays').style.transform = `rotate(${t * 9}deg) scale(${1 + .06 * Math.sin(t * 1.4)})`;
+  $('dots').style.backgroundPosition = `0 ${-t * 22}px`;
+  QMS.forEach(q => { q.d.style.transform = `translate(${q.x + Math.sin(t * .5 + q.ph) * 30}px,${((q.y - t * q.v * 4) % 2100 + 2100) % 2100 - 180}px) rotate(${Math.sin(t * .4 + q.ph) * q.r}deg)`; });
+  const sweep = Math.sin(t * 1.1);
+  $('beamL').style.transform = `rotate(${-28 + sweep * 18 + (1 - p(t, 0, .6, E.o)) * -40}deg)`;
+  $('beamR').style.transform = `rotate(${28 - sweep * 18 + (1 - p(t, 0, .6, E.o)) * 40}deg)`;
+  const bo = p(t, 0, .4) * (1 - .55 * p(t, A0 - .3, A0 + .4));
+  $('beamL').style.opacity = $('beamR').style.opacity = bo;
+  $('flash').style.opacity = Math.max(0, 1 - Math.abs(t - LAND) / .18) * .9 + Math.max(0, 1 - Math.abs(t - A0) / .15) * .5;
   $('b1').style.transform = `translate(${Math.sin(t * .4) * 80}px,${Math.cos(t * .3) * 120}px)`;
   $('b2').style.transform = `translate(${Math.cos(t * .35) * 90}px,${Math.sin(t * .45) * 100}px)`;
 
@@ -218,9 +264,19 @@ function render(t) {
   const hOut = p(t, A0 - .5, A0);
   $('hook').style.opacity = 1 - hOut;
   $('hook').style.transform = `scale(${1 - hOut * .12})`;
-  const sy = p(t, .05, .55, E.back);
-  $('hSym').style.transform = `translateY(${(1 - sy) * -220}px) scale(${lerp(1.4, 1, sy)})`; $('hSym').style.opacity = clamp(sy * 2);
-  [['hBadge', .45], ['hQ', .7], ['hSub', 1.0]].forEach(([id, d]) => { const k = p(t, d, d + .45, E.o); $(id).style.opacity = k; $(id).style.transform = `translateY(${(1 - k) * 40}px)`; });
+  /* big ? falls spinning, slams down, then lifts away as the logo lockup arrives */
+  const fall = p(t, .25, LAND, E.io), up = p(t, 1.55, 2.05, E.io);
+  const squash = 1 - .22 * Math.max(0, 1 - Math.abs(t - LAND - .06) / .12);
+  $('bigQ').style.opacity = clamp((t - .2) * 6);
+  $('bigQ').style.transform = `translateY(${lerp(-1300, 0, fall) + up * -330}px) rotateY(${(1 - fall) * 720}deg) rotate(${(1 - fall) * -25}deg) scale(${lerp(1, .55, up) / squash},${lerp(1, .55, up) * squash})`;
+  const rk = clamp((t - LAND) / .6);
+  $('ring').style.opacity = t >= LAND ? (1 - rk) : 0;
+  $('ring').style.transform = `scale(${.4 + rk * 4.2})`;
+  CF.forEach(c => { const s = Math.max(0, t - LAND); c.d.style.opacity = s > 0 ? clamp(1.6 - s) : 0;
+    c.d.style.transform = `translate(${c.vx * s * .55}px,${c.vy * s * .55 + 1100 * s * s}px) rotate(${c.r * s}deg)`; });
+  const lk = p(t, 1.75, 2.3, E.back);
+  $('hLock').style.opacity = clamp(lk * 1.5); $('hLock').style.transform = `scale(${lerp(.5, 1, lk)})`;
+  [['hQ', 2.15], ['hSub', 2.45]].forEach(([id, d]) => { const k = p(t, d, d + .45, E.back); $(id).style.opacity = clamp(k); $(id).style.transform = `scale(${lerp(.7, 1, k)})`; });
 
   /* quiz screen in/out */
   const qIn = p(t, A0 - .4, A0 + .3, E.o), qOut = p(t, ASK - .2, ASK + .4);
