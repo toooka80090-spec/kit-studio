@@ -203,7 +203,7 @@
 <script src="env.js"></script>
 <script>
 /* audio (commentary) starts at A0 in the video; scene cuts follow the source clip */
-const A0 = 3.6, CUT_B = A0 + 8.5, CUT_C = A0 + 15.3, ASK = A0 + 17.2, DURATION = ASK + 6;
+const A0 = 0, CUT_B = A0 + 8.5, CUT_C = A0 + 15.3, ASK = A0 + 17.2, DURATION = ASK + 6;
 const $ = id => document.getElementById(id);
 const clamp = x => Math.min(1, Math.max(0, x));
 const E = {
@@ -230,7 +230,7 @@ for (let i = 0; i < 40; i++) {
   const a = (i / 40) * Math.PI * 2 + (i % 3) * .2, sp = 900 + (i * 137) % 700;
   CF.push({d, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 500, r: (i * 47) % 720 - 360});
 }
-const LAND = .95;
+const LAND = -9; // no text intro: the video opens straight on the commentary
 for (let i = 0; i < BARS; i++) $('eq').appendChild(document.createElement('i'));
 const env = t => { const i = Math.floor((t - A0) * 60); return i >= 0 && i < ENV.length ? ENV[i] : 0; };
 
@@ -252,17 +252,17 @@ function render(t) {
   $('dots').style.backgroundPosition = `0 ${-t * 22}px`;
   QMS.forEach(q => { q.d.style.transform = `translate(${q.x + Math.sin(t * .5 + q.ph) * 30}px,${((q.y - t * q.v * 4) % 2100 + 2100) % 2100 - 180}px) rotate(${Math.sin(t * .4 + q.ph) * q.r}deg)`; });
   const sweep = Math.sin(t * 1.1);
-  $('beamL').style.transform = `rotate(${-28 + sweep * 18 + (1 - p(t, 0, .6, E.o)) * -40}deg)`;
-  $('beamR').style.transform = `rotate(${28 - sweep * 18 + (1 - p(t, 0, .6, E.o)) * 40}deg)`;
-  const bo = p(t, 0, .4) * (1 - .55 * p(t, A0 - .3, A0 + .4));
+  $('beamL').style.transform = `rotate(${-28 + sweep * 18}deg)`;
+  $('beamR').style.transform = `rotate(${28 - sweep * 18}deg)`;
+  const bo = .45 + .55 * p(t, ASK, ASK + .4);
   $('beamL').style.opacity = $('beamR').style.opacity = bo;
-  $('flash').style.opacity = Math.max(0, 1 - Math.abs(t - LAND) / .18) * .9 + Math.max(0, 1 - Math.abs(t - A0) / .15) * .5;
+  $('flash').style.opacity = Math.max(0, 1 - Math.abs(t - LAND) / .18) * .9 + Math.max(0, 1 - Math.abs(t - ASK) / .15) * .5;
   $('b1').style.transform = `translate(${Math.sin(t * .4) * 80}px,${Math.cos(t * .3) * 120}px)`;
   $('b2').style.transform = `translate(${Math.cos(t * .35) * 90}px,${Math.sin(t * .45) * 100}px)`;
 
-  /* hook */
-  const hOut = p(t, A0 - .5, A0);
-  $('hook').style.opacity = 1 - hOut;
+  /* hook (removed: the video opens on the commentary) */
+  const hOut = 1;
+  $('hook').style.display = 'none';
   $('hook').style.transform = `scale(${1 - hOut * .12})`;
   /* big ? falls spinning, slams down, then lifts away as the logo lockup arrives */
   const fall = p(t, .25, LAND, E.io), up = p(t, 1.55, 2.05, E.io);
@@ -279,11 +279,11 @@ function render(t) {
   [['hQ', 2.15], ['hSub', 2.45]].forEach(([id, d]) => { const k = p(t, d, d + .45, E.back); $(id).style.opacity = clamp(k); $(id).style.transform = `scale(${lerp(.7, 1, k)})`; });
 
   /* quiz screen in/out */
-  const qIn = p(t, A0 - .4, A0 + .3, E.o), qOut = p(t, ASK - .2, ASK + .4);
-  $('tv').style.transform = `translateY(${(1 - qIn) * 1500}px) scale(${lerp(1, .9, qOut)})`;
-  $('tv').style.opacity = (qIn > 0 ? 1 : 0) * (1 - qOut);
-  ['top', 'eq', 'listen', 'url'].forEach((id, i) => { const k = p(t, A0 - .2 + i * .1, A0 + .3 + i * .1, E.o); $(id).style.opacity = k * (1 - qOut); });
-  $('top').style.transform = `translateY(${(1 - p(t, A0 - .2, A0 + .3, E.o)) * -40}px)`;
+  const qIn = p(t, 0, .35, E.o), qOut = p(t, ASK - .2, ASK + .4);
+  $('tv').style.transform = `scale(${lerp(.92, 1, qIn) * lerp(1, .9, qOut)})`;
+  $('tv').style.opacity = 1 - qOut;
+  ['top', 'eq', 'listen', 'url'].forEach((id, i) => { $(id).style.opacity = 1 - qOut; });
+  $('top').style.transform = `translateY(${(1 - p(t, 0, .35, E.o)) * -30}px)`;
   $('live').style.opacity = .55 + .45 * Math.abs(Math.sin(t * 3));
 
   /* scenes + wipes */

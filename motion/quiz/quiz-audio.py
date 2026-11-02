@@ -11,7 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, '..', 'out')
 SR = 48000
 # keep in sync with quiz.html
-A0, LAND, LOCK, TXT = 3.6, .95, 1.75, (2.15, 2.45)
+A0 = 0   # no text intro: the commentary starts the video
 CUT_B, CUT_C, ASK = A0 + 8.5, A0 + 15.3, A0 + 17.2
 DUR = ASK + 6
 N = int(SR * DUR)
@@ -78,20 +78,12 @@ def section(buf, a, b, level, full=True):
         t += BEAT / 4; step += 1
 
 music = np.zeros(N)
-# build-up: accelerating snare roll + riser into the slam
-place(music, riser(LAND + .05), 0, .35)
-t = .05
-while t < LAND - .02:
-    gap = .2 - .16 * (t / LAND)
-    place(music, snare(), t, .25 + .4 * t / LAND); t += gap
-place(music, impact(), LAND, .9); place(music, crash(), LAND, .3)
-section(music, LAND, A0 - .1, 1.0)
-place(music, riser(.6), A0 - .7, .25)
 # under the commentary: just a soft pulse
 section(music, A0, ASK - .1, .16, full=False)
+place(music, riser(1.2), ASK - 1.2, .3)
 place(music, impact(), ASK, .8); place(music, crash(), ASK, .3)
 section(music, ASK, DUR, 1.0)
-fade = np.interp(np.arange(N) / SR, [0, DUR - 1.4, DUR], [1, 1, 0])
+fade = np.interp(np.arange(N) / SR, [0, .3, DUR - 1.4, DUR], [0, 1, 1, 0])
 music *= fade
 
 # ---------- game-show SFX
@@ -111,10 +103,6 @@ def whoosh(d):
     return out * np.sin(np.pi * t / d) ** 2
 
 sfx = np.zeros(N)
-for k in range(5): place(sfx, whoosh(.18), .25 + k * .14, .12)          # the spinning '?'
-place(sfx, shing(), LOCK, .35)                                         # logo lockup
-for d, (f0, f1) in zip(TXT, ((300, 900), (450, 1300))): place(sfx, bloop(f0, f1), d, .45)
-place(sfx, bell(88), A0 - .05, .25); place(sfx, bell(91), A0 + .12, .25)  # 'listen'
 for c in (CUT_B, CUT_C): place(sfx, zap(), c - .05, .25); place(sfx, whoosh(.4), c - .2, .2)
 for k, ch in enumerate(([57, 60, 64], [58, 62, 65], [59, 63, 66], [60, 64, 67, 72])):   # dun-dun-dun-DUN
     place(sfx, stab(ch, .5 if k == 3 else .2), ASK - .55 + k * .18 if k < 3 else ASK, .5)
