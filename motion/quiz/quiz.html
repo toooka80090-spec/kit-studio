@@ -45,9 +45,11 @@
   #hSub{font-size:38px;font-weight:500;color:rgba(255,255,255,.7);margin-top:22px}
 
   /* quiz screen */
-  #top{position:absolute;top:150px;left:0;right:0;text-align:center;direction:rtl}
-  #tLock img{height:62px}#tLock span{font-size:32px;padding:5px 24px 11px}
+  #top{position:absolute;top:110px;left:0;right:0;text-align:center;direction:rtl}
+  #tLock img{height:50px}#tLock span{font-size:32px;padding:5px 24px 11px}
   #tTitle{font-size:64px;font-weight:700;margin-top:18px;line-height:1.2}
+  #prize{display:inline-block;margin-top:22px;font-size:50px;font-weight:700;padding:6px 36px 14px;border-radius:70px;border:3px solid var(--accent);background:#0f1607}
+  #prize em{font-style:normal;color:var(--accent)}
   #tTitle em{font-style:normal;color:var(--accent)}
   #tv{position:absolute;left:40px;top:470px;width:1000px;height:760px;border-radius:44px;overflow:hidden;background:#0b0c0f;
       box-shadow:0 0 0 4px rgba(154,208,12,.85),0 0 90px rgba(154,208,12,.25),0 40px 120px rgba(0,0,0,.7)}
@@ -60,7 +62,7 @@
   #live i{width:14px;height:14px;border-radius:50%;background:#ff3b3b}
   #eq{position:absolute;left:0;right:0;top:1290px;height:150px;display:flex;align-items:center;justify-content:center;gap:9px}
   #eq i{width:14px;border-radius:10px;background:var(--accent);height:10px}
-  #listen{position:absolute;top:1460px;left:0;right:0;text-align:center;font-size:40px;font-weight:600;direction:rtl}
+  #listen{position:absolute;top:1450px;left:0;right:0;text-align:center;font-size:58px;font-weight:700;line-height:1.3;direction:rtl}
   #listen b{color:var(--accent);font-weight:700}
   #url{position:absolute;bottom:60px;left:0;right:0;text-align:center;font-family:Figtree,sans-serif;font-weight:800;font-size:38px;letter-spacing:6px;color:rgba(255,255,255,.55)}
 
@@ -77,13 +79,12 @@
 </head>
 <body>
 <div id="stage">
-  <div id="rays"></div><div id="dots"></div><div id="qms"></div>
+  <div id="dots"></div><div id="qms"></div>
   <div class="blob" id="b1"></div><div class="blob" id="b2"></div>
-  <div class="beam" id="beamL"></div><div class="beam" id="beamR"></div>
   <div id="flash"></div>
   <div id="bigword">VAMOS VAMOS</div>
 
-  <div id="top"><div class="lock" id="tLock"><img src="../site/logo-horizontal-dark.png"><i></i><span>مسابقات</span></div><div id="tTitle">اسمع <em>التعليق</em> زين 🎧</div></div>
+  <div id="top"><div class="lock" id="tLock"><img src="../site/wordmark-white.png"><i></i><span>مسابقات</span></div><div id="tTitle">اسمع <em>التعليق</em> زين 🎧</div><div id="prize">توقع واربح <em>تيشيرت</em> 👕</div></div>
 
   <div id="tv">
     <!-- scene A: coach in a dark suit, front view, on the bench -->
@@ -248,14 +249,10 @@ for (let i = 0; i < 16; i++) {
 const BALL = [[380, 420], [520, 360], [610, 470], [720, 390], [860, 380]];
 
 function render(t) {
-  $('rays').style.transform = `rotate(${t * 9}deg) scale(${1 + .06 * Math.sin(t * 1.4)})`;
   $('dots').style.backgroundPosition = `0 ${-t * 22}px`;
   QMS.forEach(q => { q.d.style.transform = `translate(${q.x + Math.sin(t * .5 + q.ph) * 30}px,${((q.y - t * q.v * 4) % 2100 + 2100) % 2100 - 180}px) rotate(${Math.sin(t * .4 + q.ph) * q.r}deg)`; });
   const sweep = Math.sin(t * 1.1);
-  $('beamL').style.transform = `rotate(${-28 + sweep * 18}deg)`;
-  $('beamR').style.transform = `rotate(${28 - sweep * 18}deg)`;
   const bo = .45 + .55 * p(t, ASK, ASK + .4);
-  $('beamL').style.opacity = $('beamR').style.opacity = bo;
   $('flash').style.opacity = Math.max(0, 1 - Math.abs(t - LAND) / .18) * .9 + Math.max(0, 1 - Math.abs(t - ASK) / .15) * .5;
   $('b1').style.transform = `translate(${Math.sin(t * .4) * 80}px,${Math.cos(t * .3) * 120}px)`;
   $('b2').style.transform = `translate(${Math.cos(t * .35) * 90}px,${Math.sin(t * .45) * 100}px)`;
@@ -279,11 +276,14 @@ function render(t) {
   [['hQ', 2.15], ['hSub', 2.45]].forEach(([id, d]) => { const k = p(t, d, d + .45, E.back); $(id).style.opacity = clamp(k); $(id).style.transform = `scale(${lerp(.7, 1, k)})`; });
 
   /* quiz screen in/out */
-  const qIn = p(t, 0, .35, E.o), qOut = p(t, ASK - .2, ASK + .4);
-  $('tv').style.transform = `scale(${lerp(.92, 1, qIn) * lerp(1, .9, qOut)})`;
+  const qIn = p(t, .05, .75, E.back), qOut = p(t, ASK - .2, ASK + .4);
+  $('tv').style.transform = `translateY(${(1 - qIn) * 1350}px) rotate(${(1 - qIn) * 8}deg) scale(${lerp(.8, 1, clamp(qIn)) * lerp(1, .9, qOut)})`;
   $('tv').style.opacity = 1 - qOut;
-  ['top', 'eq', 'listen', 'url'].forEach((id, i) => { $(id).style.opacity = 1 - qOut; });
-  $('top').style.transform = `translateY(${(1 - p(t, 0, .35, E.o)) * -30}px)`;
+  ['top', 'eq', 'listen', 'url'].forEach((id, i) => { const k = p(t, .3 + i * .12, .75 + i * .12, E.o); $(id).style.opacity = k * (1 - qOut); });
+  $('top').style.transform = `translateY(${(1 - p(t, .3, .75, E.o)) * -60}px)`;
+  const pz = p(t, .7, 1.2, E.back);
+  $('prize').style.transform = `scale(${lerp(.5, 1, pz) * (1 + Math.sin(Math.max(0, t - 1.3) * 3.2) * .03)})`;
+  $('listen').style.transform = `translateY(${(1 - p(t, .54, .99, E.o)) * 40}px)`;
   $('live').style.opacity = .55 + .45 * Math.abs(Math.sin(t * 3));
 
   /* scenes + wipes */

@@ -103,6 +103,8 @@ def whoosh(d):
     return out * np.sin(np.pi * t / d) ** 2
 
 sfx = np.zeros(N)
+place(sfx, whoosh(.6), .05, .4); place(sfx, impact(), .62, .35)          # screen flies in
+place(sfx, bloop(450, 1300), .72, .4); place(sfx, shing(), .75, .2)    # 'توقع واربح تيشيرت'
 for c in (CUT_B, CUT_C): place(sfx, zap(), c - .05, .25); place(sfx, whoosh(.4), c - .2, .2)
 for k, ch in enumerate(([57, 60, 64], [58, 62, 65], [59, 63, 66], [60, 64, 67, 72])):   # dun-dun-dun-DUN
     place(sfx, stab(ch, .5 if k == 3 else .2), ASK - .55 + k * .18 if k < 3 else ASK, .5)
