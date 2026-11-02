@@ -1,5 +1,5 @@
 // Render motion/how-to-order.html to MP4 (1080x1920, 60fps; FPS=30 env to override).
-//   node motion/render.mjs [out.mp4] [--stills 1,5,12] [--variant gift] [--start cart]
+//   node motion/render.mjs [out.mp4] [--stills 1,5,12] [--variant gift] [--start cart] [--page quiz/quiz.html]
 import { createRequire } from 'module';
 import { spawn } from 'child_process';
 import path from 'path';
@@ -18,7 +18,8 @@ const FPS = +(process.env.FPS || 60);
 
 const browser = await pw.chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
-await page.goto(pathToFileURL(path.join(here, 'how-to-order.html')).href + '?render' + (variant ? '&variant=' + variant : '') + (start ? '&start=' + start : ''));
+const pgi = args.indexOf('--page'), pageFile = pgi >= 0 ? args[pgi + 1] : 'how-to-order.html';
+await page.goto(pathToFileURL(path.join(here, pageFile)).href + '?render' + (variant ? '&variant=' + variant : '') + (start ? '&start=' + start : ''));
 await page.evaluate(() => window.__ready);
 const duration = await page.evaluate(() => window.DURATION);
 
