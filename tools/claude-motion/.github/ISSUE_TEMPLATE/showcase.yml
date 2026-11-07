@@ -1,0 +1,34 @@
+name: Showcase
+description: Share a video you made with this repo
+title: "[showcase] "
+labels: [showcase]
+body:
+  - type: textarea
+    id: video
+    attributes:
+      label: Video
+      description: Drag your MP4 or GIF here.
+    validations:
+      required: true
+  - type: textarea
+    id: prompt
+    attributes:
+      label: Prompt
+      description: The exact prompt(s) you gave the agent, including revisions.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Agent, model and effort
+      placeholder: Claude Code · Opus 5.5 · medium
+  - type: input
+    id: time
+    attributes:
+      label: How long did it take?
+      placeholder: ~30 min, 2 revisions
+  - type: input
+    id: link
+    attributes:
+      label: Link to your post (optional)
