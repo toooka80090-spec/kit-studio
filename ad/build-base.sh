@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 S=shots
 G="scale=1080:1920:flags=lanczos,setsar=1,fps=30"
 ffmpeg -y -loglevel error \
-  -ss 5.0 -t 3.0  -i $S/hook-b.mp4 \
+  -ss 5.15 -t 3.0  -i $S/hook-b.mp4 \
   -ss 0.2 -t 3.01 -i $S/cotton-b.mp4 \
   -ss 1.0 -t 2.99 -i $S/sewing-a.mp4 \
   -ss 3.0 -t 5.53 -i $S/print-a.mp4 \
@@ -15,7 +15,7 @@ ffmpeg -y -loglevel error \
   -f lavfi -t 1.2 -i color=c=0x0b0b0b:s=1080x1920:r=30 \
   -f lavfi -t 3.8 -i color=c=0x0b0b0b:s=1080x1920:r=30 \
   -filter_complex "
-   [0]$G,hue=h=9:s=1.05,eq=contrast=1.06:brightness=-0.02,setpts=PTS-STARTPTS[a];
+   [0]$G,hue=h=9:s=1.05,eq=contrast=1.06:brightness=-0.02,setpts=PTS-STARTPTS,zoompan=z=1+0.04*on/90:x=iw/2-(iw/zoom/2):y=ih/2-(ih/zoom/2):d=1:s=1080x1920:fps=30[a];
    [1]$G,eq=contrast=1.08,setpts=PTS-STARTPTS[b];
    [2]$G,eq=contrast=1.05,setpts=PTS-STARTPTS[c];
    [3]$G,eq=contrast=1.08:saturation=1.1,setpts=PTS-STARTPTS[d];
