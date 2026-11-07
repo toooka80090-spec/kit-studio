@@ -1,6 +1,6 @@
 ---
 name: youtube-script-writer
-description: "Write a high-retention YouTube script — explainer, tutorial, video essay, review, or talking head — on the packaging then cold-open then value-stack then retention structure that holds watch time past the drop-off cliffs. Use when asked to write a YouTube script, script a long-form or explainer video, draft a video hook, outline a video essay, or turn a blog post or talk into a video. Produces title and thumbnail concepts, multiple hook options, a beat-by-beat body with retention devices, and clear visual and audio cues."
+description: "Write a two-column shooting script (A/V script) for an editor: every beat has video cues (B-roll, camera angle, zoom, text overlay, motion graphic) next to audio cues (spoken line, SFX, music change), plus 3 title/thumbnail concepts and 3 hooks. Use when the script will go to editing or motion design, or when asked for a script with visual cues, a shooting script, a storyboard script, or an A/V script. For a spoken talking-head script with scored hooks, use yt-script."
 ---
 
 # YouTube Script Writer Skill

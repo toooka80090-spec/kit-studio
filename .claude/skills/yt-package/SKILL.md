@@ -1,10 +1,6 @@
 ---
 name: yt-package
-description: >-
-  Write and lint the title and thumbnail for a YouTube video as one pairing,
-  checking truncation, duplication and vagueness before publish. Use for
-  "title ideas", "what should I call this", "thumbnail text", "my CTR is
-  bad", packaging, or any request to rename or repackage an existing video.
+description: "Write and lint the title and thumbnail for a YouTube video as one pairing, checking truncation, duplication and vagueness before publish. 119 proven title formulas in references/title-formulas.md. Use for \"title ideas\", \"what should I call this\", \"thumbnail text\", \"my CTR is bad\", packaging, or any request to rename or repackage an existing video."
 ---
 
 # yt-package
@@ -19,7 +15,7 @@ python3 title.py titles.txt            # one per line, ranked
 
 ## Before you write
 
-1. Read `~/.claude/youtube/voice.md` if it exists. That is the user's voice profile: how they talk
+1. Read `.claude/youtube/voice.md` in this repo (fall back to `~/.claude/youtube/voice.md`) if it exists. That is the user's voice profile: how they talk
    on camera, the words they never use, who they are talking to, what they will not claim. If it
    does not exist, ask for **three of their own videos**, read or transcribe them, infer the voice,
    and write the file. A script in the wrong voice is worse than no script, because they have to
@@ -47,3 +43,7 @@ framing, the three words, and what the background has to do to hold contrast at 
 
 Nothing here publishes. This skill writes and you publish. Every output ends in a block the user
 copies, and the last line of every run is the question: **ship it, or change it?**
+
+## More title formulas
+
+`references/title-formulas.md` has 119 title formulas grouped by video type, plus strategy notes by channel size. Read it when the first round of titles feels flat, then run every candidate through `title.py`.

@@ -58,6 +58,19 @@ Springs for things that feel physical (UI, objects). Bezier tweens for type and 
 - Mono labels: uppercase, `letterSpacing: 0.2–0.24em`, muted color. They're decoration; anything the viewer must read goes big.
 - Phone test: at 360 px wide (how X shows it in the feed) the key message must still read. Check it on the contact sheet.
 
+### Arabic text (RTL)
+
+Most of our videos carry Arabic on screen. The Latin rules above do not transfer as-is.
+
+- Fonts that hold up big and small: **Cairo**, **Tajawal**, **IBM Plex Sans Arabic**, **Readex Pro** (UI and body); **Lalezar**, **Rakkas**, **Aref Ruqaa** for display. All on `@remotion/google-fonts`. Load the Arabic subset explicitly and check every glyph renders, not tofu boxes.
+- Set `direction: "rtl"` and `textAlign` per block. In a mixed line (Arabic + `After Effects` or a number), wrap the Latin run in `<bdi>` or `unicodeBidi: "isolate"` so the order does not flip.
+- **Never letter-spacing Arabic.** Any non-zero `letterSpacing` breaks the joins between letters. Keep tight tracking for Latin only.
+- **Never reveal Arabic letter by letter.** Splitting a word breaks the shaping, so each letter shows its isolated form. Reveal per **word** (split on spaces) or with a mask/clip-path wipe moving **right to left**.
+- Arabic needs more line height than Latin: `lineHeight: 1.25–1.45` for display, more if the text carries tashkeel, or the marks get clipped by a mask.
+- Stagger and wipes go right to left, and the eye enters the frame on the right. Mirror arrows and progress bars.
+- Numbers: pick Western (123) or Eastern Arabic (١٢٣) per video and keep it. Counters animate digit by digit the same way.
+- Voiceover text with tashkeel: the on-screen caption can drop the marks, the VO script never does.
+
 ## 6. Color
 
 - Palette tokens live in `C` (`lib.ts`). Don't introduce new hex values in components.

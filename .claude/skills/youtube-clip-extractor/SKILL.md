@@ -1,6 +1,6 @@
 ---
 name: youtube-clip-extractor
-description: Download YouTube videos, identify compelling clips from transcripts, cut clips with ffmpeg, and generate platform-optimized on-screen text and captions. Complete workflow from URL to publishable clips.
+description: "Download a YouTube video, cut clips with ffmpeg, and write on-screen text and captions for each. Use when the user gives a YouTube URL and wants the actual clip files cut. To only pick which moments to clip from a transcript, use yt-shorts."
 ---
 
 # YouTube Clip Extractor

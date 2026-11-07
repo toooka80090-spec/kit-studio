@@ -132,4 +132,6 @@ speech, see the captions section of `references/motion-patterns.md`.
 - Forgetting `--overwrite` on re-renders, then inspecting the stale file.
 - Fonts: never rely on system defaults for hero text; load a display font via
   `@remotion/google-fonts` or `@font-face` + `staticFile`.
+- Arabic on screen: follow the "Arabic text (RTL)" rules in the `motion-design` skill
+  (no letter-spacing, per-word reveals, right-to-left wipes, `<bdi>` around Latin runs).
 - Trying to "describe" the result to the user instead of rendering and verifying it.

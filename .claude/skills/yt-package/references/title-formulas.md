@@ -1,7 +1,3 @@
----
-name: youtube-title-creator
-description: Generate high-CTR YouTube titles and thumbnails using framework fitting method. Match content to 119 proven formulas from Creator Hooks, apply psychological principles, test variations.
----
 
 # YouTube Title & Thumbnail Creator
 

@@ -1,16 +1,6 @@
 ---
 name: youtube
-description: >
-  The ultimate YouTube creator skill. Covers channel audits, video SEO,
-  retention-engineered scripts, hook writing, thumbnail briefs, content
-  strategy, content calendars, Shorts optimisation, analytics interpretation,
-  monetisation planning, competitor research, cross-platform repurposing,
-  upload metadata packages, and data-driven video idea generation.
-  Triggers on: "youtube", "channel", "video", "views", "subscribers",
-  "watch time", "shorts", "thumbnail", "CTR", "retention", "monetize",
-  "script", "hook", "upload", "youtube audit", "video ideas",
-  "content calendar", "competitor analysis", "repurpose video",
-  "youtube seo", "youtube strategy", "youtube analytics".
+description: "YouTube channel-level work: channel strategy and positioning, analytics and YouTube Data API pulls (channel stats, video analytics, competitor search, transcripts), monetisation planning, thumbnail design briefs, cross-platform repurposing plans, and full upload packages. Use for /youtube commands, \"grow my channel\", \"monetize\", \"analyze my channel data\", \"thumbnail brief\", \"repurpose this video for other platforms\". For a single task prefer the focused yt-* skills: yt-script (scripts, hooks), yt-package (titles), yt-seo, yt-shorts, yt-chapters, yt-edit, yt-retention, yt-viral, yt-audit, yt-plan, yt-comment."
 tools:
   - Read
   - Write

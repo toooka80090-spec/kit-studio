@@ -1,6 +1,6 @@
 ---
 name: short-form-video
-description: Create short-form video content (Reels, TikTok, Shorts) using practitioner methodology. Covers production workflow from concept to publish, hook construction, format selection, and algorithm optimization.
+description: "Plan and produce original short-form video (Reels, TikTok, Shorts) made for the format, not cut from a long video: concept, hook, format choice, shot list, algorithm habits. Use for \"Reel idea\", \"TikTok for my business\", \"short video concept\". For clips cut from a long video, use yt-shorts."
 ---
 
 # Short-Form Video Production
