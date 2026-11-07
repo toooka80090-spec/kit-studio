@@ -425,7 +425,7 @@ Write the hooks directly into the EDITOR_HANDOFF.md clip sections.
 - `podcast-production` - Invokes this skill at Step 4 (on-screen hook generation)
 - `short-form-video` - Full production workflow (this skill handles text only)
 - `text-content` - For text-only social posts (LinkedIn, X, not video)
-- `youtube-title-creator` - Title + thumbnail (same complementarity principle, different application)
+- `yt-package` - Title + thumbnail (same complementarity principle, different application)
 - `cold-open-creator` - Cold opens use [SWOOSH] transitions, not hooks
 
 ---
