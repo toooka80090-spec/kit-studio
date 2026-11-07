@@ -1,0 +1,14 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "kit-studio",
+  "description": "VAMOS studio skills: brand, motion design, kit stories and YouTube.",
+  "owner": { "name": "VAMOS" },
+  "plugins": [
+    {
+      "name": "vamos-studio",
+      "description": "VAMOS brand rules, motion design pipeline, kit-story pipeline and YouTube toolkit (23 skills).",
+      "source": "./plugin/vamos-studio",
+      "category": "productivity"
+    }
+  ]
+}

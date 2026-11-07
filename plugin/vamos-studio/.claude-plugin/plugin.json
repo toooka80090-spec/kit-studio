@@ -1,0 +1,16 @@
+{
+  "name": "vamos-studio",
+  "description": "VAMOS brand, motion design (Remotion, procedural sound, review loop, web sims), the VAMOS kit-story pipeline, and a full YouTube toolkit.",
+  "version": "1.0.0",
+  "author": {
+    "name": "VAMOS"
+  },
+  "keywords": [
+    "vamos",
+    "motion",
+    "remotion",
+    "youtube",
+    "shorts",
+    "brand"
+  ]
+}
