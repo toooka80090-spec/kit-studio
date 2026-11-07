@@ -1,0 +1,85 @@
+{
+ "fps": 30,
+ "width": 1080,
+ "height": 1920,
+ "duration": 28,
+ "bpm": 120,
+ "s1": {
+  "start": 0,
+  "words": 0.25,
+  "sub": 1.0,
+  "hl": 1.55,
+  "exit": 2.75
+ },
+ "s2": {
+  "start": 3.0,
+  "chip": 3.1,
+  "circle": 3.2,
+  "count": 3.4,
+  "countEnd": 4.6,
+  "sub": 4.4,
+  "absorb": 5.2,
+  "exit": 5.75
+ },
+ "s3": {
+  "start": 6.0,
+  "draw": 6.1,
+  "drawEnd": 7.4,
+  "stitch": 7.3,
+  "stitchEnd": 8.5,
+  "fill": 8.4,
+  "sub": 7.0,
+  "exit": 9.25
+ },
+ "s4": {
+  "start": 9.5,
+  "scan": 9.9,
+  "scanEnd": 10.9,
+  "swaps": [
+   11.5,
+   12.0,
+   12.5
+  ],
+  "sub": 10.9,
+  "exit": 13.25
+ },
+ "s5": {
+  "start": 13.5,
+  "drop": 13.7,
+  "dropEnd": 14.35,
+  "lid": 14.6,
+  "lidEnd": 15.15,
+  "tape": 15.3,
+  "label": 15.75,
+  "sub": 14.2,
+  "exit": 16.75
+ },
+ "s6": {
+  "start": 17.0,
+  "truckIn": 17.05,
+  "truckInEnd": 17.65,
+  "load": 17.7,
+  "drive": 18.35,
+  "driveEnd": 18.95,
+  "globe": 18.9,
+  "abroad": 19.1,
+  "routes": 19.3,
+  "exit": 20.25
+ },
+ "s7": {
+  "start": 20.5,
+  "head": 20.55,
+  "tiles": 20.9,
+  "step": 0.055,
+  "exit": 24.25
+ },
+ "s8": {
+  "start": 24.3,
+  "iris": 24.3,
+  "logo": 24.5,
+  "cta": 25.25,
+  "url": 25.5,
+  "note": 25.75,
+  "tees": 25.35
+ }
+}

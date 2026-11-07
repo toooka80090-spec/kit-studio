@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>VAMOS — من القطن حتى باب بيتك</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@600;800;900&family=Tajawal:wght@500;700;800&family=Jost:wght@500;600&display=block" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EFEFEB; --ink: #121212; --mute: #6E6E6A;
+    --lime: #9CD00D; --lime-d: #7AA800; --box: #161616;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); color: var(--ink);
+           font-family: 'Tajawal', sans-serif; }
+  .abs { position: absolute; }
+  .layer { position: absolute; inset: 0; }
+  img { display: block; user-select: none; }
+
+  /* background */
+  #bgTex { position: absolute; inset: -40px; opacity: .55; }
+  .streak { position: absolute; background: var(--lime); transform-origin: center; }
+  .streak.k { background: var(--ink); }
+  #grain { position: absolute; inset: 0; opacity: .09; mix-blend-mode: multiply; pointer-events: none; }
+
+  /* type */
+  .chip { position: absolute; top: 300px; right: 0; left: 0; display: flex; justify-content: center; }
+  .chip span { display: inline-flex; align-items: center; gap: 14px; background: var(--ink); color: #fff; border-radius: 999px;
+               padding: 14px 36px 12px; font: 700 42px/1 'Tajawal'; }
+  .chip b { font: 600 38px/1 'Jost'; color: var(--lime); direction: ltr; }
+  h1 { position: absolute; right: 0; left: 0; text-align: center; font: 900 128px/1.25 'Rubik'; isolation: isolate; }
+  h1 .w, .sub .w { display: inline-block; white-space: pre; }
+  .sub { position: absolute; right: 0; left: 0; text-align: center; font: 700 56px/1.4 'Tajawal'; color: var(--ink); isolation: isolate; }
+  .hl { position: relative; display: inline-block; padding: 0 .12em; }
+  .hl i { position: absolute; inset: 12% -.04em 6%; background: var(--lime); z-index: -1; transform-origin: right center; border-radius: 10px; }
+  .lime { color: var(--lime-d); }
+
+  /* logo (Latin; tracking is fine here) */
+  .logo { display: inline-flex; align-items: center; direction: ltr; font-family: 'Jost'; font-weight: 500; letter-spacing: .09em; line-height: 1; }
+  .logo svg { height: .74em; width: .62em; margin: 0 .06em 0 .03em; overflow: visible; }
+
+  /* tee */
+  .tee { position: absolute; width: 820px; height: 820px; left: 130px; top: 720px; }
+  .tee img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .glow { position: absolute; width: 760px; height: 760px; left: 160px; top: 750px; border-radius: 50%; background: var(--lime); }
+  .shadow { position: absolute; left: 260px; top: 1560px; width: 560px; height: 60px; border-radius: 50%;
+            background: radial-gradient(closest-side, rgba(0,0,0,.28), rgba(0,0,0,0)); }
+
+  /* s2 */
+  #macro { position: absolute; width: 620px; height: 620px; left: 230px; top: 820px; border-radius: 50%; overflow: hidden;
+           box-shadow: 0 0 0 14px var(--lime), 0 30px 80px rgba(0,0,0,.25); background-color: #3a3a3a; }
+  #macro img { position: absolute; width: 3400px; height: 3400px; left: -1500px; top: -1500px; }
+  .boll { position: absolute; width: 150px; height: 130px; }
+  .boll i { position: absolute; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff 0 55%, #f1f1ee 75%, #dcdcd6);
+            box-shadow: 0 6px 16px rgba(0,0,0,.12); }
+  .boll u { position: absolute; left: 50%; bottom: -8px; width: 90px; height: 34px; margin-left: -45px; border-radius: 0 0 50px 50px;
+            background: #6b4a2b; z-index: -1; }
+
+  /* s3 */
+  #s3svg { position: absolute; left: 130px; top: 720px; width: 820px; height: 820px; overflow: visible; }
+
+  /* s4 */
+  #head { position: absolute; height: 26px; border-radius: 13px; background: var(--lime);
+          box-shadow: 0 0 30px 8px rgba(156,208,13,.7), 0 0 90px 30px rgba(156,208,13,.35); }
+  .sw { position: absolute; top: 1590px; width: 70px; height: 70px; border-radius: 50%; border: 3px solid rgba(0,0,0,.18); }
+  .sw::after { content: ''; position: absolute; inset: -12px; border-radius: 50%; border: 5px solid var(--lime); opacity: var(--on, 0); }
+  #colorName { position: absolute; top: 1690px; right: 0; left: 0; text-align: center; font: 700 44px/1 'Tajawal'; color: var(--mute); }
+
+  /* s5 box */
+  #box { position: absolute; left: 240px; top: 1120px; width: 600px; height: 420px; }
+  #boxBack { position: absolute; left: 0; top: -36px; width: 600px; height: 80px; background: #0c0c0c; border-radius: 6px 6px 0 0; }
+  #boxFront { position: absolute; inset: 0; background: linear-gradient(180deg, #222 0%, var(--box) 60%, #0f0f0f 100%); border-radius: 4px 4px 14px 14px;
+              box-shadow: 0 40px 70px rgba(0,0,0,.3); overflow: hidden; }
+  #boxFront .band { position: absolute; left: 0; right: 0; bottom: 0; height: 70px; background: var(--lime); }
+  #boxFront .logo { position: absolute; left: 0; right: 0; top: 112px; justify-content: center; color: #fff; font-size: 92px; }
+  .flap { position: absolute; top: -10px; width: 300px; height: 26px; background: #1d1d1d; border-radius: 4px; }
+  #flapR { right: 0; transform-origin: 100% 50%; }
+  #flapL { left: 0; transform-origin: 0% 50%; }
+  #tape { position: absolute; left: 262px; top: -14px; width: 76px; height: 86px; background: linear-gradient(90deg, #8fbf0a, #b4e43a 45%, #8fbf0a); transform-origin: top; box-shadow: 0 2px 4px rgba(0,0,0,.25); }
+  #label { position: absolute; left: 356px; top: 236px; width: 210px; padding: 16px 12px 12px; background: #fff; border-radius: 8px; text-align: center;
+           box-shadow: 0 4px 10px rgba(0,0,0,.2); direction: ltr; }
+  #label .logo { position: static; font-size: 40px; color: var(--ink); justify-content: center; }
+  #label small { display: block; margin-top: 6px; font: 500 17px/1 'Jost'; color: var(--mute); letter-spacing: .04em; }
+
+  /* s6 */
+  #truck { position: absolute; left: 110px; top: 980px; width: 860px; height: 520px; overflow: visible; }
+  #globe { position: absolute; left: 270px; top: 880px; width: 540px; height: 540px; overflow: visible; }
+
+  /* s7 */
+  .tile { position: absolute; width: 176px; height: 146px; }
+  .tile img { width: 100%; height: 100%; filter: drop-shadow(0 8px 14px rgba(0,0,0,.18)); }
+  #cnt { display: inline-block; min-width: 1.2em; }
+
+  /* s8 */
+  #iris { position: absolute; left: 540px; top: 960px; width: 100px; height: 100px; margin: -50px 0 0 -50px; border-radius: 50%; background: var(--lime); }
+  #ctaPill { position: absolute; left: 0; right: 0; top: 1260px; display: flex; justify-content: center; }
+  #ctaPill span { background: var(--ink); color: var(--lime); border-radius: 999px; padding: 26px 90px 20px; font: 900 72px/1 'Rubik'; }
+  #url { position: absolute; left: 0; right: 0; top: 1405px; text-align: center; font: 600 50px/1 'Jost'; direction: ltr; letter-spacing: .02em; }
+  #note { position: absolute; left: 60px; right: 60px; top: 1490px; text-align: center; font: 700 36px/1.5 'Tajawal'; color: #121212; }
+  .mini { position: absolute; width: 330px; height: 330px; }
+  .mini img { width: 100%; height: 100%; }
+
+  #topLogo { position: absolute; left: 0; right: 0; top: 150px; display: flex; justify-content: center; font-size: 54px; color: var(--ink); }
+  #prog { position: absolute; left: 0; right: 0; top: 228px; display: flex; justify-content: center; gap: 12px; direction: rtl; }
+  #prog i { display: block; width: 70px; height: 8px; border-radius: 4px; background: rgba(0,0,0,.12); overflow: hidden; position: relative; }
+  #prog i b { position: absolute; inset: 0; background: var(--ink); transform-origin: right; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <svg id="bgTex" width="1160" height="2000"><filter id="f"><feTurbulence type="fractalNoise" baseFrequency=".012 .03" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .55  0 0 0 0 .53  0 0 0 -1.4 .9"/></filter><rect width="100%" height="100%" filter="url(#f)"/></svg>
+  <div id="streaks" class="layer"></div>
+
+  <!-- S1 -->
+  <div id="s1" class="layer">
+    <div class="glow" id="s1glow"></div>
+    <div class="shadow" id="s1shadow"></div>
+    <div class="tee" id="s1tee"><img src="assets/tee-black.png"></div>
+    <h1 id="s1h" style="top:330px"></h1>
+    <div class="sub" id="s1s" style="top:520px"></div>
+  </div>
+
+  <!-- S2 cotton -->
+  <div id="s2" class="layer">
+    <div class="chip" id="s2c"><span><b>01</b>القطن</span></div>
+    <h1 id="s2h" style="top:390px"><span class="w">قطن </span><span class="w" id="s2n">١٠٠</span><span class="w">٪</span></h1>
+    <div class="sub" id="s2s" style="top:575px"></div>
+    <svg id="threads" class="abs" style="left:0;top:0" width="1080" height="1920"></svg>
+    <div id="macro"><img src="assets/tee-charcoal.png"></div>
+    <div id="bolls"></div>
+  </div>
+
+  <!-- S3 stitching -->
+  <div id="s3" class="layer">
+    <div class="chip" id="s3c"><span><b>02</b>الخياطة</span></div>
+    <h1 id="s3h" style="top:390px"></h1>
+    <div class="sub" id="s3s" style="top:575px"></div>
+    <div class="shadow" id="s3shadow"></div>
+    <div class="tee" id="s3tee"><img src="assets/tee-black-blank.png"></div>
+    <svg id="s3svg" viewBox="0 0 1080 1080">
+      <path id="outline" fill="none" stroke="#121212" stroke-width="7" stroke-linejoin="round"/>
+      <g id="stitches" fill="none" stroke="#9CD00D" stroke-width="9" stroke-linecap="round" stroke-dasharray="16 12">
+        <path id="stHem" d="M282,1032 L812,1032"/>
+        <path id="stCuffR" d="M836,466 L990,402"/>
+        <path id="stCuffL" d="M248,466 L96,402"/>
+        <path id="stCollar" d="M418,30 Q545,92 672,30"/>
+      </g>
+      <circle id="needle" r="11" fill="#121212"/>
+    </svg>
+  </div>
+
+  <!-- S4 print -->
+  <div id="s4" class="layer">
+    <div class="chip" id="s4c"><span><b>03</b>الطباعة</span></div>
+    <h1 id="s4h" style="top:390px"></h1>
+    <div class="sub" id="s4s" style="top:575px"></div>
+    <div class="shadow" id="s4shadow"></div>
+    <div id="s4tees"></div>
+    <div id="head"></div>
+    <div id="sws"></div>
+    <div id="colorName"></div>
+  </div>
+
+  <!-- S5 pack -->
+  <div id="s5" class="layer">
+    <div class="chip" id="s5c"><span><b>04</b>التغليف</span></div>
+    <h1 id="s5h" style="top:390px"></h1>
+    <div class="sub" id="s5s" style="top:575px"></div>
+    <div id="box">
+      <div id="boxBack"></div>
+      <div class="tee" id="s5tee" style="width:520px;height:520px;left:40px;top:-560px"><img src="assets/tee-white.png"></div>
+      <div id="boxFront"><div class="band"></div><span class="logo" data-logo></span></div>
+      <div class="flap" id="flapR"></div><div class="flap" id="flapL"></div>
+      <div id="tape"></div>
+      <div id="label"><span class="logo" data-logo></span><small>Home of Classic Jerseys</small></div>
+    </div>
+  </div>
+
+  <!-- S6 delivery -->
+  <div id="s6" class="layer">
+    <div class="chip" id="s6c"><span><b>05</b>التوصيل</span></div>
+    <h1 id="s6h" style="top:390px"></h1>
+    <h1 id="s6h2" style="top:390px;font-size:104px"></h1>
+    <div class="sub" id="s6s" style="top:665px"></div>
+    <svg id="truck" viewBox="0 0 860 520">
+      <g id="speed" stroke="#9CD00D" stroke-width="14" stroke-linecap="round">
+        <line x1="640" y1="150" x2="820" y2="150"/><line x1="680" y1="215" x2="840" y2="215"/><line x1="620" y1="280" x2="800" y2="280"/>
+      </g>
+      <g id="truckBody" fill="none" stroke="#7AA800" stroke-width="16" stroke-linejoin="round" stroke-linecap="round">
+        <rect x="250" y="80" width="380" height="290" rx="22" fill="#EFEFEB"/>
+        <path d="M250,370 L250,160 L140,160 Q118,160 104,180 L48,262 Q40,274 40,290 L40,370 Z" fill="#EFEFEB"/>
+        <path d="M232,180 L150,180 L94,262 L232,262 Z" fill="#9CD00D" stroke-width="10"/>
+        <line x1="20" y1="370" x2="660" y2="370"/>
+        <circle cx="150" cy="390" r="52" fill="#EFEFEB"/><circle cx="150" cy="390" r="16" fill="#7AA800"/>
+        <circle cx="520" cy="390" r="52" fill="#EFEFEB"/><circle cx="520" cy="390" r="16" fill="#7AA800"/>
+      </g>
+      <g id="cargo"></g>
+    </svg>
+    <svg id="globe" viewBox="-270 -270 540 540">
+      <g fill="none" stroke="#7AA800" stroke-width="10" id="globeLines">
+        <circle r="250"/>
+        <ellipse rx="110" ry="250"/><ellipse rx="200" ry="250"/>
+        <line x1="-250" y1="0" x2="250" y2="0"/>
+        <path d="M-215,-125 Q0,-95 215,-125"/><path d="M-215,125 Q0,95 215,125"/>
+        <line x1="0" y1="-250" x2="0" y2="250"/>
+      </g>
+      <g id="routes" fill="none" stroke="#121212" stroke-width="7" stroke-linecap="round"></g>
+      <g id="dots"></g>
+      <g id="pin" transform="translate(70,-30)">
+        <path d="M0,0 C-30,-40 -34,-56 -34,-70 A34,34 0 1 1 34,-70 C34,-56 30,-40 0,0 Z" fill="#121212"/>
+        <circle cy="-70" r="13" fill="#9CD00D"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- S7 flags -->
+  <div id="s7" class="layer">
+    <div class="chip" id="s7c" style="top:290px"><span>شحن دولي</span></div>
+    <h1 id="s7h" style="top:370px;font-size:112px"><span class="w">نوصّل إلى </span><span class="w lime" id="cnt">٢٩</span><span class="w"> دولة</span></h1>
+    <div id="tiles"></div>
+  </div>
+
+  <!-- S8 CTA -->
+  <div id="s8" class="layer">
+    <div id="iris"></div>
+    <div class="abs" id="bigLogo" style="left:0;right:0;top:360px;display:flex;justify-content:center"><span class="logo" data-logo style="font-size:190px;color:#121212"></span></div>
+    <div class="abs" id="tag" style="left:0;right:0;top:600px;text-align:center;font:600 40px/1 Jost;letter-spacing:.18em;direction:ltr;color:#121212">HOME OF CLASSIC JERSEYS</div>
+    <div id="minis"></div>
+    <div id="ctaPill"><span>اطلب الآن</span></div>
+    <div id="url">www.vamos-kw.com</div>
+    <div id="note"></div>
+  </div>
+
+  <div id="topLogo"><span class="logo" data-logo></span></div>
+  <div id="prog"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+  <canvas id="grain" width="540" height="960"></canvas>
+</div>
+
+<script>
+(async function () {
+  // ---------- data ----------
+  if (!window.TL) window.TL = await (await fetch('timeline.json')).json();
+  if (!window.OUTLINE) window.OUTLINE = await (await fetch('assets/outline.json')).json();
+  const TL = window.TL, $ = (id) => document.getElementById(id);
+
+  // ---------- math ----------
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const p = (t, a, b) => clamp((t - a) / (b - a));
+  const lerp = (a, b, x) => a + (b - a) * x;
+  const E = {
+    out: (x) => 1 - Math.pow(1 - x, 3),
+    expo: (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x)),
+    inout: (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2),
+    in: (x) => x * x * x,
+    back: (x) => { const c = 1.6, c3 = c + 1; return 1 + c3 * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); },
+  };
+  function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+  const AR = (n) => String(n).replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[d]);
+  const css = (el, o) => { for (const k in o) el.style[k] = o[k]; };
+
+  // ---------- logo ----------
+  const LAMBDA = '<svg viewBox="0 0 62 74"><path d="M3,74 L31,2 L59,74" fill="none" stroke="currentColor" stroke-width="10.5" stroke-linejoin="miter"/></svg>';
+  document.querySelectorAll('[data-logo]').forEach((el) => { el.innerHTML = 'V' + LAMBDA + 'MOS'; });
+
+  // ---------- words: split on spaces so Arabic shaping stays intact ----------
+  function setWords(el, html) {
+    // html: words separated by spaces; a word wrapped in [..] gets the lime highlight
+    el.innerHTML = html.split(' ').map((w) => {
+      const hl = /^\[(.*)\]$/.exec(w);
+      return hl ? `<span class="w hl"><i></i>${hl[1].replace(/_/g, ' ')} </span>` : `<span class="w">${w} </span>`;
+    }).join('');
+  }
+  function revealWords(el, t, t0, stagger = 0.08, dur = 0.5, dy = 46) {
+    [...el.querySelectorAll('.w')].forEach((w, i) => {
+      const k = E.expo(p(t, t0 + i * stagger, t0 + i * stagger + dur));
+      w.style.opacity = k; w.style.transform = `translateY(${(1 - k) * dy}px)`;
+    });
+  }
+  function highlight(el, t, t0, dur = 0.45) {
+    el.querySelectorAll('.hl i').forEach((i) => { i.style.transform = `scaleX(${E.expo(p(t, t0, t0 + dur))})`; });
+  }
+  // exit: fast, upward (exits are faster than entrances)
+  const exitK = (t, te, d = 0.25) => E.in(p(t, te, te + d));
+  function scene(el, t, s, e) {
+    const on = t >= s - 0.001 && t < e + 0.3;
+    el.style.display = on ? 'block' : 'none';
+    return on;
+  }
+
+  setWords($('s1h'), 'رحلة تيشيرتك');
+  setWords($('s1s'), 'من القطن.. حتى [باب_بيتك]');
+  setWords($('s2s'), 'خامة ناعمة تتنفّس معك');
+  setWords($('s3h'), 'خياطة بدقّة');
+  setWords($('s3s'), 'كل غرزة في [مكانها]');
+  setWords($('s4h'), 'طباعة دقيقة');
+  setWords($('s4s'), '[٤_ألوان] تناسب ذوقك');
+  setWords($('s5h'), 'تغليف أنيق');
+  setWords($('s5s'), 'مغلّف بعناية حتى [يصلك]');
+  setWords($('s6h'), 'حتى باب بيتك');
+  setWords($('s6h2'), 'حتى لو كنت [خارج_الكويت]');
+  setWords($('s6s'), 'شحن آمن وسريع');
+  $('note').innerHTML = 'سعر الشحن يُحسب عبر الموقع الإلكتروني<br>غير شامل الرسوم الجمركية<br><span style="font-weight:500">ما عدا السعودية / الإمارات / البحرين</span>';
+
+  // ---------- background streaks (sports grunge, like the brand's story) ----------
+  const STREAKS = [
+    { x: -60, y: 70, w: 360, h: 18, r: -38, c: '' }, { x: -90, y: 150, w: 420, h: 9, r: -38, c: 'k' },
+    { x: 820, y: 90, w: 380, h: 14, r: 38, c: '' }, { x: 870, y: 40, w: 300, h: 6, r: 38, c: 'k' },
+    { x: -80, y: 1780, w: 460, h: 20, r: 38, c: '' }, { x: 760, y: 1820, w: 420, h: 16, r: -38, c: '' },
+    { x: 800, y: 1740, w: 360, h: 7, r: -38, c: 'k' },
+  ];
+  STREAKS.forEach((s) => { const d = document.createElement('div'); d.className = 'streak ' + s.c; css(d, { left: s.x + 'px', top: s.y + 'px', width: s.w + 'px', height: s.h + 'px' }); $('streaks').appendChild(d); s.el = d; });
+
+  // ---------- grain: one noise tile, offset every frame ----------
+  const g = $('grain').getContext('2d'); const tile = document.createElement('canvas'); tile.width = tile.height = 256;
+  { const c = tile.getContext('2d'), im = c.createImageData(256, 256), r = rng(3); for (let i = 0; i < im.data.length; i += 4) { const v = 110 + r() * 145; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } c.putImageData(im, 0, 0); }
+  css($('grain'), { width: '1080px', height: '1920px' });
+  function grain(frame) { const r = rng(frame * 7 + 1); const ox = -r() * 256, oy = -r() * 256; for (let y = oy; y < 960; y += 256) for (let x = ox; x < 540; x += 256) g.drawImage(tile, x, y); }
+
+  // ---------- s2 cotton bolls ----------
+  const BOLLS = []; { const r = rng(21);
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 + 0.35, R = 455 + r() * 40;
+      const el = document.createElement('div'); el.className = 'boll';
+      let h = ''; [[20, 30, 70], [60, 10, 80], [78, 40, 66], [36, 54, 62], [70, 62, 54]].forEach(([x, y, s]) => { h += `<i style="left:${x}px;top:${y}px;width:${s}px;height:${s}px"></i>`; });
+      el.innerHTML = h; $('bolls').appendChild(el);
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      line.setAttribute('fill', 'none'); line.setAttribute('stroke', '#ffffff'); line.setAttribute('stroke-width', '4'); line.setAttribute('stroke-linecap', 'round');
+      $('threads').appendChild(line);
+      BOLLS.push({ el, line, a, R, delay: r() * 0.35, bob: r() * 6 });
+    } }
+
+  // ---------- s3 outline ----------
+  const outline = $('outline'); outline.setAttribute('d', window.OUTLINE.tee);
+  const OL = outline.getTotalLength(); outline.style.strokeDasharray = OL;
+  const ST = ['stHem', 'stCuffR', 'stCuffL', 'stCollar'].map((id) => { const el = $(id); return { el, L: el.getTotalLength() }; });
+
+  // ---------- s4 tees + swatches ----------
+  const COLORS = [
+    { k: 'black', name: 'أسود', sw: '#2d2d2d' }, { k: 'charcoal', name: 'رمادي داكن', sw: '#4a4a4a' },
+    { k: 'grey', name: 'رمادي', sw: '#b5b5b3' }, { k: 'white', name: 'أبيض', sw: '#f7f7f5' },
+  ];
+  const BOX = { black: [449, 335, 631, 383] };
+  COLORS.forEach((c, i) => {
+    const d = document.createElement('div'); d.className = 'tee'; d.id = 'tee4-' + c.k;
+    d.innerHTML = (i === 0 ? '<img src="assets/tee-black-blank.png">' : '') + `<img class="printed" src="assets/tee-${c.k}.png">`;
+    $('s4tees').appendChild(d); c.el = d;
+    const s = document.createElement('div'); s.className = 'sw'; css(s, { right: (540 - 4 * 50 + i * 100 - 35 + 50) + 'px', background: c.sw }); $('sws').appendChild(s); c.swEl = s;
+  });
+
+  // ---------- s6 cargo box + routes ----------
+  $('cargo').innerHTML = '<g id="cargoBox"><rect x="330" y="170" width="220" height="154" rx="8" fill="#161616"/><rect x="330" y="296" width="220" height="28" fill="#9CD00D"/><text x="440" y="252" text-anchor="middle" font-family="Jost" font-weight="500" font-size="40" letter-spacing="4" fill="#fff">VAMOS</text></g>';
+  const DESTS = [[-180, -110], [-150, 120], [-40, -205], [140, 160], [205, 30], [-225, 10], [40, 200]];
+  const ROUTES = DESTS.map(([x, y], i) => {
+    const pth = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const sx = 70, sy = -100, mx = (sx + x) / 2, my = (sy + y) / 2 - 110;
+    pth.setAttribute('d', `M${sx},${sy} Q${mx},${my} ${x},${y}`); pth.setAttribute('stroke-dasharray', '2 16');
+    $('routes').appendChild(pth);
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', 16); dot.setAttribute('fill', '#9CD00D'); dot.setAttribute('stroke', '#121212'); dot.setAttribute('stroke-width', 6);
+    $('dots').appendChild(dot);
+    return { pth, dot, L: pth.getTotalLength() };
+  });
+  const GL = [...$('globeLines').children].map((el) => { const L = el.getTotalLength(); el.style.strokeDasharray = L; return { el, L }; });
+
+  // ---------- s7 tiles: right to left, like the brand's story ----------
+  const TILES = []; { const ys = [560, 726, 892, 1058, 1224, 1390];
+    for (let r = 0; r < 6; r++) {
+      const xs = r < 5 ? [838, 645, 452, 259, 66] : [741, 548, 355, 162];
+      xs.forEach((x, c) => { const d = document.createElement('div'); d.className = 'tile'; css(d, { left: x + 'px', top: ys[r] + 'px' }); d.innerHTML = `<img src="assets/flags/r${r}c${c}.png">`; $('tiles').appendChild(d); TILES.push(d); });
+    } }
+
+  // ---------- s8 mini tees fanned ----------
+  const MINIS = COLORS.map((c, i) => { const d = document.createElement('div'); d.className = 'mini'; d.innerHTML = `<img src="assets/tee-${c.k}.png">`; $('minis').appendChild(d); return d; });
+
+  // ======================= render(t) =======================
+  function render(t) {
+    const frame = Math.round(t * TL.fps);
+    grain(frame);
+    // background drift
+    STREAKS.forEach((s, i) => { s.el.style.transform = `rotate(${s.r}deg) translateX(${Math.sin(t * 0.6 + i) * 18}px)`; });
+    $('bgTex').style.transform = `translate(${Math.sin(t * 0.13) * 20}px, ${Math.cos(t * 0.11) * 20}px)`;
+
+    // persistent top logo + progress (chapters 1..5 = s2..s6)
+    { const k = E.out(p(t, 2.9, 3.4)) * (1 - p(t, TL.s8.start - 0.1, TL.s8.start + 0.2));
+      css($('topLogo'), { opacity: k, transform: `translateY(${(1 - k) * -20}px)` }); css($('prog'), { opacity: k });
+      const ch = [TL.s2, TL.s3, TL.s4, TL.s5, TL.s6];
+      [...$('prog').querySelectorAll('b')].forEach((b, i) => { const nx = i < 4 ? ch[i + 1].start : TL.s7.start; b.style.transform = `scaleX(${p(t, ch[i].start, nx)})`; }); }
+
+    // ---------- S1 hook ----------
+    if (scene($('s1'), t, 0, TL.s1.exit)) { const s = TL.s1; const x = exitK(t, s.exit, 0.3);
+      revealWords($('s1h'), t, s.words, 0.12, 0.55, 60); revealWords($('s1s'), t, s.sub, 0.09); highlight($('s1s'), t, s.hl);
+      ['s1h', 's1s'].forEach((id) => css($(id), { opacity: 1 - x, transform: `translateY(${-70 * x}px)` }));
+      const k = E.out(p(t, 0, 1.4));
+      css($('s1tee'), { transform: `translateY(${lerp(40, 0, k) + Math.sin(t * 2) * 6 - 0 * x}px) rotate(${lerp(-5, 0, k)}deg) scale(${lerp(1.1, 1, k) * (1 - 0.5 * x)})`, opacity: 1 - x });
+      css($('s1glow'), { transform: `scale(${(0.82 + 0.18 * E.back(p(t, 0, 0.8))) * (1 + 0.015 * Math.sin(t * 3)) * (1 - 0.6 * x)})`, opacity: 1 - x });
+      css($('s1shadow'), { opacity: 1 - x });
+    }
+
+    // ---------- S2 cotton ----------
+    if (scene($('s2'), t, TL.s2.start, TL.s2.exit)) { const s = TL.s2; const x = exitK(t, s.exit);
+      const ck = E.back(p(t, s.chip, s.chip + 0.4)); css($('s2c'), { opacity: p(t, s.chip, s.chip + 0.15) * (1 - x), transform: `scale(${ck})` });
+      const hk = E.expo(p(t, s.count - 0.15, s.count + 0.35)); css($('s2h'), { opacity: hk * (1 - x), transform: `translateY(${(1 - hk) * 50 - 60 * x}px)` });
+      $('s2n').textContent = AR(Math.round(100 * E.out(p(t, s.count, s.countEnd))));
+      revealWords($('s2s'), t, s.sub); css($('s2s'), { opacity: 1 - x, transform: `translateY(${-60 * x}px)` });
+      const mk = E.back(p(t, s.circle, s.circle + 0.6));
+      css($('macro'), { transform: `scale(${(0.55 + 0.45 * mk) * (1 + 0.04 * p(t, s.circle, s.exit))}) rotate(${(t - s.circle) * 6}deg)`, opacity: p(t, s.circle, s.circle + 0.2) * (1 - x) });
+      css($('macro').firstChild, { transform: `rotate(${-(t - s.circle) * 6}deg)` });
+      const cx = 540, cy = 1130;
+      BOLLS.forEach((b, i) => {
+        const ink = E.out(p(t, s.circle + 0.1 + b.delay, s.circle + 0.7 + b.delay));
+        const ab = E.inout(p(t, s.absorb + i * 0.04, s.absorb + 0.45 + i * 0.04));
+        const R = lerp(b.R + 120, b.R, ink) * (1 - 0.62 * ab);
+        const bx = cx + Math.cos(b.a) * R, by = cy + Math.sin(b.a) * R + Math.sin(t * 2.2 + b.bob) * 8;
+        css(b.el, { left: bx - 75 + 'px', top: by - 65 + 'px', opacity: ink * (1 - ab) * (1 - x), transform: `scale(${(0.8 + 0.2 * ink) * (1 - 0.5 * ab)})` });
+        // thread from boll to the fabric circle edge
+        const ex = cx + Math.cos(b.a) * 320, ey = cy + Math.sin(b.a) * 320;
+        b.line.setAttribute('d', `M${bx},${by} Q${(bx + ex) / 2 + Math.sin(b.a) * 40},${(by + ey) / 2 - Math.cos(b.a) * 40} ${ex},${ey}`);
+        const L = b.line.getTotalLength(); const dk = E.out(p(t, s.circle + 0.5 + b.delay, s.circle + 1.1 + b.delay));
+        b.line.style.strokeDasharray = L; b.line.style.strokeDashoffset = L * (1 - dk); b.line.style.opacity = (1 - ab) * (1 - x) * 0.95;
+      });
+    }
+
+    // ---------- S3 stitching ----------
+    if (scene($('s3'), t, TL.s3.start, TL.s3.exit)) { const s = TL.s3; const x = exitK(t, s.exit);
+      const ck = E.back(p(t, s.start + 0.05, s.start + 0.45)); css($('s3c'), { opacity: p(t, s.start, s.start + 0.15) * (1 - x), transform: `scale(${ck})` });
+      revealWords($('s3h'), t, s.start + 0.15, 0.1, 0.5, 50); revealWords($('s3s'), t, s.sub); highlight($('s3s'), t, s.sub + 0.35);
+      ['s3h', 's3s'].forEach((id) => css($(id), { opacity: 1 - x, transform: `translateY(${-60 * x}px)` }));
+      const dk = E.inout(p(t, s.draw, s.drawEnd)); outline.style.strokeDashoffset = OL * (1 - dk);
+      const span = (s.stitchEnd - s.stitch) / ST.length;
+      ST.forEach((o, i) => { const k = E.out(p(t, s.stitch + i * span, s.stitch + (i + 1) * span));
+        o.el.style.opacity = k > 0 ? 1 : 0;
+        o.el.style.strokeDasharray = dashUpTo(o.L * k, 16, 12); });
+      // needle rides the stitch currently being sewn
+      { const kk = clamp((t - s.stitch) / span); const idx = Math.min(ST.length - 1, Math.floor(kk));
+        const o = ST[idx]; const k = E.out(p(t, s.stitch + idx * span, s.stitch + (idx + 1) * span)); const pt = o.el.getPointAtLength(o.L * k);
+        const n = $('needle'); n.setAttribute('cx', pt.x); n.setAttribute('cy', pt.y + Math.sin(t * 60) * 5); n.style.opacity = t > s.stitch && t < s.stitchEnd ? 1 : 0; }
+      const fk = E.out(p(t, s.fill, s.fill + 0.6));
+      css($('s3tee'), { opacity: fk }); outline.style.opacity = 1 - fk; css($('s3shadow'), { opacity: fk });
+      $('stitches').style.opacity = 1 - 0.6 * p(t, s.exit - 0.4, s.exit);
+      // stitches stay visible over the fill a moment, then fade into the fabric
+    }
+
+    // ---------- S4 print + colours ----------
+    if (scene($('s4'), t, TL.s4.start, TL.s4.exit)) { const s = TL.s4; const x = exitK(t, s.exit);
+      const ck = E.back(p(t, s.start + 0.05, s.start + 0.45)); css($('s4c'), { opacity: p(t, s.start, s.start + 0.15) * (1 - x), transform: `scale(${ck})` });
+      revealWords($('s4h'), t, s.start + 0.15, 0.1, 0.5, 50); revealWords($('s4s'), t, s.sub); highlight($('s4s'), t, s.sub + 0.3);
+      ['s4h', 's4s'].forEach((id) => css($(id), { opacity: 1 - x, transform: `translateY(${-60 * x}px)` }));
+      // print head sweeps the chest; the printed shirt is revealed above it
+      const [, y0, , y1] = BOX.black; const sc = 820 / 1080;
+      const hk = E.inout(p(t, s.scan, s.scanEnd)); const hy = lerp(y0 - 50, y1 + 50, hk);
+      const scanning = t >= s.scan - 0.25 && t <= s.scanEnd + 0.3;
+      css($('head'), { left: 130 + 360 * sc + 'px', width: 360 * sc + 'px', top: 720 + hy * sc - 13 + 'px', opacity: scanning ? Math.min(p(t, s.scan - 0.25, s.scan), 1 - p(t, s.scanEnd, s.scanEnd + 0.3)) : 0 });
+      const printed = COLORS[0].el.querySelector('.printed');
+      printed.style.clipPath = t < s.scanEnd + 0.01 ? `inset(0 0 ${100 - (hy / 1080) * 100}% 0)` : 'none';
+      // colour swaps: whip left (forward in RTL), new one comes in from the right
+      const sw = s.swaps; let active = 0; sw.forEach((ts, i) => { if (t >= ts) active = i + 1; });
+      COLORS.forEach((c, i) => {
+        let tx = 0, op = 0, sk = 0;
+        if (i === active) { const ts = i === 0 ? -1 : sw[i - 1]; const k = E.expo(p(t, ts, ts + 0.32)); tx = lerp(700, 0, k); op = 1; sk = (1 - k) * -10; }
+        else if (i === active - 1) { const k = E.in(p(t, sw[i], sw[i] + 0.22)); tx = lerp(0, -900, k); op = 1 - k * 0.3; sk = k * 10; }
+        css(c.el, { opacity: op * (1 - x * (i === 3 ? 0 : 1)), transform: `translateX(${tx}px) skewX(${sk}deg) translateY(${Math.sin(t * 2) * 5}px)` });
+        c.swEl.style.setProperty('--on', i === active ? 1 : 0);
+        css(c.swEl, { opacity: E.out(p(t, s.scanEnd + 0.1 + i * 0.06, s.scanEnd + 0.4 + i * 0.06)) * (1 - x), transform: `scale(${i === active ? 1.08 : 0.92})` });
+      });
+      $('colorName').textContent = COLORS[active].name; css($('colorName'), { opacity: E.out(p(t, s.scanEnd + 0.2, s.scanEnd + 0.5)) * (1 - x) });
+      css($('s4shadow'), { opacity: 1 - x });
+      // handoff: the white tee lifts toward the box in S5
+      if (t > s.exit) css(COLORS[3].el, { transform: `translateY(${-140 * E.in(p(t, s.exit, s.exit + 0.25))}px) scale(${1 - 0.3 * E.in(p(t, s.exit, s.exit + 0.25))})`, opacity: 1 - p(t, s.exit + 0.15, s.exit + 0.25) });
+    }
+
+    // ---------- S5 packing ----------
+    if (scene($('s5'), t, TL.s5.start, TL.s5.exit)) { const s = TL.s5; const x = exitK(t, s.exit, 0.25);
+      const ck = E.back(p(t, s.start + 0.05, s.start + 0.45)); css($('s5c'), { opacity: p(t, s.start, s.start + 0.15) * (1 - x), transform: `scale(${ck})` });
+      revealWords($('s5h'), t, s.start + 0.15, 0.1, 0.5, 50); revealWords($('s5s'), t, s.sub); highlight($('s5s'), t, s.sub + 0.35);
+      ['s5h', 's5s'].forEach((id) => css($(id), { opacity: 1 - x, transform: `translateY(${-60 * x}px)` }));
+      const bk = E.back(p(t, s.start, s.start + 0.5));
+      css($('box'), { transform: `translateY(${(1 - bk) * 500}px) translateX(${-1200 * E.in(p(t, s.exit, s.exit + 0.25))}px)`, opacity: p(t, s.start, s.start + 0.1) });
+      // tee drops into the box, folded (narrower and shorter)
+      const dk = E.in(p(t, s.drop, s.dropEnd)); const fold = E.out(p(t, s.drop, s.drop + 0.3));
+      css($('s5tee'), { transform: `translateY(${lerp(-80, 520, dk)}px) scaleX(${lerp(1, 0.78, fold)}) scaleY(${lerp(1, 0.6, fold)})`, opacity: p(t, s.start + 0.1, s.drop) * (1 - p(t, s.dropEnd, s.dropEnd + 0.05)) });
+      // flaps close
+      const lk = E.back(p(t, s.lid, s.lidEnd));
+      css($('flapR'), { transform: `rotate(${lerp(-118, 0, lk)}deg)` }); css($('flapL'), { transform: `rotate(${lerp(118, 0, lk)}deg)` });
+      css($('tape'), { transform: `scaleY(${E.expo(p(t, s.tape, s.tape + 0.35))})` });
+      const lb = E.back(p(t, s.label, s.label + 0.4)); css($('label'), { opacity: p(t, s.label, s.label + 0.1), transform: `scale(${lb}) rotate(${-6 + 6 * lb}deg)` });
+      // little squash when the lid shuts
+      const sq = Math.sin(clamp((t - s.lidEnd) / 0.25) * Math.PI) * 0.025; $('boxFront').style.transform = `scale(${1 + sq}, ${1 - sq})`;
+    }
+
+    // ---------- S6 delivery ----------
+    if (scene($('s6'), t, TL.s6.start, TL.s6.exit)) { const s = TL.s6; const x = exitK(t, s.exit);
+      const ck = E.back(p(t, s.start + 0.05, s.start + 0.45)); css($('s6c'), { opacity: p(t, s.start, s.start + 0.15) * (1 - x), transform: `scale(${ck})` });
+      const h1out = E.in(p(t, s.abroad - 0.2, s.abroad + 0.05));
+      revealWords($('s6h'), t, s.start + 0.15, 0.1, 0.5, 50); css($('s6h'), { opacity: 1 - h1out, transform: `translateY(${-60 * h1out}px)` });
+      revealWords($('s6h2'), t, s.abroad, 0.09, 0.5, 50); highlight($('s6h2'), t, s.abroad + 0.35); css($('s6h2'), { opacity: 1 - x, transform: `translateY(${-60 * x}px)` });
+      revealWords($('s6s'), t, s.abroad + 0.4); css($('s6s'), { opacity: 1 - x });
+      // truck: in from the right, load, drive off to the left
+      const ink = E.expo(p(t, s.truckIn, s.truckInEnd)); const dr = E.in(p(t, s.drive, s.driveEnd));
+      const tx = lerp(1100, 0, ink) + lerp(0, -1400, dr);
+      const bounce = Math.abs(Math.sin(t * 14)) * 4 * (ink < 1 || dr > 0 ? 1 : 0.3);
+      css($('truck'), { transform: `translate(${tx}px, ${-bounce}px) skewX(${(1 - ink) * -8 + dr * 10}deg)` });
+      $('speed').style.opacity = (ink < 1 ? 1 - ink : 0) + dr; $('speed').style.transform = `translateX(${(1 - ink) * 60 + dr * 80}px)`;
+      const lo = E.back(p(t, s.load, s.load + 0.35)); $('cargoBox').style.transform = `translate(${(1 - lo) * 0}px, ${(1 - lo) * -260}px)`; $('cargoBox').style.opacity = p(t, s.load, s.load + 0.08);
+      // globe + routes from Kuwait
+      const gk = E.out(p(t, s.globe, s.globe + 0.7));
+      css($('globe'), { opacity: p(t, s.globe, s.globe + 0.1) * (1 - x), transform: `scale(${(0.85 + 0.15 * gk) * (1 + 0.03 * p(t, s.globe, s.exit))})` });
+      GL.forEach((o, i) => { o.el.style.strokeDashoffset = o.L * (1 - E.out(p(t, s.globe + i * 0.05, s.globe + 0.6 + i * 0.05))); });
+      const pk = E.back(p(t, s.globe + 0.25, s.globe + 0.6)); $('pin').setAttribute('transform', `translate(70,${-30 - (1 - pk) * 60}) scale(${pk})`);
+      ROUTES.forEach((r, i) => { const k = E.out(p(t, s.routes + i * 0.08, s.routes + 0.5 + i * 0.08));
+        r.pth.style.opacity = k > 0 ? 1 : 0; r.pth.style.strokeDasharray = dashUpTo(r.L * k, 2, 16);
+        const dk = E.back(p(t, s.routes + 0.4 + i * 0.08, s.routes + 0.7 + i * 0.08)); r.dot.setAttribute('r', 16 * dk); });
+    }
+
+    // ---------- S7 flags ----------
+    if (scene($('s7'), t, TL.s7.start, TL.s7.exit)) { const s = TL.s7; const x = exitK(t, s.exit);
+      const ck = E.back(p(t, s.head, s.head + 0.4)); css($('s7c'), { opacity: p(t, s.head, s.head + 0.15) * (1 - x), transform: `scale(${ck})` });
+      const hk = E.expo(p(t, s.head, s.head + 0.45)); css($('s7h'), { opacity: hk * (1 - x), transform: `translateY(${(1 - hk) * 50 - 60 * x}px)` });
+      const shown = TILES.filter((_, i) => t >= s.tiles + i * s.step).length; $('cnt').textContent = AR(Math.max(1, shown));
+      TILES.forEach((d, i) => { const t0 = s.tiles + i * s.step; const k = E.back(p(t, t0, t0 + 0.38));
+        css(d, { opacity: p(t, t0, t0 + 0.08) * (1 - x), transform: `translateY(${(1 - k) * 60 + Math.sin(t * 2 + i) * 3 * (k >= 1 ? 1 : 0)}px) scale(${0.6 + 0.4 * k})` }); });
+    }
+
+    // ---------- S8 CTA ----------
+    if (scene($('s8'), t, TL.s8.start, TL.duration + 1)) { const s = TL.s8;
+      const ik = E.inout(p(t, s.iris, s.iris + 0.55)); css($('iris'), { transform: `scale(${ik * 24})` });
+      const lk = E.back(p(t, s.logo, s.logo + 0.55)); css($('bigLogo'), { opacity: p(t, s.logo, s.logo + 0.1), transform: `scale(${0.7 + 0.3 * lk + 0.015 * Math.sin(t * 2)})` });
+      css($('tag'), { opacity: E.out(p(t, s.logo + 0.3, s.logo + 0.7)), transform: `translateY(${(1 - E.out(p(t, s.logo + 0.3, s.logo + 0.7))) * 20}px)` });
+      const fan = [[-24, -280, 760], [-8, -95, 720], [8, 95, 720], [24, 280, 760]];
+      MINIS.forEach((d, i) => { const k = E.back(p(t, s.tees + i * 0.08, s.tees + 0.5 + i * 0.08)); const [r, dx, y] = fan[3 - i];
+        css(d, { left: 540 + dx * k - 165 + 'px', top: y + (1 - k) * 120 + Math.sin(t * 2 + i) * 6 + 'px', opacity: p(t, s.tees + i * 0.08, s.tees + 0.1 + i * 0.08), transform: `rotate(${r * k}deg)` }); });
+      const ck = E.back(p(t, s.cta, s.cta + 0.45)); css($('ctaPill'), { opacity: p(t, s.cta, s.cta + 0.1), transform: `scale(${ck * (1 + 0.025 * Math.sin((t - s.cta) * 6) * p(t, s.cta + 0.6, s.cta + 1))})` });
+      const uk = E.out(p(t, s.url, s.url + 0.4)); css($('url'), { opacity: uk, transform: `translateY(${(1 - uk) * 24}px)` });
+      css($('note'), { opacity: E.out(p(t, s.note, s.note + 0.4)) });
+    }
+    return {};
+  }
+  // dashed route that grows: repeat "2 16" up to length L, then a long gap
+  // a dashed line that grows along its path: whole dashes up to length L, then one long gap
+  function dashUpTo(L, on, off) { if (L <= 0.5) return '0 100000'; const n = Math.floor(L / (on + off)); const rest = L - n * (on + off);
+    return (n ? Array(n).fill(`${on} ${off}`).join(' ') + ' ' : '') + `${Math.min(on, rest)} 100000`; }
+
+  window.render = render;
+  await document.fonts.load('900 100px Rubik', 'رحلة'); await document.fonts.load('800 60px Tajawal', 'خامة'); await document.fonts.load('700 60px Tajawal', 'خامة'); await document.fonts.load('500 60px Tajawal', 'خامة'); await document.fonts.load('500 60px Jost', 'VAMOS'); await document.fonts.load('600 60px Jost', 'VAMOS');
+  await document.fonts.ready;
+  await Promise.all([...document.images].map((im) => (im.complete ? Promise.resolve() : new Promise((r) => { im.onload = im.onerror = r; }))));
+  render(0);
+  window.READY = true;
+  if (!window.CAPTURE) { const t0 = performance.now(); const loop = () => { render(((performance.now() - t0) / 1000) % TL.duration); requestAnimationFrame(loop); }; loop(); }
+})();
+</script>
+</body>
+</html>
