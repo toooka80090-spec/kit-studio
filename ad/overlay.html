@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>VAMOS — Cotton to Door (overlay)</title>
+<meta name="viewport" content="width=1080">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800;900&family=Jost:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* VAMOS identity: black + lime only, white for text */
+  :root{--lime:#9AD00C;--neon:#A8F01E;--black:#0b0b0b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:transparent}
+  body{font-family:Rubik,sans-serif;color:#fff}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden}
+  .abs{position:absolute}
+  /* readable band under captions */
+  #shade{left:0;right:0;bottom:0;height:900px;background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.45) 45%,transparent)}
+  #topShade{left:0;right:0;top:0;height:330px;background:linear-gradient(to bottom,rgba(0,0,0,.65),transparent)}
+  #bug{top:96px;left:50%;width:330px;margin-left:-165px}
+  /* secondary element: two thick slanted parallel bars */
+  .bars{width:220px;height:260px}
+  .bars i{position:absolute;top:0;width:58px;height:300px;background:var(--lime);transform:skewX(-24deg);transform-origin:0 0}
+  .bars i:nth-child(2){left:86px}
+  /* captions */
+  .cap{left:70px;right:70px;bottom:250px;direction:rtl;text-align:right}
+  .num{font-family:Jost,sans-serif;font-weight:800;font-size:150px;line-height:.9;color:transparent;-webkit-text-stroke:4px var(--lime);direction:ltr;text-align:right}
+  .ttl{font-weight:900;font-size:118px;line-height:1.12;margin-top:14px}
+  .sub{font-weight:800;font-size:58px;line-height:1.25;margin-top:16px;color:var(--lime)}
+  .w{display:inline-block}
+  /* hook */
+  #hook{left:60px;right:60px;bottom:280px;direction:rtl;text-align:center}
+  #hook .ttl{font-size:150px}
+  /* print stamp + colours */
+  #stamp{left:50%;top:880px;width:520px;margin-left:-260px;filter:brightness(0)}
+  #ring{left:540px;top:930px;width:200px;height:200px;margin:-100px 0 0 -100px;border-radius:50%;border:10px solid var(--neon)}
+  #dim{inset:0;background:rgba(11,11,11,.86)}
+  #tees{left:0;right:0;top:560px;display:flex;justify-content:center;gap:14px;direction:rtl}
+  .tee{width:240px;text-align:center}
+  .tee img{width:240px;display:block;filter:drop-shadow(0 0 26px rgba(154,208,12,.35))}
+  .tee b{display:block;margin-top:18px;font-weight:800;font-size:36px}
+  #fourT{left:0;right:0;top:300px;text-align:center;direction:rtl;font-weight:900;font-size:96px}
+  #fourT em{font-style:normal;color:var(--lime)}
+  /* box scene */
+  #boxScene{inset:0;background:radial-gradient(ellipse at 50% 55%,rgba(154,208,12,.30),rgba(11,11,11,0) 60%),var(--black)}
+  .bigV{left:-10%;width:120%;top:-5%;height:110%;background:var(--lime);clip-path:polygon(0 0,22% 0,50% 78%,78% 0,100% 0,50% 100%)}
+  #boxImg{left:50%;top:330px;height:1180px;transform-origin:50% 100%}
+  /* countries */
+  #cTop{left:0;right:0;top:250px;text-align:center;direction:rtl}
+  #cTop .k{font-weight:800;font-size:62px}
+  #cNum{font-weight:900;font-size:300px;line-height:1;color:var(--lime);text-shadow:0 0 60px rgba(154,208,12,.5)}
+  #cNum span{font-size:120px;color:#fff;margin-right:20px}
+  #flags{left:70px;right:70px;top:1000px;display:grid;grid-template-columns:repeat(6,1fr);gap:16px 16px;direction:rtl}
+  #flags img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:10px;box-shadow:0 0 0 3px rgba(154,208,12,.85),0 10px 24px rgba(0,0,0,.6)}
+  /* CTA */
+  #cta{inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(154,208,12,.28),rgba(11,11,11,0) 62%),var(--black)}
+  #ctaV{left:-15%;width:130%;top:300px;height:1000px;background:var(--lime);opacity:.95;clip-path:polygon(0 0,24% 0,50% 74%,76% 0,100% 0,50% 100%)}
+  #ctaLogo{left:50%;top:120px;width:300px;margin-left:-150px}
+  #ctaBox{left:50%;top:380px;height:860px}
+  #ctaNow{left:0;right:0;top:1290px;text-align:center;font-weight:900;font-size:150px;direction:rtl}
+  #ctaUrl{left:50%;top:1500px;transform:translateX(-50%);background:var(--lime);color:#000;font-family:Jost,sans-serif;font-weight:700;font-size:52px;padding:10px 46px 16px;border-radius:80px;white-space:nowrap}
+  #ctaNote{left:70px;right:70px;top:1660px;text-align:center;direction:rtl;font-weight:700;font-size:31px;line-height:1.5;color:rgba(255,255,255,.82)}
+  #ctaNote b{color:var(--lime);font-weight:800}
+  /* V wipe: lime block with a V-shaped leading edge and a black band behind it */
+  .vw{left:-10%;width:120%;height:5760px;top:-5760px}
+  .vw.l{background:var(--lime);clip-path:polygon(0 0,100% 0,100% 80%,50% 100%,0 80%)}
+  .vw.b{background:#000;clip-path:polygon(0 0,100% 0,100% 80%,50% 100%,0 80%)}
+  #flash{inset:0;background:radial-gradient(circle at 50% 50%,rgba(220,255,140,.95),rgba(168,240,30,.5) 45%,rgba(154,208,12,0) 75%)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="abs" id="topShade"></div>
+  <div class="abs" id="shade"></div>
+  <img class="abs" id="bug" src="../motion/site/logo-horizontal-dark.png">
+  <div class="abs bars" id="barsHook" style="top:-40px;left:40px"><i></i><i></i></div>
+
+  <div class="abs" id="hook"><div class="ttl" id="hT"></div><div class="sub" id="hS"></div></div>
+
+  <div class="abs cap" id="cap1"><div class="num">01</div><div class="ttl">قطن ١٠٠٪</div></div>
+  <div class="abs cap" id="cap2"><div class="num">02</div><div class="ttl">الخياطة</div></div>
+  <div class="abs cap" id="cap3"><div class="num">03</div><div class="ttl">الطباعة</div></div>
+  <div class="abs cap" id="cap4"><div class="num">04</div><div class="ttl">التغليف</div></div>
+  <div class="abs cap" id="cap5"><div class="num">05</div><div class="ttl">التوصيل</div><div class="sub" id="cap5s">حتى باب بيتك</div></div>
+
+  <img class="abs" id="stamp" src="../motion/site/wordmark-white.png">
+  <div class="abs" id="ring"></div>
+  <div class="abs" id="dim"></div>
+  <div class="abs" id="fourT">٤ <em>ألوان</em></div>
+  <div class="abs" id="tees">
+    <div class="tee"><img src="assets/tees/cut-black.png"><b>أسود</b></div>
+    <div class="tee"><img src="assets/tees/cut-charcoal.png"><b>رمادي داكن</b></div>
+    <div class="tee"><img src="assets/tees/cut-grey.png"><b>رمادي</b></div>
+    <div class="tee"><img src="assets/tees/cut-white.png"><b>أبيض</b></div>
+  </div>
+
+  <div class="abs" id="boxScene"><div class="abs bigV" id="boxV"></div><img class="abs" id="boxImg" src="assets/box/box-front.webp"></div>
+
+  <div class="abs" id="cTop"><div class="k" id="cK">نوصل إلى</div><div id="cNum"><b id="cN">٠</b><span>دولة</span></div></div>
+  <div class="abs" id="flags"></div>
+
+  <div class="abs" id="cta">
+    <div class="abs" id="ctaV"></div>
+    <img class="abs" id="ctaLogo" src="../motion/site/logo-vertical-dark.png">
+    <img class="abs" id="ctaBox" src="assets/box/box-front.webp">
+    <div class="abs" id="ctaNow">اطلب الآن</div>
+    <div class="abs" id="ctaUrl">www.vamos-kw.com</div>
+    <div class="abs" id="ctaNote">سعر الشحن يُحسب عبر الموقع الإلكتروني · غير شامل الرسوم الجمركية<br><b>ما عدا السعودية / الإمارات / البحرين</b></div>
+    <div class="abs bars" id="barsCta" style="bottom:-60px;right:30px;top:auto"><i></i><i></i></div>
+  </div>
+
+  <div class="abs" id="flash"></div>
+  <div class="abs vw b" id="vwB"></div>
+  <div class="abs vw l" id="vwL"></div>
+</div>
+
+<script>
+/* timeline (s) — cuts sit on the Street Trial bar lines, the print scene starts on the drop at 9.0 */
+const DURATION = 28;
+const CUTS = [3.0, 6.01, 13.03, 17.03, 21.03, 24.23];   // V wipes
+const DROP = 9.0, STAMP = 11.03, COLORS = 11.55, BOX = 15.63;
+const $ = id => document.getElementById(id);
+const clamp = x => Math.min(1, Math.max(0, x));
+const E = {
+  o: x => 1 - Math.pow(1 - x, 3),
+  io: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  back: x => { const c = 1.70158; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); }
+};
+const p = (t, a, b, e = E.io) => e(clamp((t - a) / (b - a)));
+const lerp = (a, b, k) => a + (b - a) * k;
+const toAr = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+
+/* Arabic words appear word by word, each wiping in from the right */
+function words(el, txt) { el.innerHTML = txt.split(' ').map(w => `<span class="w">${w}</span>`).join(' '); return [...el.children]; }
+const HW = words($('hT'), 'رحلة تيشيرتك'), HS = words($('hS'), 'من القطن حتى باب بيتك');
+const CAPS = [[1, 3.15, 5.85], [2, 6.15, 8.85], [3, 9.15, 10.85], [4, 13.2, 15.45], [5, 17.2, 20.85]];
+CAPS.forEach(([n]) => { const t = $('cap' + n).querySelector('.ttl'); words(t, t.textContent); });
+function reveal(ws, t0, step, t) {
+  ws.forEach((w, i) => { const k = p(t, t0 + i * step, t0 + i * step + .32, E.o);
+    w.style.clipPath = `inset(0 0 0 ${(1 - k) * 100}%)`; w.style.opacity = k > 0 ? 1 : 0; w.style.transform = `translateY(${(1 - k) * 30}px)`; });
+}
+
+/* flags */
+const FL = [];
+for (let i = 0; i < 29; i++) { const im = document.createElement('img'); im.src = `assets/countries/flags/${String(i).padStart(2, '0')}.png`; $('flags').appendChild(im); FL.push(im); }
+
+function render(t) {
+  /* hook */
+  const hookOn = t < 3.0;
+  $('hook').style.display = hookOn ? '' : 'none';
+  reveal(HW, .35, .28, t); reveal(HS, 1.35, .17, t);
+  const bh = p(t, .2, .7, E.o) * (1 - p(t, 2.75, 3.0));
+  $('barsHook').style.transform = `translateY(${(1 - bh) * -320}px)`; $('barsHook').style.display = t < 3.2 ? '' : 'none';
+
+  /* logo bug: hook through the countries */
+  $('bug').style.opacity = (t < 24.23 ? 1 : 0) * p(t, .1, .5) * (t > BOX && t < 17.03 ? 0 : 1) * (t > COLORS - .1 && t < 13.03 ? 0 : 1);
+
+  /* scene captions */
+  CAPS.forEach(([n, a, b]) => {
+    const el = $('cap' + n), on = t >= a - .05 && t < b + .3;
+    el.style.display = on ? '' : 'none'; if (!on) return;
+    const nk = p(t, a, a + .3, E.back);
+    el.querySelector('.num').style.cssText = `opacity:${clamp(nk)};transform:translateX(${(1 - nk) * 120}px)`;
+    reveal([...el.querySelector('.ttl').children], a + .15, .2, t);
+    const out = p(t, b - .05, b + .25);
+    el.style.opacity = 1 - out; el.style.transform = `translateY(${out * 40}px)`;
+  });
+  /* 05: second line swaps to the abroad message */
+  if (t >= 17.2) $('cap5s').textContent = t < 19.03 ? 'حتى باب بيتك' : 'حتى لو كنت خارج الكويت';
+  const s5 = t < 19.03 ? p(t, 17.8, 18.2, E.o) : p(t, 19.03, 19.4, E.o);
+  $('cap5s').style.clipPath = `inset(0 0 0 ${(1 - s5) * 100}%)`;
+  $('shade').style.opacity = t < 24.23 ? 1 : 0;
+  $('topShade').style.opacity = t < 24.23 ? 1 : 0;
+
+  /* drop: flash + logo stamped onto the fresh lime ink */
+  const fl = Math.max(0, 1 - Math.abs(t - DROP) / .2) * .85 + Math.max(0, 1 - Math.abs(t - STAMP) / .16) * .6;
+  $('flash').style.opacity = fl;
+  const sk = p(t, STAMP - .12, STAMP + .06, E.o);
+  $('stamp').style.display = t >= STAMP - .12 && t < 13.03 ? '' : 'none';
+  $('stamp').style.transform = `scale(${lerp(2.2, 1, sk)})`; $('stamp').style.opacity = clamp(sk * 1.5);
+  const rk = clamp((t - STAMP) / .5);
+  $('ring').style.opacity = t >= STAMP && t < STAMP + .5 ? 1 - rk : 0; $('ring').style.transform = `scale(${.6 + rk * 4})`;
+
+  /* 4 colours */
+  const ck = p(t, COLORS, COLORS + .3), cOut = p(t, 12.85, 13.03);
+  $('dim').style.opacity = ck * (1 - cOut);
+  $('fourT').style.opacity = p(t, COLORS + .05, COLORS + .35, E.o) * (1 - cOut);
+  $('fourT').style.transform = `scale(${lerp(.7, 1, p(t, COLORS + .05, COLORS + .35, E.back))})`;
+  [...$('tees').children].forEach((d, i) => {
+    const k = p(t, COLORS + .1 + i * .18, COLORS + .45 + i * .18, E.back);
+    d.style.opacity = clamp(k) * (1 - cOut); d.style.transform = `translateY(${(1 - k) * 260}px) rotate(${(1 - k) * (i % 2 ? 8 : -8)}deg)`;
+  });
+
+  /* box: the folded shirt goes into the real VAMOS box */
+  const bOn = t >= BOX && t < 17.03;
+  $('boxScene').style.display = bOn ? '' : 'none';
+  if (bOn) {
+    const vk = p(t, BOX, BOX + .25, E.o);
+    $('boxV').style.clipPath = `polygon(0 0,22% 0,50% ${78 * vk}%,78% 0,100% 0,50% ${100 * vk}%)`;
+    const bk = p(t, BOX + .1, BOX + .55, E.back);
+    $('boxImg').style.transform = `translateX(-50%) translateY(${(1 - bk) * 1400}px) rotate(${(1 - bk) * -12}deg) scale(${1 + Math.max(0, t - BOX - .6) * .03})`;
+  }
+
+  /* countries: counter + flags popping on the beats */
+  const cOn = t >= 21.1 && t < 24.23;
+  $('cTop').style.display = $('flags').style.display = cOn ? '' : 'none';
+  if (cOn) {
+    $('cK').style.opacity = p(t, 21.15, 21.45, E.o);
+    $('cN').textContent = toAr(Math.round(29 * p(t, 21.3, 22.2, E.o)));
+    $('cNum').style.transform = `scale(${1 + Math.max(0, 1 - Math.abs(t - 22.2) / .15) * .12})`;
+    FL.forEach((f, i) => { const a = 21.45 + i * .085, k = p(t, a, a + .3, E.back);
+      f.style.opacity = clamp(k * 1.4); f.style.transform = `scale(${lerp(.3, 1, k) * (1 + Math.max(0, 1 - Math.abs(t - 23.22) / .12) * .08)})`; });
+  }
+
+  /* CTA */
+  const ctaOn = t >= 24.23;
+  $('cta').style.display = ctaOn ? '' : 'none';
+  if (ctaOn) {
+    const vk = p(t, 24.3, 24.6, E.o);
+    $('ctaV').style.clipPath = `polygon(0 0,24% 0,50% ${74 * vk}%,76% 0,100% 0,50% ${100 * vk}%)`;
+    const lk = p(t, 24.53, 24.9, E.back);
+    $('ctaLogo').style.cssText = `opacity:${clamp(lk)};transform:scale(${lerp(.6, 1, lk)})`;
+    const bk = p(t, 24.45, 24.95, E.back);
+    $('ctaBox').style.transform = `translateX(-50%) translateY(${(1 - bk) * 1200}px) rotate(${(1 - bk) * 10}deg) scale(${1 + Math.max(0, t - 25) * .015})`;
+    const nk = p(t, 25.03, 25.35, E.back);
+    $('ctaNow').style.cssText = `opacity:${clamp(nk)};transform:scale(${lerp(.5, 1, nk) * (1 + Math.max(0, 1 - Math.abs(t - 26.13) / .15) * .08)})`;
+    const uk = p(t, 25.53, 25.85, E.back);
+    $('ctaUrl').style.cssText = `opacity:${clamp(uk)};transform:translateX(-50%) scale(${lerp(.5, 1, uk)})`;
+    $('ctaNote').style.opacity = p(t, 26.13, 26.5, E.o);
+    const bb = p(t, 24.7, 25.1, E.o);
+    $('barsCta').style.transform = `translateY(${(1 - bb) * 360}px)`;
+  }
+
+  /* V wipe on every cut: covers the frame for a moment around the cut */
+  let y = -5760;
+  CUTS.forEach(c => { const k = clamp((t - (c - .2875)) / .5); if (k > 0 && k < 1) y = lerp(-5760, 1920, k); });
+  $('vwL').style.transform = `translateY(${y + 5760}px)`; $('vwB').style.transform = `translateY(${y + 5760 + 46}px)`;
+}
+function frame(t) { render(t); }
+
+window.__ready = (async () => {
+  await Promise.all([...document.images].map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; })));
+  await document.fonts.ready;
+  await Promise.all(['700', '800', '900'].map(w => document.fonts.load(`${w} 60px Rubik`, 'رحلة')).concat(['700', '800'].map(w => document.fonts.load(`${w} 60px Jost`))));
+  frame(0); return true;
+})();
+window.frame = frame; window.DURATION = DURATION;
+</script>
+</body>
+</html>
