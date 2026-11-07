@@ -55,8 +55,8 @@
   #cta{inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(154,208,12,.28),rgba(11,11,11,0) 62%),var(--black)}
   #ctaV{left:12%;width:76%;top:430px;height:760px;background:var(--lime);opacity:.32;filter:blur(1px);clip-path:polygon(0 0,24% 0,50% 74%,76% 0,100% 0,50% 100%)}
   #ctaLogo{left:50%;top:120px;width:300px;margin-left:-150px}
-  #ctaBox{left:50%;top:380px;height:860px}
-  #ctaNow{left:0;right:0;top:1290px;text-align:center;font-weight:900;font-size:150px;direction:rtl}
+  #ctaBox{left:50%;top:300px;width:880px;filter:drop-shadow(0 0 40px rgba(154,208,12,.35))}
+  #ctaNow{left:0;right:0;top:1300px;text-align:center;font-weight:900;font-size:150px;direction:rtl}
   #ctaUrl{left:50%;top:1500px;transform:translateX(-50%);background:var(--lime);color:#000;font-family:Jost,sans-serif;font-weight:700;font-size:52px;padding:10px 46px 16px;border-radius:80px;white-space:nowrap}
   #ctaNote{left:70px;right:70px;top:1660px;text-align:center;direction:rtl;font-weight:700;font-size:31px;line-height:1.5;color:rgba(255,255,255,.82)}
   #ctaNote b{color:var(--lime);font-weight:800}
@@ -101,7 +101,7 @@
   <div class="abs" id="cta">
     <div class="abs" id="ctaV"></div>
     <img class="abs" id="ctaLogo" src="../motion/site/logo-vertical-dark.png">
-    <img class="abs" id="ctaBox" src="assets/box/box-front.webp">
+    <img class="abs" id="ctaBox" src="assets/bag/bag-cutout.png">
     <div class="abs" id="ctaNow">اطلب الآن</div>
     <div class="abs" id="ctaUrl">www.vamos-kw.com</div>
     <div class="abs" id="ctaNote">سعر الشحن يُحسب عبر الموقع الإلكتروني · غير شامل الرسوم الجمركية<br><b>ما عدا السعودية / الإمارات / البحرين</b></div>
@@ -224,7 +224,7 @@ function render(t) {
     const lk = p(t, 24.53, 24.9, E.back);
     $('ctaLogo').style.cssText = `opacity:${clamp(lk)};transform:scale(${lerp(.6, 1, lk)})`;
     const bk = p(t, 24.45, 24.95, E.back);
-    $('ctaBox').style.transform = `translateX(-50%) translateY(${(1 - bk) * 1200}px) rotate(${(1 - bk) * 10}deg) scale(${1 + Math.max(0, t - 25) * .015})`;
+    $('ctaBox').style.transform = `translateX(-50%) translateY(${(1 - bk) * 1200 + Math.sin(Math.max(0, t - 25) * 2.2) * 8}px) rotate(${(1 - bk) * 8 + Math.sin(Math.max(0, t - 25) * 1.6) * 1.2}deg) scale(${1 + Math.max(0, t - 25) * .012})`;
     const nk = p(t, 25.03, 25.35, E.back);
     $('ctaNow').style.cssText = `opacity:${clamp(nk)};transform:scale(${lerp(.5, 1, nk) * (1 + Math.max(0, 1 - Math.abs(t - 26.13) / .15) * .08)})`;
     const uk = p(t, 25.53, 25.85, E.back);
