@@ -10,7 +10,7 @@ from scipy.signal import butter, sosfilt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SR, DUR = 48000, 28.0
-CUTS = [3.0, 6.01, 13.03, 17.03, 21.03, 24.23]
+CUTS = [3.0, 6.01, 14.53, 17.03, 21.03, 24.23]
 STAMP = 11.03
 rng = np.random.default_rng(9)
 

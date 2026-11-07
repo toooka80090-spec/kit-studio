@@ -116,8 +116,8 @@
 <script>
 /* timeline (s) — cuts sit on the Street Trial bar lines, the print scene starts on the drop at 9.0 */
 const DURATION = 28;
-const CUTS = [3.0, 6.01, 13.03, 17.03, 21.03, 24.23];   // V wipes
-const DROP = 9.0, STAMP = 11.03, COLORS = 11.55, BOX = 15.63;
+const CUTS = [3.0, 6.01, 14.53, 17.03, 21.03, 24.23];   // V wipes
+const DROP = 9.0, STAMP = 11.03, COLORS = 11.55, COLORS_OUT = 14.35, BOX = 15.83;
 const $ = id => document.getElementById(id);
 const clamp = x => Math.min(1, Math.max(0, x));
 const E = {
@@ -132,7 +132,7 @@ const toAr = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
 /* Arabic words appear word by word, each wiping in from the right */
 function words(el, txt) { el.innerHTML = txt.split(' ').map(w => `<span class="w">${w}</span>`).join(' '); return [...el.children]; }
 const HW = words($('hT'), 'رحلة تيشيرتك'), HS = words($('hS'), 'من القطن حتى باب بيتك');
-const CAPS = [[1, 3.15, 5.85], [2, 6.15, 8.85], [3, 9.15, 10.85], [4, 13.2, 15.45], [5, 17.2, 20.85]];
+const CAPS = [[1, 3.15, 5.85], [2, 6.15, 8.85], [3, 9.15, 10.85], [4, 14.7, 15.65], [5, 17.2, 20.85]];
 CAPS.forEach(([n]) => { const t = $('cap' + n).querySelector('.ttl'); words(t, t.textContent); });
 function reveal(ws, t0, step, t) {
   ws.forEach((w, i) => { const k = p(t, t0 + i * step, t0 + i * step + .32, E.o);
@@ -152,7 +152,7 @@ function render(t) {
   $('barsHook').style.transform = `translateY(${(1 - bh) * -320}px)`; $('barsHook').style.display = t < 3.2 ? '' : 'none';
 
   /* logo bug: hook through the countries */
-  $('bug').style.opacity = (t < 24.23 ? 1 : 0) * p(t, .1, .5) * (t > BOX && t < 17.03 ? 0 : 1) * (t > COLORS - .1 && t < 13.03 ? 0 : 1);
+  $('bug').style.opacity = (t < 24.23 ? 1 : 0) * p(t, .1, .5) * (t > BOX && t < 17.03 ? 0 : 1) * (t > COLORS - .1 && t < 14.53 ? 0 : 1);
 
   /* scene captions */
   CAPS.forEach(([n, a, b]) => {
@@ -175,19 +175,23 @@ function render(t) {
   const fl = Math.max(0, 1 - Math.abs(t - DROP) / .2) * .85 + Math.max(0, 1 - Math.abs(t - STAMP) / .16) * .6;
   $('flash').style.opacity = fl;
   const sk = p(t, STAMP - .12, STAMP + .06, E.o);
-  $('stamp').style.display = t >= STAMP - .12 && t < 13.03 ? '' : 'none';
+  $('stamp').style.display = t >= STAMP - .12 && t < 14.53 ? '' : 'none';
   $('stamp').style.transform = `scale(${lerp(2.2, 1, sk)})`; $('stamp').style.opacity = clamp(sk * 1.5);
   const rk = clamp((t - STAMP) / .5);
   $('ring').style.opacity = t >= STAMP && t < STAMP + .5 ? 1 - rk : 0; $('ring').style.transform = `scale(${.6 + rk * 4})`;
 
   /* 4 colours */
-  const ck = p(t, COLORS, COLORS + .3), cOut = p(t, 12.85, 13.03);
+  const ck = p(t, COLORS, COLORS + .3), cOut = p(t, COLORS_OUT, 14.53);
   $('dim').style.opacity = ck * (1 - cOut);
   $('fourT').style.opacity = p(t, COLORS + .05, COLORS + .35, E.o) * (1 - cOut);
   $('fourT').style.transform = `scale(${lerp(.7, 1, p(t, COLORS + .05, COLORS + .35, E.back))})`;
   [...$('tees').children].forEach((d, i) => {
-    const k = p(t, COLORS + .1 + i * .18, COLORS + .45 + i * .18, E.back);
-    d.style.opacity = clamp(k) * (1 - cOut); d.style.transform = `translateY(${(1 - k) * 260}px) rotate(${(1 - k) * (i % 2 ? 8 : -8)}deg)`;
+    /* one shirt per beat (12.03, 12.53, 13.03, 13.53), then a gentle float with a glow pulse on each beat */
+    const a = 12.03 + i * .5 - .25, k = p(t, a, a + .35, E.back);
+    const fl = Math.sin((t - a) * 2.2 + i) * 8 * clamp(t - a - .35);
+    const beat = Math.max(0, 1 - ((t - 12.03) % .5 + .5) % .5 / .18) * clamp(t - 13.9);
+    d.style.opacity = clamp(k) * (1 - cOut);
+    d.style.transform = `translateY(${(1 - k) * 260 + fl}px) rotate(${(1 - k) * (i % 2 ? 8 : -8)}deg) scale(${1 + beat * .04})`;
   });
 
   /* box: the folded shirt goes into the real VAMOS box */

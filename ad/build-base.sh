@@ -8,11 +8,11 @@ ffmpeg -y -loglevel error \
   -ss 5.0 -t 3.0  -i $S/hook-b.mp4 \
   -ss 0.2 -t 3.01 -i $S/cotton-b.mp4 \
   -ss 1.0 -t 2.99 -i $S/sewing-a.mp4 \
-  -ss 3.0 -t 4.03 -i $S/print-a.mp4 \
-  -ss 0.6 -t 2.6  -i $S/fold-a.mp4 \
+  -ss 3.0 -t 5.53 -i $S/print-a.mp4 \
+  -ss 1.8 -t 1.3  -i $S/fold-a.mp4 \
   -ss 0.6 -t 4.0  -i $S/bag-a.mp4 \
   -ss 0.0 -t 3.0  -i $S/plane-a.mp4 \
-  -f lavfi -t 1.4 -i color=c=0x0b0b0b:s=1080x1920:r=30 \
+  -f lavfi -t 1.2 -i color=c=0x0b0b0b:s=1080x1920:r=30 \
   -f lavfi -t 3.8 -i color=c=0x0b0b0b:s=1080x1920:r=30 \
   -filter_complex "
    [0]$G,hue=h=9:s=1.05,eq=contrast=1.06:brightness=-0.02,setpts=PTS-STARTPTS[a];
