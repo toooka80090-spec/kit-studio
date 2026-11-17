@@ -2,7 +2,7 @@
 <html><head><meta charset="utf-8">
 <link rel="stylesheet" href="fonts/local.css">
 <style>
-html,body{margin:0;padding:0;background:#000;width:1080px;height:1920px;overflow:hidden}
+html,body{margin:0;padding:0;background:#000;overflow:hidden}
 svg{display:block}
 .ru{font-family:'Aref Ruqaa',serif;font-weight:700}
 .ca{font-family:'Cairo',sans-serif}
@@ -12,6 +12,8 @@ svg{display:block}
 <svg id="v" xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
 <script>
 const W=1080,H=1920,BEAT=0.8,BAR=3.2;
+const LAND=new URLSearchParams(location.search).has('land');
+const RX=r=>LAND?-1300+r*2400:r*1080;
 const S=[0,9.6,19.2,25.6,35.2,44.8,51.2,60.8,70.4,80,90];
 const AR=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
@@ -136,11 +138,12 @@ const boy=(id,o={})=>man(id,{shirt:'#F2A541',pants:'#4A6FA5',...o});
 /* ---------------- text helpers ---------------- */
 let clipN=0;
 function wtext(id,x,y,size,cls,fill,txt,extra=''){
-  return `<clipPath id="${id}_cp"><rect id="${id}_cr" x="0" y="${y-size*1.4}" width="0" height="${size*2.1}"/></clipPath>
+  const r=`<clipPath id="${id}_cp"><rect id="${id}_cr" x="0" y="${y-size*1.4}" width="0" height="${size*2.1}"/></clipPath>
    <g clip-path="url(#${id}_cp)">${g(id,0,0,`<text x="${x}" y="${y}" class="${cls}" font-size="${size}" fill="${fill}" text-anchor="middle" direction="rtl" filter="url(#tsh)" ${extra}>${txt}</text>`)}</g>`;
+  return `<g class="tx">${r}</g>`;
 }
 function ftext(id,x,y,size,cls,fill,txt,extra=''){
-  return g(id,x,y,`<text x="0" y="0" class="${cls}" font-size="${size}" fill="${fill}" text-anchor="middle" direction="rtl" filter="url(#tsh)" ${extra}>${txt}</text>`,'opacity="0"');
+  return '<g class="tx">'+g(id,x,y,`<text x="0" y="0" class="${cls}" font-size="${size}" fill="${fill}" text-anchor="middle" direction="rtl" filter="url(#tsh)" ${extra}>${txt}</text>`,'opacity="0"')+'</g>';
 }
 
 /* ---------------- particles ---------------- */
@@ -153,7 +156,7 @@ function updHearts(pre,n,u,x0,x1,y0,y1,start=0,period=3.2){
     const off=rnd(i,1)*period, lt=u-start-off*0.6;
     if(lt<0){e.setAttribute('opacity',0);continue}
     const ph=(lt%period)/period;
-    const x=lerp(x0,x1,rnd(i,2))+Math.sin(lt*2+i)*22, y=lerp(y1,y0,ph);
+    const x=(LAND&&x1-x0>600)?RX(rnd(i,2)):lerp(x0,x1,rnd(i,2))+Math.sin(lt*2+i)*22, y=lerp(y1,y0,ph);
     const s=.5+rnd(i,3)*.9;
     e.setAttribute('transform',`translate(${x} ${y}) scale(${s})`);
     e.setAttribute('opacity',Math.sin(ph*Math.PI)*.9);
@@ -170,7 +173,7 @@ function updConfetti(pre,n,u,start){
     const e=$(pre+i); const lt=u-start;
     if(lt<0){e.setAttribute('opacity',0);continue}
     const sp=180+rnd(i,4)*220, y=-60+((lt*sp+rnd(i,5)*2000)%2050);
-    const x=rnd(i,6)*W+Math.sin(lt*1.6+i)*50;
+    const x=RX(rnd(i,6))+Math.sin(lt*1.6+i)*50;
     e.setAttribute('transform',`translate(${x} ${y}) rotate(${lt*120*(rnd(i,7)-.5)*4}) scale(${i%3===0?.6:1} ${Math.cos(lt*4+i)})`);
     e.setAttribute('opacity',clamp(lt*2)*.95);
   }
@@ -205,7 +208,7 @@ function sceneMarkup(){
    <rect y="1320" width="1080" height="600" fill="#EBD6BF"/>
    ${[0,1,2,3,4,5].map(i=>`<line x1="0" y1="${1420+i*100}" x2="1080" y2="${1420+i*100}" stroke="#DCC2A6" stroke-width="3"/>`).join('')}
    <rect y="1290" width="1080" height="10" fill="#fff"/><rect y="1240" width="1080" height="8" fill="#fff"/>
-   ${Array.from({length:12},(_,i)=>`<rect x="${i*96+10}" y="1240" width="10" height="80" fill="#fff"/>`).join('')}
+   ${Array.from({length:LAND?28:12},(_,i)=>`<rect x="${(LAND?-1334:0)+i*96+10}" y="1240" width="10" height="80" fill="#fff"/>`).join('')}
    <path d="M150 820 L540 720 L930 820Z" fill="#E9476F"/><path d="M280 786 L540 720 L410 815Z M670 815 L540 720 L800 786Z" fill="#fff" opacity=".85"/>
    <rect x="532" y="760" width="16" height="720" fill="#7A4A2A"/>
    ${g('c_m',330,1660,man('cm',{look:1,armR:-45,armL:-25}))}
@@ -223,7 +226,7 @@ function sceneMarkup(){
    ${ftext('c_t3',540,1865,42,'ca','#7E4F31','كنتي بتذاكري… وأنا كنت بذاكر عينيكي','font-weight="700"')}`);
   /* 3 PROPOSAL */
   sc.push(`<rect width="1080" height="1920" fill="url(#gDusk)"/>
-   ${Array.from({length:40},(_,i)=>`<circle cx="${rnd(i,9)*1080}" cy="${rnd(i,8)*900}" r="${1.5+rnd(i,7)*3}" fill="#fff" id="p_st${i}"/>`).join('')}
+   ${Array.from({length:LAND?90:40},(_,i)=>`<circle cx="${RX(rnd(i,9))}" cy="${rnd(i,8)*900}" r="${1.5+rnd(i,7)*3}" fill="#fff" id="p_st${i}"/>`).join('')}
    <path d="M-20 520 Q270 700 540 560 Q810 700 1100 520" stroke="#3a2a40" stroke-width="3" fill="none"/>
    ${Array.from({length:14},(_,i)=>{const x=i*80+20;const y=i<7?520+Math.sin(i/7*Math.PI)*120:560+Math.sin((i-7)/7*Math.PI)*120;return `<circle id="p_b${i}" cx="${x}" cy="${y+12}" r="13" fill="#FFE08A"/>`}).join('')}
    ${g('p_burst',540,1260,`<use href="#hp" fill="#F27B9A" opacity=".35" transform="scale(16)"/>`,'opacity="0"')}
@@ -238,7 +241,7 @@ function sceneMarkup(){
   sc.push(`<rect width="1080" height="1920" fill="url(#gHome)"/>
    ${cloud('h_cl1',200,820,.9)}${cloud('h_cl2',860,700,.7)}
    <path d="M-50 1700 Q540 1560 1130 1700 L1130 1920 L-50 1920Z" fill="#9CC59A"/><path d="M-50 1760 Q540 1660 1130 1760 L1130 1920 L-50 1920Z" fill="#86B585"/>
-   ${g('h_rings',540,610,`<circle cx="-34" r="54" fill="none" stroke="#E9A84C" stroke-width="16"/><circle cx="34" r="54" fill="none" stroke="#F6C760" stroke-width="16"/><path d="M-34 -78 l10 12 -10 12 -10 -12Z" fill="#E8F7FF"/>`,'opacity="0"')}
+   <g class="tx">${g('h_rings',540,610,`<circle cx="-34" r="54" fill="none" stroke="#E9A84C" stroke-width="16"/><circle cx="34" r="54" fill="none" stroke="#F6C760" stroke-width="16"/><path d="M-34 -78 l10 12 -10 12 -10 -12Z" fill="#E8F7FF"/>`,'opacity="0"')}</g>
    <g transform="translate(540 1640)">
      ${g('h_f',0,0,`<rect x="-260" y="-20" width="520" height="30" rx="6" fill="#B08968"/>`,'opacity="0"')}
      ${g('h_wall',0,-20,`<rect x="-220" y="-340" width="440" height="340" fill="#FFF3E2"/><rect x="-220" y="-340" width="440" height="340" fill="none" stroke="#E5C9A8" stroke-width="6"/>`,'opacity="0"')}
@@ -265,7 +268,7 @@ function sceneMarkup(){
    ${g('w_cpl',0,0,g('w_m',450,1760,`<g transform="scale(.9)">${man('wm',{look:1,outfit:'wedding',armR:-30})}</g>`)+g('w_wo',640,1760,`<g transform="scale(.9)">${woman('ww',{look:-1,outfit:'wedding',armL:30,armR:-30})}</g>`),'opacity="0"')}
    ${g('w_heart',545,1130,`<use href="#hp" fill="#E9476F" transform="scale(2.4)"/>`,'opacity="0"')}
    ${wtext('w_t1',540,300,112,'ru','#9B1B3F','وجه أحلى يوم في عمري')}
-   <g class="ca" font-weight="900" font-size="120" fill="url(#gold)" text-anchor="middle" filter="url(#tsh)">
+   <g class="ca tx" font-weight="900" font-size="120" fill="url(#gold)" text-anchor="middle" filter="url(#tsh)">
      ${g('w_d1',840,560,`<text>١٧</text>`,'opacity="0"')}${g('w_s1',735,560,`<text font-size="90" fill="#E9476F">/</text>`,'opacity="0"')}
      ${g('w_d2',630,560,`<text>١١</text>`,'opacity="0"')}${g('w_s2',515,560,`<text font-size="90" fill="#E9476F">/</text>`,'opacity="0"')}
      ${g('w_d3',330,560,`<text>٢٠١٦</text>`,'opacity="0"')}</g>
@@ -276,7 +279,7 @@ function sceneMarkup(){
   sc.push(`<rect width="1080" height="1920" fill="#9ED3F0" id="l_sky"/>
    <rect width="1080" height="1920" fill="url(#gNight)" id="l_night" opacity="0"/>
    ${g('l_sun',0,0,sun(0,0,80,'#FFD66B'))}${g('l_moon',0,0,`<circle r="70" fill="#FFF3C4"/><circle cx="28" cy="-18" r="60" fill="#2A3563" id="l_mc"/>`)}
-   ${Array.from({length:30},(_,i)=>`<circle class="l_st" cx="${rnd(i,3)*1080}" cy="${150+rnd(i,4)*800}" r="${1.5+rnd(i,5)*3}" fill="#fff" opacity="0"/>`).join('')}
+   ${Array.from({length:30},(_,i)=>`<circle class="l_st" cx="${RX(rnd(i,3))}" cy="${150+rnd(i,4)*800}" r="${1.5+rnd(i,5)*3}" fill="#fff" opacity="0"/>`).join('')}
    <g id="l_city" fill="#7C93B8">${[[0,260,190],[140,380,150],[300,300,170],[470,420,140]].map(([x,h,w])=>`<rect x="${x}" y="${1700-h}" width="${w}" height="${h}"/>`).join('')}
      ${Array.from({length:24},(_,i)=>`<rect class="l_cw" x="${30+(i%6)*80}" y="${1480+Math.floor(i/6)*60}" width="26" height="30" fill="#DDE8F7"/>`).join('')}</g>
    <g transform="translate(860 1700)"><rect x="-150" y="-260" width="300" height="260" fill="#FFF3E2"/><path d="M-190 -260 L0 -420 L190 -260Z" fill="#D9534F"/>
@@ -285,11 +288,11 @@ function sceneMarkup(){
    ${g('l_m',0,1820,`<g transform="scale(.75)">${man('lm',{look:1,hold:'case',armR:-4,armL:10})}</g>`)}
    ${g('l_wo',700,1820,`<g transform="scale(.75)">${woman('lw',{look:-1,armL:20})}</g>`)}
    ${g('l_heart',570,1440,`<use href="#hp" fill="#E9476F" transform="scale(2)"/>`,'opacity="0"')}
-   ${icon('l_i1',190,720,`<rect x="-36" y="-16" width="72" height="50" rx="8" fill="#7A4A2A"/><rect x="-14" y="-30" width="28" height="18" rx="6" fill="none" stroke="#7A4A2A" stroke-width="6"/>`)}
+   <g class="tx">${icon('l_i1',190,720,`<rect x="-36" y="-16" width="72" height="50" rx="8" fill="#7A4A2A"/><rect x="-14" y="-30" width="28" height="18" rx="6" fill="none" stroke="#7A4A2A" stroke-width="6"/>`)}
    ${icon('l_i2',365,720,`<rect x="-38" y="-30" width="76" height="48" rx="5" fill="#3E5C8A"/><rect x="-48" y="18" width="96" height="10" rx="4" fill="#2B2D42"/>`)}
    ${icon('l_i3',540,720,`<path d="M-24 -24 L24 -24 L20 22 L-20 22Z" fill="#8A5A3B"/><path d="M24 -14 q18 0 14 16 q-3 9 -18 6" stroke="#8A5A3B" stroke-width="6" fill="none"/>`)}
    ${icon('l_i4',715,720,`<path d="M-36 4 L0 -30 L36 4Z" fill="#D9534F"/><rect x="-26" y="4" width="52" height="34" fill="#FFF3E2" stroke="#D9534F" stroke-width="4"/>`)}
-   ${icon('l_i5',890,720,`<use href="#hp" fill="#E9476F" transform="translate(0 2) scale(1.6)"/>`)}
+   ${icon('l_i5',890,720,`<use href="#hp" fill="#E9476F" transform="translate(0 2) scale(1.6)"/>`)}</g>
    ${ftext('l_t1',540,360,96,'ru','#2B2D42','شغل… وتعب…')}
    ${ftext('l_t2',540,480,56,'ca','#fff','وأرجع لبيت إنتِ دفاه','font-weight="900"')}`);
   /* 7 OMAR */
@@ -337,7 +340,7 @@ function sceneMarkup(){
   /* 10 OUTRO */
   sc.push(`<rect width="1080" height="1920" fill="url(#gIntro)"/>
    ${hearts('xh',14,['#F27B9A','#F6C760','#F9C6D3'])}
-   ${g('x_h',540,720,`<path id="x_hpath" d="M0 90 C-120 10 -110 -120 0 -70 C110 -120 120 10 0 90Z" fill="none" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/><use href="#hp" id="x_hf" fill="#E9476F" opacity="0" transform="scale(2.6)"/>`)}
+   <g class="tx">${g('x_h',540,720,`<path id="x_hpath" d="M0 90 C-120 10 -110 -120 0 -70 C110 -120 120 10 0 90Z" fill="none" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/><use href="#hp" id="x_hf" fill="#E9476F" opacity="0" transform="scale(2.6)"/>`)}</g>
    ${wtext('x_t1',540,960,100,'ru','url(#gold)','كل سنة وإنتِ حبيبتي')}
    ${ftext('x_t2',540,1090,62,'ca','#FBE3E8','عيد جواز سعيد يا مروة','font-weight="900"')}
    ${ftext('x_t3',540,1240,104,'gv','#F6C760','Happy 10th Anniversary','direction="ltr"')}
@@ -383,16 +386,24 @@ function popS(id,u,a,d=.5,extra={}){const p=pop(u,a,d); set(id,{s:p,o:clamp(P(u,
 
 /* ---------------- build ---------------- */
 const svg=document.getElementById('v');
-const SCN=sceneMarkup();
+let SCN=sceneMarkup();
+if(LAND){
+  SCN=SCN.map(m=>m.replace(/width="1080" height="1920"/g,'x="-2200" width="3800" height="1920"')
+    .replace(/<rect y="(\d+)" width="1080"/g,'<rect x="-1400" y="$1" width="2600"')
+    .replace(/x1="0" y1="(\d+)" x2="1080"/g,'x1="-1400" y1="$1" x2="1200"')
+    .replace(/M-50 (\d+) Q540 (\d+) 1130 (\d+) L1130 1920 L-50 1920Z/g,'M-1400 $3 L-200 $3 Q540 $2 1200 $3 L1200 1920 L-1400 1920Z'));
+  svg.setAttribute('width',1920);svg.setAttribute('height',1080);svg.setAttribute('viewBox','-1300 560 2400 1350');
+  document.body.style.width='1920px';document.body.style.height='1080px';
+}
 svg.innerHTML=defs()+SCN.map((m,i)=>`<g id="scene${i}" style="display:none"><g id="cam${i}">${m}</g></g>`).join('')+
   `<g id="bokeh" filter="url(#blur)">${Array.from({length:22},(_,i)=>`<circle id="bk${i}" r="${8+rnd(i,11)*22}" fill="${i%3?'#FFF3D6':'#F9C6D3'}"/>`).join('')}</g>`+
-  `<rect id="vig" width="1080" height="1920" fill="url(#vg)" pointer-events="none"/>`;
+  `<rect id="vig" ${LAND?'x="-1300" y="560" width="2400" height="1350"':'width="1080" height="1920"'} fill="url(#vg)" pointer-events="none"/>`;
 svg.querySelector('defs').insertAdjacentHTML('beforeend',`<radialGradient id="vg" cx=".5" cy=".5" r=".75"><stop offset=".65" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient>`);
 const HL={};
 for(const id of ['i_hpath','x_hpath','w_arch']){const e=$(id);HL[id]=e.getTotalLength();e.setAttribute('stroke-dasharray',HL[id]);}
 function draw(id,p){$(id).setAttribute('stroke-dashoffset',HL[id]*(1-p));}
 
-function wavePath(y,amp,len,ph){let d=`M0 ${y}`;for(let x=0;x<=1080;x+=20)d+=` L${x} ${y+Math.sin(x/len+ph)*amp}`;return d+` L1080 1330 L0 1330Z`;}
+function wavePath(y,amp,len,ph){const a=LAND?-1400:0,b=LAND?1200:1080;let d=`M${a} ${y}`;for(let x=a;x<=b;x+=20)d+=` L${x} ${y+Math.sin(x/len+ph)*amp}`;return d+` L${b} 1330 L${a} 1330Z`;}
 function steam(ph){let d='';for(let k=0;k<3;k++){const x=-10+k*10;d+=`M${x} -48 q${8*Math.sin(ph+k)} -15 0 -30 q${-8*Math.sin(ph+k)} -15 0 -30 `;}return d;}
 
 /* ---------------- render ---------------- */
@@ -405,12 +416,12 @@ function render(t){
     if(o<=0){el.style.display='none';continue}
     el.style.display='';el.setAttribute('opacity',o);
     const pr=(t-a)/(b-a);
-    $('cam'+i).setAttribute('transform',`translate(540 1000) scale(${1+0.035*pr}) translate(-540 -1000)`);
+    $('cam'+i).setAttribute('transform',(LAND&&i===0?'translate(540 1910) scale(.86) translate(-540 -1910) ':'')+`translate(540 1000) scale(${1+0.035*pr}) translate(-540 -1000)`);
   }
   // bokeh
   for(let i=0;i<22;i++){
     const sp=20+rnd(i,12)*40, y=((rnd(i,13)*2200 - t*sp)%2200+2200)%2200-140;
-    const x=rnd(i,14)*1080+Math.sin(t*.4+i)*40;
+    const x=RX(rnd(i,14))+Math.sin(t*.4+i)*40;
     const e=$('bk'+i);e.setAttribute('cx',x);e.setAttribute('cy',y);
     e.setAttribute('opacity',(.12+.18*Math.sin(t*1.3+i*2)**2)*(t>79.5?1:.8));
   }
@@ -439,7 +450,7 @@ function render(t){
     wipe('c_t1',u,.3,1.1); fadeUp('c_t2',u,1.2); fadeUp('c_t3',u,4.8);
   }
   /* 3 PROPOSAL */ if(t>S[2]-.3&&t<S[3]+.3){u=t-S[2];
-    for(let i=0;i<40;i++)$('p_st'+i).setAttribute('opacity',.3+.7*Math.abs(Math.sin(u*2+i)));
+    for(let i=0;i<(LAND?90:40);i++)$('p_st'+i).setAttribute('opacity',.3+.7*Math.abs(Math.sin(u*2+i)));
     for(let i=0;i<14;i++)$('p_b'+i).setAttribute('opacity',.55+.45*((Math.floor(u/0.4)+i)%2));
     const ra=eio(P(u,.8,.8)); set('pm_ar',{r:lerp(-20,-98,ra)}); set('pm_hold',{r:lerp(20,98,ra)});
     set('ringlid',{r:-115*eo(P(u,1.6,.4))});
@@ -550,6 +561,33 @@ function render(t){
   }
 }
 window.render=render;
-const q=new URLSearchParams(location.search); if(q.has('t')) document.fonts.ready.then(()=>render(+q.get('t')));
+function landLayout(){
+  const PY=1235, GAP=34;
+  $('c_t3').querySelector('text').setAttribute('fill','#FFE3C8');
+  ['o_agetx','y_agetx'].forEach(id=>$(id).textContent='عمره دلوقتي ١٠ سنين');
+  for(let i=0;i<10;i++){
+    const sc=$('scene'+i); sc.style.display='';
+    const cam=$('cam'+i); cam.removeAttribute('transform');
+    const PX=i===9?-100:-650;
+    const items=[...cam.querySelectorAll('.tx')].map(e=>{const b=e.getBBox();return {e,b,cy:b.y+b.height/2}}).filter(o=>o.b.height>0);
+    items.sort((a,b)=>a.cy-b.cy);
+    const sc_=it=>Math.min(1,1150/it.b.width);
+    const total=items.reduce((s,it)=>s+it.b.height*sc_(it),0)+GAP*(items.length-1);
+    let y=PY-total/2;
+    if(i===1){const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+      Object.entries({x:PX-620,y:y-50,width:1240,height:total+100,rx:50,fill:'#3A1F2E',opacity:.42}).forEach(([k,v])=>r.setAttribute(k,v));
+      items[0].e.parentNode.insertBefore(r,items[0].e);}
+    for(const it of items){const k=sc_(it),h=it.b.height*k;
+      const tx=PX-(it.b.x+it.b.width/2)*k, ty=y+h/2-(it.cy)*k;
+      const w=document.createElementNS('http://www.w3.org/2000/svg','g');w.setAttribute('transform',`translate(${tx} ${ty}) scale(${k})`);
+      it.e.parentNode.insertBefore(w,it.e);w.appendChild(it.e);y+=h+GAP;}
+    sc.style.display='none';
+  }
+  ['o_agetx','y_agetx'].forEach(id=>$(id).textContent='');
+  const xb=$('x_black'); xb.parentNode.appendChild(xb);
+  const wf=$('w_flash'); wf.parentNode.appendChild(wf);
+}
+window.layoutDone=LAND?document.fonts.ready.then(landLayout):Promise.resolve();
+const q=new URLSearchParams(location.search); if(q.has('t')) window.layoutDone.then(()=>render(+q.get('t')));
 </script>
 </body></html>
