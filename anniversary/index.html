@@ -513,11 +513,11 @@ function render(t){
     set('o_name',{s:pop(u,2.0,.6)*(1+.05*bp),o:P(u,2.0,.15)});
     const bg=1-P(u,4.8,.5); set('ow_hold',{o:bg});
     if(u>4.8){const l=eio(P(u,4.8,.6)); set('ow_al',{r:lerp(-62,10,l)}); set('ow_ar',{r:lerp(62,-10,l)});}
-    const age=u<4.8?0:Math.min(10,1+Math.floor((u-4.8)/0.4));
-    const kp=eo(P(u,4.8,.5)); const gs=lerp(.42,.74,clamp((u-4.8)/3.6));
+    const age=u<4.8?0:Math.min(9,1+Math.floor((u-4.8)/0.4));
+    const kp=eo(P(u,4.8,.5)); const gs=lerp(.42,.74,clamp((u-4.8)/3.2));
     set('o_kid',{s:gs*(kp)+0.0001,o:kp,y:-Math.abs(Math.sin(u*7.85))*6*kp});
-    $('o_agetx').textContent=age?`عمره دلوقتي ${AR(age)} ${age>=3&&age<=10?'سنين':'سنة'}`:'';
-    set('o_age',{o:P(u,4.8,.2),s:1+.08*Math.exp(-(((u-4.8)%0.4)/0.4)*4)*(age<10||u<8.6?1:0)});
+    $('o_agetx').textContent=age?`عمره دلوقتي ${AR(age)} ${age===1?'سنة':age===2?'سنتين':'سنين'}`:'';
+    set('o_age',{o:P(u,4.8,.2),s:1+.08*Math.exp(-(((u-4.8)%0.4)/0.4)*4)*(age<9||u<8.2?1:0)});
     for(let i=0;i<7;i++){const a=5.6+i*.25;set('o_bl'+i,{y:lerp(2100,800+rnd(i,4)*400,eo(P(u,a,2.5))),x:Math.sin(u*1.5+i)*14,o:P(u,a,.1)});}
     set('om_h',{r:6*eio(P(u,2.4,.6))}); set('ow_h',{r:-6*eio(P(u,2.4,.6))});
     updHearts('oh',12,u,300,780,900,1500,2.0,2.4);
