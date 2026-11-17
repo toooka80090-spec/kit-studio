@@ -191,8 +191,8 @@ function sceneMarkup(){
       `<g transform="translate(540 1500) scale(1.3)">`+g('i_m',-105,0,man('im',{look:1}))+g('i_w',105,0,woman('iw',{look:-1}))+`</g>`,'opacity="0"')}</g>
    ${g('i_frame',540,960,`<path id="i_hpath" d="M0 330 C-430 40 -370 -440 0 -270 C370 -440 430 40 0 330Z" fill="none" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>`)}
    ${wtext('i_t1',540,1490,128,'ru','url(#gold)','أسامة <tspan fill="#F27B9A">♥</tspan> مروة')}
-   ${ftext('i_t2',540,1600,56,'ca','#FBE3E8','حكاية ١٠ سنين حب','font-weight="700"')}
-   ${ftext('i_t0',540,420,44,'ca','#F6C760','١٧ نوفمبر','font-weight="700" letter-spacing="2"')}
+   ${ftext('i_t2',540,1600,56,'ca','#FBE3E8','حكايتنا في ١٠ سنين','font-weight="700"')}
+   ${ftext('i_t0',540,420,58,'ca','#F6C760','إلى مروة… من أسامة','font-weight="700" letter-spacing="2"')}
    ${hearts('ih',14,['#F27B9A','#F6C760','#F9C6D3'])}`);
   /* 2 CAFE */
   sc.push(`<rect width="1080" height="1920" fill="url(#gSunset)"/>
@@ -220,7 +220,7 @@ function sceneMarkup(){
    ${hearts('ch',12,['#E9476F','#F27B9A','#fff'])}
    ${wtext('c_t1',540,300,120,'ru','#fff','البداية…')}
    ${ftext('c_t2',540,410,50,'ca','#fff','كافيه نادي المهندسين على البحر','font-weight="700"')}
-   ${ftext('c_t3',540,1890,46,'ca','#7E4F31','قعدة مذاكرة… وأول نظرة','font-weight="700"')}`);
+   ${ftext('c_t3',540,1865,42,'ca','#7E4F31','كنتي بتذاكري… وأنا كنت بذاكر عينيكي','font-weight="700"')}`);
   /* 3 PROPOSAL */
   sc.push(`<rect width="1080" height="1920" fill="url(#gDusk)"/>
    ${Array.from({length:40},(_,i)=>`<circle cx="${rnd(i,9)*1080}" cy="${rnd(i,8)*900}" r="${1.5+rnd(i,7)*3}" fill="#fff" id="p_st${i}"/>`).join('')}
@@ -233,7 +233,7 @@ function sceneMarkup(){
    ${g('p_q1',360,1000,`<path d="M-190 -60 Q-190 -120 -130 -120 L130 -120 Q190 -120 190 -60 Q190 0 130 0 L30 0 L0 50 L-10 0 L-130 0 Q-190 0 -190 -60Z" fill="#fff"/><text x="0" y="-38" class="ca" font-size="54" font-weight="900" fill="#9B1B3F" text-anchor="middle" direction="rtl">تتجوزيني؟</text>`,'opacity="0"')}
    ${g('p_q2',760,960,`<path d="M-150 -60 Q-150 -120 -90 -120 L90 -120 Q150 -120 150 -60 Q150 0 90 0 L10 0 L-10 50 L-30 0 L-90 0 Q-150 0 -150 -60Z" fill="#E9476F"/><text x="0" y="-38" class="ca" font-size="58" font-weight="900" fill="#fff" text-anchor="middle" direction="rtl">أيوه ♥</text>`,'opacity="0"')}
    ${hearts('ph',16,['#F27B9A','#FFE08A','#fff','#E9476F'])}
-   ${wtext('p_t1',540,320,112,'ru','url(#gold)','وقرر يكمّل الحكاية')}`);
+   ${wtext('p_t1',540,320,112,'ru','url(#gold)','وقررت أكمّل الحكاية معاكي')}`);
   /* 4 HOME */
   sc.push(`<rect width="1080" height="1920" fill="url(#gHome)"/>
    ${cloud('h_cl1',200,820,.9)}${cloud('h_cl2',860,700,.7)}
@@ -254,8 +254,8 @@ function sceneMarkup(){
    ${g('h_bx1',300,1780,`<rect x="-50" y="-70" width="100" height="70" rx="6" fill="#D9A066"/><rect x="-8" y="-70" width="16" height="70" fill="#EBC28E"/>`,'opacity="0"')}
    ${g('h_bx2',300,1710,`<rect x="-40" y="-56" width="80" height="56" rx="6" fill="#C98E55"/><rect x="-7" y="-56" width="14" height="56" fill="#EBC28E"/>`,'opacity="0"')}
    ${g('h_plant',800,1790,`<path d="M-30 0 L-38 -60 L38 -60 L30 0Z" fill="#E07A5F"/><path d="M0 -60 Q-50 -120 -30 -170 Q0 -120 0 -60 Q10 -150 40 -180 Q40 -110 0 -60" fill="#5FA05B"/>`,'opacity="0"')}
-   ${wtext('h_t1',540,330,120,'ru','#9B1B3F','اتخطبوا…')}
-   ${ftext('h_t2',540,440,52,'ca','#7E4F31','وجهّزوا عشّهم حتة حتة','font-weight="700"')}`);
+   ${wtext('h_t1',540,330,120,'ru','#9B1B3F','اتخطبنا…')}
+   ${ftext('h_t2',540,440,52,'ca','#7E4F31','وجهّزنا عشّنا حتة حتة','font-weight="700"')}`);
   /* 5 WEDDING */
   sc.push(`<rect width="1080" height="1920" fill="url(#gWed)"/>
    ${g('w_glow',540,1350,`<circle r="420" fill="#FFF6D8" opacity=".55"/>`)}
@@ -264,12 +264,12 @@ function sceneMarkup(){
    <ellipse cx="540" cy="1770" rx="420" ry="40" fill="#E9B9C6"/>
    ${g('w_cpl',0,0,g('w_m',450,1760,`<g transform="scale(.9)">${man('wm',{look:1,outfit:'wedding',armR:-30})}</g>`)+g('w_wo',640,1760,`<g transform="scale(.9)">${woman('ww',{look:-1,outfit:'wedding',armL:30,armR:-30})}</g>`),'opacity="0"')}
    ${g('w_heart',545,1130,`<use href="#hp" fill="#E9476F" transform="scale(2.4)"/>`,'opacity="0"')}
-   ${wtext('w_t1',540,300,112,'ru','#9B1B3F','وجه أحلى يوم')}
+   ${wtext('w_t1',540,300,112,'ru','#9B1B3F','وجه أحلى يوم في عمري')}
    <g class="ca" font-weight="900" font-size="120" fill="url(#gold)" text-anchor="middle" filter="url(#tsh)">
      ${g('w_d1',840,560,`<text>١٧</text>`,'opacity="0"')}${g('w_s1',735,560,`<text font-size="90" fill="#E9476F">/</text>`,'opacity="0"')}
      ${g('w_d2',630,560,`<text>١١</text>`,'opacity="0"')}${g('w_s2',515,560,`<text font-size="90" fill="#E9476F">/</text>`,'opacity="0"')}
      ${g('w_d3',330,560,`<text>٢٠١٦</text>`,'opacity="0"')}</g>
-   ${ftext('w_t2',540,680,56,'ca','#9B1B3F','يوم الفرح','font-weight="900"')}
+   ${ftext('w_t2',540,680,56,'ca','#9B1B3F','يوم ما بقيتي مراتي','font-weight="900"')}
    ${confetti('wc',70)}
    <rect id="w_flash" width="1080" height="1920" fill="#fff" opacity="0"/>`);
   /* 6 LIFE */
@@ -291,7 +291,7 @@ function sceneMarkup(){
    ${icon('l_i4',715,720,`<path d="M-36 4 L0 -30 L36 4Z" fill="#D9534F"/><rect x="-26" y="4" width="52" height="34" fill="#FFF3E2" stroke="#D9534F" stroke-width="4"/>`)}
    ${icon('l_i5',890,720,`<use href="#hp" fill="#E9476F" transform="translate(0 2) scale(1.6)"/>`)}
    ${ftext('l_t1',540,360,96,'ru','#2B2D42','شغل… وتعب…')}
-   ${ftext('l_t2',540,480,56,'ca','#fff','ورجوع لبيت مليان دفا','font-weight="900"')}`);
+   ${ftext('l_t2',540,480,56,'ca','#fff','وأرجع لبيت إنتِ دفاه','font-weight="900"')}`);
   /* 7 OMAR */
   sc.push(`<rect width="1080" height="1920" fill="url(#gBaby)"/>
    ${cloud('o_cl1',160,900,.8)}${cloud('o_cl2',900,1050,.6)}${cloud('o_cl3',700,780,.5)}
@@ -302,7 +302,7 @@ function sceneMarkup(){
    ${g('o_kid',520,1830,`<g>${boy('ok',{look:0,headS:1.3})}</g>`,'opacity="0"')}
    ${g('o_star',540,0,`<circle r="60" fill="#FFF6C8" opacity=".4"/><path d="M0 -40 L11 -12 L40 -12 L17 6 L25 36 L0 18 L-25 36 L-17 6 L-40 -12 L-11 -12Z" fill="#FFE08A"/>`,'opacity="0"')}
    ${hearts('oh',12,['#9CC9F2','#F6C760','#fff'])}
-   ${wtext('o_t1',540,300,96,'ru','#2F5E8C','وربنا رزقهم بأحلى هدية')}
+   ${wtext('o_t1',540,300,96,'ru','#2F5E8C','وربنا رزقنا بأحلى هدية')}
    ${ftext('o_name',540,640,260,'ru','url(#blue)','عُمر')}
    ${ftext('o_age',540,800,64,'ca','#2F5E8C','','font-weight="900" id="o_agetx"')}`);
   /* 8 LILY */
@@ -317,9 +317,9 @@ function sceneMarkup(){
    ${g('y_girl',620,1830,`<g>${girl('yg',{headS:1.45})}</g>`,'opacity="0"')}
    ${g('y_star',540,0,`<circle r="60" fill="#FFE0EC" opacity=".5"/><path d="M0 -40 L11 -12 L40 -12 L17 6 L25 36 L0 18 L-25 36 L-17 6 L-40 -12 L-11 -12Z" fill="#FF9EC4"/>`,'opacity="0"')}
    ${hearts('yh',12,['#F27B9A','#FF9EC4','#fff'])}
-   ${wtext('y_t1',540,300,104,'ru','#9B1B3F','وكمّلت الفرحة')}
+   ${wtext('y_t1',540,300,104,'ru','#9B1B3F','وكمّلتي فرحتنا')}
    ${ftext('y_name',540,540,200,'ru','url(#pink)','لي لي')}
-   ${ftext('y_sub',540,680,60,'ca','#9B1B3F','نوّرت الدنيا','font-weight="900"')}
+   ${ftext('y_sub',540,680,60,'ca','#9B1B3F','نوّرت دنيتنا','font-weight="900"')}
    ${ftext('y_age',540,780,56,'ca','#B5406A','','font-weight="900" id="y_agetx"')}`);
   /* 9 FINALE */
   sc.push(`<rect width="1080" height="1920" fill="url(#gFinale)"/>
@@ -331,17 +331,17 @@ function sceneMarkup(){
    ${g('f_wo',800,1780,`<g transform="scale(.82)">${woman('fw',{look:-1,armL:-20})}</g>`,'opacity="0"')}
    ${g('f_girl',630,1810,`<g transform="scale(.6)">${girl('fg',{headS:1.45,look:-1})}</g>`,'opacity="0"')}
    ${wtext('f_t1',540,360,150,'ru','url(#gold)','١٠ سنين…')}
-   ${ftext('f_t2',540,500,66,'ca','#fff','والحب لسه بيكبر','font-weight="900"')}
+   ${ftext('f_t2',540,500,66,'ca','#fff','وبحبك أكتر من أول يوم','font-weight="900"')}
    ${ftext('f_t3',540,1890,40,'ca','#FBE3E8','أسامة • مروة • عُمر • لي لي','font-weight="700"')}
    ${hearts('fh',18,['#FFE08A','#F27B9A','#fff'])}`);
   /* 10 OUTRO */
   sc.push(`<rect width="1080" height="1920" fill="url(#gIntro)"/>
    ${hearts('xh',14,['#F27B9A','#F6C760','#F9C6D3'])}
    ${g('x_h',540,720,`<path id="x_hpath" d="M0 90 C-120 10 -110 -120 0 -70 C110 -120 120 10 0 90Z" fill="none" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/><use href="#hp" id="x_hf" fill="#E9476F" opacity="0" transform="scale(2.6)"/>`)}
-   ${wtext('x_t1',540,960,100,'ru','url(#gold)','كل سنة وإنتو مع بعض')}
-   ${ftext('x_t2',540,1090,62,'ca','#FBE3E8','عيد جواز سعيد يا أسامة ومروة','font-weight="900"')}
+   ${wtext('x_t1',540,960,100,'ru','url(#gold)','كل سنة وإنتِ حبيبتي')}
+   ${ftext('x_t2',540,1090,62,'ca','#FBE3E8','عيد جواز سعيد يا مروة','font-weight="900"')}
    ${ftext('x_t3',540,1240,104,'gv','#F6C760','Happy 10th Anniversary','direction="ltr"')}
-   ${ftext('x_t4',540,1340,44,'ca','#F27B9A','٢٠١٦ — ٢٠٢٦','font-weight="700"')}
+   ${ftext('x_t4',540,1360,54,'ca','#F27B9A','مع كل حبي… أسامة ♥','font-weight="700"')}
    <rect id="x_black" width="1080" height="1920" fill="#000" opacity="0"/>`);
   return sc;
 }
