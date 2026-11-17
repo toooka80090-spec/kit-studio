@@ -1,0 +1,555 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="fonts/local.css">
+<style>
+html,body{margin:0;padding:0;background:#000;width:1080px;height:1920px;overflow:hidden}
+svg{display:block}
+.ru{font-family:'Aref Ruqaa',serif;font-weight:700}
+.ca{font-family:'Cairo',sans-serif}
+.gv{font-family:'Great Vibes',cursive}
+</style></head>
+<body>
+<svg id="v" xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script>
+const W=1080,H=1920,BEAT=0.8,BAR=3.2;
+const S=[0,9.6,19.2,25.6,35.2,44.8,51.2,60.8,70.4,80,90];
+const AR=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const P=(t,a,d)=>clamp((t-a)/d);
+const eo=x=>1-Math.pow(1-x,3);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const back=x=>{const c1=1.9,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const pop=(t,a,d=.5)=>{const p=P(t,a,d);return p<=0?0:back(p)};
+const lerp=(a,b,p)=>a+(b-a)*p;
+const beatPulse=t=>Math.exp(-((t%BEAT)/BEAT)*5);
+const rnd=(i,k=0)=>{const x=Math.sin(i*127.1+k*311.7)*43758.5453;return x-Math.floor(x)};
+
+const SKIN='#EDB991', HAIR='#2B1D16';
+const g=(id,x,y,inner,extra='')=>`<g id="${id}" data-x="${x}" data-y="${y}" transform="translate(${x} ${y})" ${extra}>${inner}</g>`;
+const HEART='M0 18 C-6 12 -22 2 -22 -9 C-22 -19 -14 -24 -7 -24 C-3 -24 0 -21 0 -17 C0 -21 3 -24 7 -24 C14 -24 22 -19 22 -9 C22 2 6 12 0 18Z';
+
+/* ---------------- characters ---------------- */
+function face(r,look=0,cy=0){
+  const ex=r*.36,ey=cy-r*.04,lx=look*r*.16;
+  return `<ellipse cx="${-ex+lx}" cy="${ey}" rx="${r*.075}" ry="${r*.11}" fill="#2a1c1c"/>
+  <ellipse cx="${ex+lx}" cy="${ey}" rx="${r*.075}" ry="${r*.11}" fill="#2a1c1c"/>
+  <circle cx="${-ex*1.35+lx}" cy="${cy+r*.26}" r="${r*.14}" fill="#F27B86" opacity=".45"/>
+  <circle cx="${ex*1.35+lx}" cy="${cy+r*.26}" r="${r*.14}" fill="#F27B86" opacity=".45"/>
+  <path d="M${-r*.2+lx} ${cy+r*.3} Q${lx} ${cy+r*.48} ${r*.2+lx} ${cy+r*.3}" stroke="#8a3b3b" stroke-width="${r*.065}" fill="none" stroke-linecap="round"/>`;
+}
+function arm(id,side,ang,color,hold=''){
+  const x=side*58;
+  return `<g id="${id}" data-x="${x}" data-y="-300" transform="translate(${x} -300) rotate(${ang})">
+   <rect x="-15" y="-6" width="30" height="156" rx="15" fill="${color}"/>
+   <circle cx="0" cy="152" r="16" fill="${SKIN}"/>${hold}</g>`;
+}
+function holdItem(id,kind){
+  if(kind==='ring') return g(id,0,160,`
+    <rect x="-24" y="-16" width="48" height="30" rx="5" fill="#9B1B3F"/>
+    <g id="ringlid" data-x="-24" data-y="-16" transform="translate(-24 -16)"><rect x="0" y="-14" width="48" height="14" rx="5" fill="#B8274F"/></g>
+    <circle cx="0" cy="-22" r="11" fill="none" stroke="#F6C760" stroke-width="5"/>
+    <path d="M0 -42 L7 -34 L0 -27 L-7 -34Z" fill="#E8F7FF"/>
+    ${g('ringsp',0,-36,[0,45,90,135,180,225,270,315].map(a=>`<line x1="0" y1="0" x2="0" y2="-38" transform="rotate(${a})" stroke="#FFF4C2" stroke-width="4" stroke-linecap="round"/>`).join(''),'opacity="0"')}`);
+  if(kind==='case') return g(id,0,160,`<rect x="-10" y="-6" width="20" height="14" rx="5" fill="none" stroke="#5A3A22" stroke-width="5"/><rect x="-40" y="6" width="80" height="58" rx="8" fill="#7A4A2A"/><rect x="-40" y="24" width="80" height="5" fill="#5A3A22"/>`);
+  if(kind==='box') return g(id,0,150,`<rect x="-55" y="-50" width="110" height="80" rx="6" fill="#D9A066"/><rect x="-55" y="-50" width="110" height="14" fill="#C08850"/><rect x="-8" y="-50" width="16" height="80" fill="#EBC28E"/>`);
+  return '';
+}
+function man(id,o={}){
+  const {look=0,outfit='casual',pose='stand',armL=6,armR=-6,shirt='#3E5C8A',pants='#2B2D42',hold='',headS=1}=o;
+  const suit=outfit==='wedding', top=suit?'#1E1F2B':shirt, leg=suit?'#1E1F2B':pants;
+  let legs='';
+  if(pose==='stand') legs=`<rect x="-46" y="-180" width="38" height="175" rx="16" fill="${leg}"/><rect x="8" y="-180" width="38" height="175" rx="16" fill="${leg}"/>
+    <ellipse cx="-30" cy="-6" rx="30" ry="12" fill="#1a1a1a"/><ellipse cx="30" cy="-6" rx="30" ry="12" fill="#1a1a1a"/>`;
+  if(pose==='kneel') legs=`<rect x="-46" y="-100" width="38" height="92" rx="16" fill="${leg}"/><rect x="-135" y="-40" width="112" height="36" rx="16" fill="${leg}"/>
+    <rect x="0" y="-106" width="120" height="40" rx="18" fill="${leg}"/><rect x="82" y="-100" width="38" height="96" rx="16" fill="${leg}"/>
+    <ellipse cx="112" cy="-6" rx="30" ry="11" fill="#1a1a1a"/>`;
+  const dy=pose==='kneel'?85:0;
+  const deco=suit?`<path d="M-20 -312 L0 -250 L20 -312Z" fill="#fff"/><path d="M-16 -300 L0 -292 L-16 -284Z M16 -300 L0 -292 L16 -284Z" fill="#B3264C"/><circle cx="0" cy="-292" r="5" fill="#B3264C"/>
+     <path d="M-20 -312 L-6 -230 M20 -312 L6 -230" stroke="#0f1018" stroke-width="5"/><circle cx="0" cy="-215" r="4" fill="#555"/><path d="M30 -270 l16 0" stroke="#F3C6CF" stroke-width="8" stroke-linecap="round"/>`
+     :`<path d="M-18 -312 L0 -286 L18 -312Z" fill="${SKIN}"/><path d="M-22 -314 L-4 -290 L-10 -314Z M22 -314 L4 -290 L10 -314Z" fill="#fff" opacity=".85"/>`;
+  return `<g id="${id}">${legs}<g transform="translate(0 ${dy})">
+    ${arm(id+'_al',-1,armL,top,hold==='caseL'?holdItem(id+'_hold','case'):'')}
+    <path d="M-64 -296 Q-66 -314 -46 -316 L46 -316 Q66 -314 64 -296 L58 -165 L-58 -165Z" fill="${top}"/>${deco}
+    <rect x="-15" y="-336" width="30" height="28" fill="${SKIN}"/>
+    ${arm(id+'_ar',1,armR,top,hold==='ring'?holdItem(id+'_hold','ring'):hold==='case'?holdItem(id+'_hold','case'):hold==='box'?holdItem(id+'_hold','box'):'')}
+    <g id="${id}_h" data-x="0" data-y="-382" transform="translate(0 -382)"><g transform="scale(${headS})">
+      <ellipse cx="-50" cy="4" rx="9" ry="13" fill="${SKIN}"/><ellipse cx="50" cy="4" rx="9" ry="13" fill="${SKIN}"/>
+      <circle r="50" fill="${SKIN}"/>
+      <path d="M-52 -4 Q-58 -64 0 -64 Q58 -64 52 -4 Q46 -34 22 -40 Q-8 -30 -40 -38 Q-50 -24 -52 -4Z" fill="${HAIR}"/>
+      ${face(50,look,4)}</g></g>
+  </g></g>`;
+}
+function woman(id,o={}){
+  const {look=0,outfit='casual',armL=6,armR=-6,dress='#B9577A',hijab='#F3C6CF',hold='',headS=1,armsFront=false}=o;
+  const wed=outfit==='wedding';
+  const d=wed?'#FFFFFF':dress, hj=wed?'#FFFBFB':hijab;
+  const skirt=wed?`M-62 -298 Q-66 -316 -46 -318 L46 -318 Q66 -316 62 -298 L145 -8 Q0 18 -145 -8Z`:`M-60 -298 Q-64 -316 -46 -318 L46 -318 Q64 -316 60 -298 L80 -10 Q0 4 -80 -10Z`;
+  const veil=wed?`<path d="M-34 -440 Q-170 -220 -160 -8 L160 -8 Q170 -220 34 -440Z" fill="#fff" opacity=".45"/>`:'';
+  const wdeco=wed?`<path d="M-40 -230 Q0 -210 40 -230" stroke="#F1D9A0" stroke-width="6" fill="none"/>
+     ${[[-90,-60],[-40,-30],[20,-50],[80,-70],[-110,-150],[100,-160]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="#F3C6CF"/>`).join('')}
+     <path d="M-60 -200 Q0 -150 60 -200" stroke="#F4E6EA" stroke-width="3" fill="none"/>`:'';
+  let holdM='';
+  if(hold==='baby'||hold==='babyG'){
+    const bl=hold==='baby'?'#9CC9F2':'#F7B3CB';
+    holdM=g(id+'_hold',0,-205,`<ellipse cx="0" cy="0" rx="74" ry="40" fill="${bl}"/><path d="M-74 0 Q-40 30 30 30" stroke="#fff" stroke-width="5" fill="none" opacity=".7"/>
+      <circle cx="-38" cy="-12" r="27" fill="${bl}"/><circle cx="-38" cy="-8" r="21" fill="${SKIN}"/>
+      <path d="M-46 -8 q4 3 8 0 M-36 -8 q4 3 8 0" stroke="#2a1c1c" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <circle cx="-48" cy="1" r="4" fill="#F27B86" opacity=".5"/><circle cx="-26" cy="1" r="4" fill="#F27B86" opacity=".5"/>`);
+  }
+  const bouquet=wed?`<g transform="translate(0 -170)">${[[-18,0,'#F27B9A'],[16,-4,'#F9C6D3'],[0,-20,'#E9476F'],[-4,14,'#fff'],[22,14,'#F27B9A'],[-24,18,'#F9C6D3']].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="15" fill="${c}"/>`).join('')}<path d="M-6 30 L0 70 L6 30" fill="#6FA36A"/></g>`:'';
+  return `<g id="${id}">${veil}
+    <ellipse cx="-26" cy="-6" rx="24" ry="10" fill="#5a2a3a"/><ellipse cx="26" cy="-6" rx="24" ry="10" fill="#5a2a3a"/>
+    ${armsFront?'':arm(id+'_al',-1,armL,d)}
+    <path d="${skirt}" fill="${d}"/>${wdeco}
+    ${armsFront?'':arm(id+'_ar',1,armR,d)}
+    ${holdM}${bouquet}
+    <g id="${id}_h" data-x="0" data-y="-380" transform="translate(0 -380)"><g transform="scale(${headS})">
+      <path d="M-62 0 Q-74 74 -64 104 L64 104 Q74 74 62 0Z" fill="${hj}"/>
+      <circle r="60" fill="${hj}"/>
+      <ellipse cx="0" cy="8" rx="40" ry="44" fill="${SKIN}"/>
+      <path d="M-44 34 Q0 76 44 34 L58 92 Q0 116 -58 92Z" fill="${hj}"/>
+      <path d="M-44 -22 Q0 -46 44 -22" stroke="${wed?'#EEE':'#E3AEBB'}" stroke-width="6" fill="none"/>
+      ${wed?`<g transform="translate(0 -56)"><path d="M-30 6 L-18 -10 L-8 2 L0 -16 L8 2 L18 -10 L30 6Z" fill="#F1C96B"/><circle cx="0" cy="-14" r="4" fill="#fff"/></g>`:''}
+      ${face(42,look,10)}</g></g>
+    ${armsFront?arm(id+'_al',-1,armL,d)+arm(id+'_ar',1,armR,d):''}
+  </g>`;
+}
+function girl(id,o={}){
+  const {look=0,dress='#F48FB1',headS=1}=o;
+  return `<g id="${id}">
+    <rect x="-34" y="-150" width="28" height="145" rx="13" fill="${SKIN}"/><rect x="6" y="-150" width="28" height="145" rx="13" fill="${SKIN}"/>
+    <ellipse cx="-22" cy="-6" rx="22" ry="10" fill="#E0457B"/><ellipse cx="22" cy="-6" rx="22" ry="10" fill="#E0457B"/>
+    ${arm(id+'_al',-1,14,SKIN)}${arm(id+'_ar',1,-14,SKIN)}
+    <path d="M-50 -300 Q-52 -314 -38 -316 L38 -316 Q52 -314 50 -300 L100 -120 Q0 -100 -100 -120Z" fill="${dress}"/>
+    <path d="M-100 -120 Q0 -100 100 -120" stroke="#fff" stroke-width="8" fill="none" stroke-dasharray="2 14" stroke-linecap="round"/>
+    <rect x="-14" y="-336" width="28" height="26" fill="${SKIN}"/>
+    <g id="${id}_h" data-x="0" data-y="-382" transform="translate(0 -382)"><g transform="scale(${headS})">
+      <circle cx="-62" cy="-14" r="24" fill="${HAIR}"/><circle cx="62" cy="-14" r="24" fill="${HAIR}"/>
+      <circle cx="-50" cy="-28" r="9" fill="#FF6FA5"/><circle cx="50" cy="-28" r="9" fill="#FF6FA5"/>
+      <circle r="50" fill="${SKIN}"/>
+      <path d="M-52 2 Q-58 -64 0 -62 Q58 -64 52 2 Q40 -30 0 -34 Q-40 -30 -52 2Z" fill="${HAIR}"/>
+      ${face(50,look,6)}</g></g>
+  </g>`;
+}
+const boy=(id,o={})=>man(id,{shirt:'#F2A541',pants:'#4A6FA5',...o});
+
+/* ---------------- text helpers ---------------- */
+let clipN=0;
+function wtext(id,x,y,size,cls,fill,txt,extra=''){
+  return `<clipPath id="${id}_cp"><rect id="${id}_cr" x="0" y="${y-size*1.4}" width="0" height="${size*2.1}"/></clipPath>
+   <g clip-path="url(#${id}_cp)">${g(id,0,0,`<text x="${x}" y="${y}" class="${cls}" font-size="${size}" fill="${fill}" text-anchor="middle" direction="rtl" filter="url(#tsh)" ${extra}>${txt}</text>`)}</g>`;
+}
+function ftext(id,x,y,size,cls,fill,txt,extra=''){
+  return g(id,x,y,`<text x="0" y="0" class="${cls}" font-size="${size}" fill="${fill}" text-anchor="middle" direction="rtl" filter="url(#tsh)" ${extra}>${txt}</text>`,'opacity="0"');
+}
+
+/* ---------------- particles ---------------- */
+function hearts(pre,n,colors){
+  let s='';for(let i=0;i<n;i++) s+=`<use id="${pre}${i}" href="#hp" fill="${colors[i%colors.length]}" opacity="0"/>`;return s;
+}
+function updHearts(pre,n,u,x0,x1,y0,y1,start=0,period=3.2){
+  for(let i=0;i<n;i++){
+    const e=$(pre+i); if(!e) continue;
+    const off=rnd(i,1)*period, lt=u-start-off*0.6;
+    if(lt<0){e.setAttribute('opacity',0);continue}
+    const ph=(lt%period)/period;
+    const x=lerp(x0,x1,rnd(i,2))+Math.sin(lt*2+i)*22, y=lerp(y1,y0,ph);
+    const s=.5+rnd(i,3)*.9;
+    e.setAttribute('transform',`translate(${x} ${y}) scale(${s})`);
+    e.setAttribute('opacity',Math.sin(ph*Math.PI)*.9);
+  }
+}
+function confetti(pre,n){
+  const C=['#F27B9A','#F6C760','#FFFFFF','#E9476F','#9CC9F2','#F9C6D3'];
+  let s='';for(let i=0;i<n;i++){
+    s+= i%3===0?`<use id="${pre}${i}" href="#hp" fill="${C[i%6]}"/>`:`<rect id="${pre}${i}" x="-9" y="-5" width="18" height="10" rx="${i%2?5:1}" fill="${C[i%6]}"/>`;
+  }return s;
+}
+function updConfetti(pre,n,u,start){
+  for(let i=0;i<n;i++){
+    const e=$(pre+i); const lt=u-start;
+    if(lt<0){e.setAttribute('opacity',0);continue}
+    const sp=180+rnd(i,4)*220, y=-60+((lt*sp+rnd(i,5)*2000)%2050);
+    const x=rnd(i,6)*W+Math.sin(lt*1.6+i)*50;
+    e.setAttribute('transform',`translate(${x} ${y}) rotate(${lt*120*(rnd(i,7)-.5)*4}) scale(${i%3===0?.6:1} ${Math.cos(lt*4+i)})`);
+    e.setAttribute('opacity',clamp(lt*2)*.95);
+  }
+}
+
+/* ---------------- scenes ---------------- */
+const sun=(x,y,r,c)=>`<circle cx="${x}" cy="${y}" r="${r*1.8}" fill="${c}" opacity=".25"/><circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+const cloud=(id,x,y,s)=>g(id,x,y,`<g transform="scale(${s})" fill="#fff" opacity=".9"><ellipse cx="0" cy="0" rx="90" ry="40"/><ellipse cx="-50" cy="10" rx="60" ry="32"/><ellipse cx="55" cy="12" rx="60" ry="30"/><ellipse cx="10" cy="-25" rx="55" ry="40"/></g>`);
+const icon=(id,x,y,inner,bg='#fff')=>g(id,x,y,`<circle r="70" fill="${bg}" opacity=".95"/><circle r="70" fill="none" stroke="#F6C760" stroke-width="5"/>${inner}`,'opacity="0"');
+
+function sceneMarkup(){
+  const sc=[];
+  /* 1 INTRO */
+  sc.push(`<rect width="1080" height="1920" fill="url(#gIntro)"/>
+   <clipPath id="heartClip"><path d="M540 1290 C110 1000 170 520 540 690 C910 520 970 1000 540 1290Z"/></clipPath>
+   <path d="M540 1290 C110 1000 170 520 540 690 C910 520 970 1000 540 1290Z" fill="#F3B9C6" opacity=".18" id="i_hfill"/>
+   <g clip-path="url(#heartClip)">${g('i_cpl',0,0,
+      `<g transform="translate(540 1500) scale(1.3)">`+g('i_m',-105,0,man('im',{look:1}))+g('i_w',105,0,woman('iw',{look:-1}))+`</g>`,'opacity="0"')}</g>
+   ${g('i_frame',540,960,`<path id="i_hpath" d="M0 330 C-430 40 -370 -440 0 -270 C370 -440 430 40 0 330Z" fill="none" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>`)}
+   ${wtext('i_t1',540,1490,128,'ru','url(#gold)','أسامة <tspan fill="#F27B9A">♥</tspan> مروة')}
+   ${ftext('i_t2',540,1600,56,'ca','#FBE3E8','حكاية ١٠ سنين حب','font-weight="700"')}
+   ${ftext('i_t0',540,420,44,'ca','#F6C760','١٧ نوفمبر','font-weight="700" letter-spacing="2"')}
+   ${hearts('ih',14,['#F27B9A','#F6C760','#F9C6D3'])}`);
+  /* 2 CAFE */
+  sc.push(`<rect width="1080" height="1920" fill="url(#gSunset)"/>
+   ${sun(780,1000,110,'#FFE08A')}
+   ${g('c_gull1',0,0,`<path d="M-30 0 Q-15 -18 0 0 Q15 -18 30 0" stroke="#5a4a5a" stroke-width="5" fill="none" stroke-linecap="round"/>`)}
+   ${g('c_gull2',0,0,`<path d="M-22 0 Q-11 -14 0 0 Q11 -14 22 0" stroke="#5a4a5a" stroke-width="4" fill="none" stroke-linecap="round"/>`)}
+   <rect y="1000" width="1080" height="330" fill="url(#gSea)"/>
+   <path id="c_w1" fill="#7FA9D0" opacity=".55"/><path id="c_w2" fill="#2F5E8C" opacity=".5"/>
+   ${[0,1,2,3,4].map(i=>`<rect id="c_sh${i}" x="${700+i*12-40}" y="${1030+i*40}" width="${160-i*20}" height="6" rx="3" fill="#FFE9B0" opacity=".7"/>`).join('')}
+   <rect y="1320" width="1080" height="600" fill="#EBD6BF"/>
+   ${[0,1,2,3,4,5].map(i=>`<line x1="0" y1="${1420+i*100}" x2="1080" y2="${1420+i*100}" stroke="#DCC2A6" stroke-width="3"/>`).join('')}
+   <rect y="1290" width="1080" height="10" fill="#fff"/><rect y="1240" width="1080" height="8" fill="#fff"/>
+   ${Array.from({length:12},(_,i)=>`<rect x="${i*96+10}" y="1240" width="10" height="80" fill="#fff"/>`).join('')}
+   <path d="M150 820 L540 720 L930 820Z" fill="#E9476F"/><path d="M280 786 L540 720 L410 815Z M670 815 L540 720 L800 786Z" fill="#fff" opacity=".85"/>
+   <rect x="532" y="760" width="16" height="720" fill="#7A4A2A"/>
+   ${g('c_m',330,1660,man('cm',{look:1,armR:-45,armL:-25}))}
+   ${g('c_wo',750,1660,woman('cw',{look:-1,armL:45,armR:25}))}
+   <ellipse cx="540" cy="1480" rx="330" ry="46" fill="#9A6440"/><rect x="210" y="1480" width="660" height="34" fill="#7E4F31"/>
+   <rect x="520" y="1510" width="40" height="300" fill="#6A3F26"/><ellipse cx="540" cy="1810" rx="120" ry="20" fill="#6A3F26"/>
+   <g transform="translate(390 1468)"><rect x="-70" y="-20" width="140" height="22" rx="3" fill="#3E7CB1"/><rect x="-62" y="-40" width="124" height="22" rx="3" fill="#E9A84C"/><rect x="-70" y="-58" width="140" height="20" rx="3" fill="#C94F6D"/></g>
+   <g transform="translate(680 1466) skewX(-8)"><rect x="-80" y="-14" width="160" height="16" fill="#fff"/><line x1="0" y1="-14" x2="0" y2="2" stroke="#ddd" stroke-width="3"/><path d="M-60 -6 h40 M10 -6 h50" stroke="#aac" stroke-width="3"/></g>
+   ${[['c_cup1',470],['c_cup2',590]].map(([id,x])=>`<g transform="translate(${x} 1462)"><path d="M-22 -40 L22 -40 L18 0 L-18 0Z" fill="#fff"/><path d="M22 -30 q16 0 14 14 q-2 10 -16 8" stroke="#fff" stroke-width="6" fill="none"/><rect x="-22" y="-28" width="44" height="8" fill="#E9476F"/>
+      <path id="${id}" d="" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/></g>`).join('')}
+   ${g('c_heart',540,1230,`<use href="#hp" fill="#E9476F" transform="scale(3)"/>`,'opacity="0"')}
+   ${hearts('ch',12,['#E9476F','#F27B9A','#fff'])}
+   ${wtext('c_t1',540,300,120,'ru','#fff','البداية…')}
+   ${ftext('c_t2',540,410,50,'ca','#fff','كافيه نادي المهندسين على البحر','font-weight="700"')}
+   ${ftext('c_t3',540,1890,46,'ca','#7E4F31','قعدة مذاكرة… وأول نظرة','font-weight="700"')}`);
+  /* 3 PROPOSAL */
+  sc.push(`<rect width="1080" height="1920" fill="url(#gDusk)"/>
+   ${Array.from({length:40},(_,i)=>`<circle cx="${rnd(i,9)*1080}" cy="${rnd(i,8)*900}" r="${1.5+rnd(i,7)*3}" fill="#fff" id="p_st${i}"/>`).join('')}
+   <path d="M-20 520 Q270 700 540 560 Q810 700 1100 520" stroke="#3a2a40" stroke-width="3" fill="none"/>
+   ${Array.from({length:14},(_,i)=>{const x=i*80+20;const y=i<7?520+Math.sin(i/7*Math.PI)*120:560+Math.sin((i-7)/7*Math.PI)*120;return `<circle id="p_b${i}" cx="${x}" cy="${y+12}" r="13" fill="#FFE08A"/>`}).join('')}
+   ${g('p_burst',540,1260,`<use href="#hp" fill="#F27B9A" opacity=".35" transform="scale(16)"/>`,'opacity="0"')}
+   <rect y="1680" width="1080" height="240" fill="#4A3050"/><ellipse cx="540" cy="1690" rx="600" ry="30" fill="#5C3B63"/>
+   ${g('p_m',360,1720,man('pm',{look:1,pose:'kneel',armR:-20,hold:'ring'}))}
+   ${g('p_wo',740,1720,woman('pw',{look:-1,dress:'#8E5BA8',hijab:'#F6D6E6',armsFront:true}))}
+   ${g('p_q1',360,1000,`<path d="M-190 -60 Q-190 -120 -130 -120 L130 -120 Q190 -120 190 -60 Q190 0 130 0 L30 0 L0 50 L-10 0 L-130 0 Q-190 0 -190 -60Z" fill="#fff"/><text x="0" y="-38" class="ca" font-size="54" font-weight="900" fill="#9B1B3F" text-anchor="middle" direction="rtl">تتجوزيني؟</text>`,'opacity="0"')}
+   ${g('p_q2',760,960,`<path d="M-150 -60 Q-150 -120 -90 -120 L90 -120 Q150 -120 150 -60 Q150 0 90 0 L10 0 L-10 50 L-30 0 L-90 0 Q-150 0 -150 -60Z" fill="#E9476F"/><text x="0" y="-38" class="ca" font-size="58" font-weight="900" fill="#fff" text-anchor="middle" direction="rtl">أيوه ♥</text>`,'opacity="0"')}
+   ${hearts('ph',16,['#F27B9A','#FFE08A','#fff','#E9476F'])}
+   ${wtext('p_t1',540,320,112,'ru','url(#gold)','وقرر يكمّل الحكاية')}`);
+  /* 4 HOME */
+  sc.push(`<rect width="1080" height="1920" fill="url(#gHome)"/>
+   ${cloud('h_cl1',200,820,.9)}${cloud('h_cl2',860,700,.7)}
+   <path d="M-50 1700 Q540 1560 1130 1700 L1130 1920 L-50 1920Z" fill="#9CC59A"/><path d="M-50 1760 Q540 1660 1130 1760 L1130 1920 L-50 1920Z" fill="#86B585"/>
+   ${g('h_rings',540,610,`<circle cx="-34" r="54" fill="none" stroke="#E9A84C" stroke-width="16"/><circle cx="34" r="54" fill="none" stroke="#F6C760" stroke-width="16"/><path d="M-34 -78 l10 12 -10 12 -10 -12Z" fill="#E8F7FF"/>`,'opacity="0"')}
+   <g transform="translate(540 1640)">
+     ${g('h_f',0,0,`<rect x="-260" y="-20" width="520" height="30" rx="6" fill="#B08968"/>`,'opacity="0"')}
+     ${g('h_wall',0,-20,`<rect x="-220" y="-340" width="440" height="340" fill="#FFF3E2"/><rect x="-220" y="-340" width="440" height="340" fill="none" stroke="#E5C9A8" stroke-width="6"/>`,'opacity="0"')}
+     ${g('h_chim',140,-470,`<rect x="-30" y="-60" width="60" height="120" fill="#B5543F"/>`,'opacity="0"')}
+     ${g('h_roof',0,-360,`<path d="M-280 0 L0 -220 L280 0Z" fill="#D9534F"/><path d="M-280 0 L0 -220 L280 0" stroke="#B5403C" stroke-width="12" fill="none" stroke-linejoin="round"/>`,'opacity="0"')}
+     ${g('h_door',0,-20,`<rect x="-55" y="-180" width="110" height="180" rx="50" fill="#8A5A3B"/><circle cx="30" cy="-90" r="8" fill="#F6C760"/><use href="#hp" fill="#F27B9A" transform="translate(0 -130) scale(.8)"/>`,'opacity="0"')}
+     ${g('h_win1',-140,-250,`<rect x="-50" y="-50" width="100" height="100" rx="10" fill="#9CC9F2"/><rect id="h_l1" x="-50" y="-50" width="100" height="100" rx="10" fill="#FFD66B" opacity="0"/><path d="M0 -50 V50 M-50 0 H50" stroke="#fff" stroke-width="8"/>`,'opacity="0"')}
+     ${g('h_win2',140,-250,`<rect x="-50" y="-50" width="100" height="100" rx="10" fill="#9CC9F2"/><rect id="h_l2" x="-50" y="-50" width="100" height="100" rx="10" fill="#FFD66B" opacity="0"/><path d="M0 -50 V50 M-50 0 H50" stroke="#fff" stroke-width="8"/>`,'opacity="0"')}
+   </g>
+   ${hearts('hh',6,['#F27B9A','#E9476F'])}
+   ${g('h_m',150,1790,`<g transform="scale(.72)">${man('hm',{look:1,armR:-20,armL:-20,hold:'box'})}</g>`,'opacity="0"')}
+   ${g('h_wo',930,1790,`<g transform="scale(.72)">${woman('hw',{look:-1})}</g>`,'opacity="0"')}
+   ${g('h_bx1',300,1780,`<rect x="-50" y="-70" width="100" height="70" rx="6" fill="#D9A066"/><rect x="-8" y="-70" width="16" height="70" fill="#EBC28E"/>`,'opacity="0"')}
+   ${g('h_bx2',300,1710,`<rect x="-40" y="-56" width="80" height="56" rx="6" fill="#C98E55"/><rect x="-7" y="-56" width="14" height="56" fill="#EBC28E"/>`,'opacity="0"')}
+   ${g('h_plant',800,1790,`<path d="M-30 0 L-38 -60 L38 -60 L30 0Z" fill="#E07A5F"/><path d="M0 -60 Q-50 -120 -30 -170 Q0 -120 0 -60 Q10 -150 40 -180 Q40 -110 0 -60" fill="#5FA05B"/>`,'opacity="0"')}
+   ${wtext('h_t1',540,330,120,'ru','#9B1B3F','اتخطبوا…')}
+   ${ftext('h_t2',540,440,52,'ca','#7E4F31','وجهّزوا عشّهم حتة حتة','font-weight="700"')}`);
+  /* 5 WEDDING */
+  sc.push(`<rect width="1080" height="1920" fill="url(#gWed)"/>
+   ${g('w_glow',540,1350,`<circle r="420" fill="#FFF6D8" opacity=".55"/>`)}
+   <path id="w_arch" d="M70 1760 A470 470 0 0 1 1010 1760" fill="none" stroke="#7FB27A" stroke-width="22" stroke-linecap="round"/>
+   ${Array.from({length:26},(_,i)=>{const a=Math.PI-(i/25)*Math.PI;const x=540+470*Math.cos(a),y=1760-470*Math.sin(a);const c=['#F27B9A','#fff','#E9476F','#F9C6D3'][i%4];return g('w_fl'+i,x,y,`<circle r="${22+(i%3)*6}" fill="${c}"/><circle r="8" fill="#F6C760"/>`,'opacity="0"')}).join('')}
+   <ellipse cx="540" cy="1770" rx="420" ry="40" fill="#E9B9C6"/>
+   ${g('w_cpl',0,0,g('w_m',450,1760,`<g transform="scale(.9)">${man('wm',{look:1,outfit:'wedding',armR:-30})}</g>`)+g('w_wo',640,1760,`<g transform="scale(.9)">${woman('ww',{look:-1,outfit:'wedding',armL:30,armR:-30})}</g>`),'opacity="0"')}
+   ${g('w_heart',545,1130,`<use href="#hp" fill="#E9476F" transform="scale(2.4)"/>`,'opacity="0"')}
+   ${wtext('w_t1',540,300,112,'ru','#9B1B3F','وجه أحلى يوم')}
+   <g class="ca" font-weight="900" font-size="120" fill="url(#gold)" text-anchor="middle" filter="url(#tsh)">
+     ${g('w_d1',840,560,`<text>١٧</text>`,'opacity="0"')}${g('w_s1',735,560,`<text font-size="90" fill="#E9476F">/</text>`,'opacity="0"')}
+     ${g('w_d2',630,560,`<text>١١</text>`,'opacity="0"')}${g('w_s2',515,560,`<text font-size="90" fill="#E9476F">/</text>`,'opacity="0"')}
+     ${g('w_d3',330,560,`<text>٢٠١٦</text>`,'opacity="0"')}</g>
+   ${ftext('w_t2',540,680,56,'ca','#9B1B3F','يوم الفرح','font-weight="900"')}
+   ${confetti('wc',70)}
+   <rect id="w_flash" width="1080" height="1920" fill="#fff" opacity="0"/>`);
+  /* 6 LIFE */
+  sc.push(`<rect width="1080" height="1920" fill="#9ED3F0" id="l_sky"/>
+   <rect width="1080" height="1920" fill="url(#gNight)" id="l_night" opacity="0"/>
+   ${g('l_sun',0,0,sun(0,0,80,'#FFD66B'))}${g('l_moon',0,0,`<circle r="70" fill="#FFF3C4"/><circle cx="28" cy="-18" r="60" fill="#2A3563" id="l_mc"/>`)}
+   ${Array.from({length:30},(_,i)=>`<circle class="l_st" cx="${rnd(i,3)*1080}" cy="${150+rnd(i,4)*800}" r="${1.5+rnd(i,5)*3}" fill="#fff" opacity="0"/>`).join('')}
+   <g id="l_city" fill="#7C93B8">${[[0,260,190],[140,380,150],[300,300,170],[470,420,140]].map(([x,h,w])=>`<rect x="${x}" y="${1700-h}" width="${w}" height="${h}"/>`).join('')}
+     ${Array.from({length:24},(_,i)=>`<rect class="l_cw" x="${30+(i%6)*80}" y="${1480+Math.floor(i/6)*60}" width="26" height="30" fill="#DDE8F7"/>`).join('')}</g>
+   <g transform="translate(860 1700)"><rect x="-150" y="-260" width="300" height="260" fill="#FFF3E2"/><path d="M-190 -260 L0 -420 L190 -260Z" fill="#D9534F"/>
+     <rect x="-40" y="-150" width="80" height="150" rx="36" fill="#8A5A3B"/><rect id="l_hw" x="-120" y="-220" width="70" height="70" rx="8" fill="#9CC9F2"/><rect id="l_hw2" x="50" y="-220" width="70" height="70" rx="8" fill="#9CC9F2"/></g>
+   <rect y="1700" width="1080" height="220" fill="#6E8E6A"/>
+   ${g('l_m',0,1820,`<g transform="scale(.75)">${man('lm',{look:1,hold:'case',armR:-4,armL:10})}</g>`)}
+   ${g('l_wo',700,1820,`<g transform="scale(.75)">${woman('lw',{look:-1,armL:20})}</g>`)}
+   ${g('l_heart',570,1440,`<use href="#hp" fill="#E9476F" transform="scale(2)"/>`,'opacity="0"')}
+   ${icon('l_i1',190,720,`<rect x="-36" y="-16" width="72" height="50" rx="8" fill="#7A4A2A"/><rect x="-14" y="-30" width="28" height="18" rx="6" fill="none" stroke="#7A4A2A" stroke-width="6"/>`)}
+   ${icon('l_i2',365,720,`<rect x="-38" y="-30" width="76" height="48" rx="5" fill="#3E5C8A"/><rect x="-48" y="18" width="96" height="10" rx="4" fill="#2B2D42"/>`)}
+   ${icon('l_i3',540,720,`<path d="M-24 -24 L24 -24 L20 22 L-20 22Z" fill="#8A5A3B"/><path d="M24 -14 q18 0 14 16 q-3 9 -18 6" stroke="#8A5A3B" stroke-width="6" fill="none"/>`)}
+   ${icon('l_i4',715,720,`<path d="M-36 4 L0 -30 L36 4Z" fill="#D9534F"/><rect x="-26" y="4" width="52" height="34" fill="#FFF3E2" stroke="#D9534F" stroke-width="4"/>`)}
+   ${icon('l_i5',890,720,`<use href="#hp" fill="#E9476F" transform="translate(0 2) scale(1.6)"/>`)}
+   ${ftext('l_t1',540,360,96,'ru','#2B2D42','شغل… وتعب…')}
+   ${ftext('l_t2',540,480,56,'ca','#fff','ورجوع لبيت مليان دفا','font-weight="900"')}`);
+  /* 7 OMAR */
+  sc.push(`<rect width="1080" height="1920" fill="url(#gBaby)"/>
+   ${cloud('o_cl1',160,900,.8)}${cloud('o_cl2',900,1050,.6)}${cloud('o_cl3',700,780,.5)}
+   ${Array.from({length:7},(_,i)=>g('o_bl'+i,140+i*130,0,`<path d="M0 60 Q-6 140 6 220" stroke="#fff" stroke-width="3" fill="none"/><ellipse rx="44" ry="56" fill="${['#9CC9F2','#F6C760','#F27B9A','#7FB27A','#9CC9F2','#F2A541','#C3A0E0'][i]}"/><ellipse cx="-14" cy="-18" rx="10" ry="16" fill="#fff" opacity=".5"/>`,'opacity="0"')).join('')}
+   <path d="M-50 1740 Q540 1640 1130 1740 L1130 1920 L-50 1920Z" fill="#BFE3B5"/>
+   ${g('o_m',330,1790,`<g transform="scale(.82)">${man('om',{look:1,armR:-24})}</g>`)}
+   ${g('o_wo',720,1790,`<g transform="scale(.82)">${woman('ow',{look:-1,armL:-62,armR:62,hold:'baby'})}</g>`)}
+   ${g('o_kid',520,1830,`<g>${boy('ok',{look:0,headS:1.3})}</g>`,'opacity="0"')}
+   ${g('o_star',540,0,`<circle r="60" fill="#FFF6C8" opacity=".4"/><path d="M0 -40 L11 -12 L40 -12 L17 6 L25 36 L0 18 L-25 36 L-17 6 L-40 -12 L-11 -12Z" fill="#FFE08A"/>`,'opacity="0"')}
+   ${hearts('oh',12,['#9CC9F2','#F6C760','#fff'])}
+   ${wtext('o_t1',540,300,96,'ru','#2F5E8C','وربنا رزقهم بأحلى هدية')}
+   ${ftext('o_name',540,640,260,'ru','url(#blue)','عُمر')}
+   ${ftext('o_age',540,800,64,'ca','#2F5E8C','','font-weight="900" id="o_agetx"')}`);
+  /* 8 LILY */
+  sc.push(`<rect width="1080" height="1920" fill="url(#gGarden)"/>
+   ${cloud('y_cl1',220,760,.7)}${cloud('y_cl2',880,880,.6)}
+   <path d="M-50 1720 Q540 1620 1130 1720 L1130 1920 L-50 1920Z" fill="#A9D6A0"/>
+   ${Array.from({length:16},(_,i)=>{const x=30+i*68+rnd(i,2)*20,y=1760+rnd(i,3)*120;return g('y_f'+i,x,y,`<path d="M0 0 V40" stroke="#5FA05B" stroke-width="5"/>${[0,72,144,216,288].map(a=>`<circle cx="${12*Math.cos(a*Math.PI/180)}" cy="${12*Math.sin(a*Math.PI/180)}" r="10" fill="${['#F27B9A','#fff','#F6C760','#C3A0E0'][i%4]}"/>`).join('')}<circle r="7" fill="#F6C760"/>`,'opacity="0"')}).join('')}
+   ${[0,1,2].map(i=>g('y_bf'+i,0,0,`<g id="y_bw${i}"><ellipse cx="-16" cy="-6" rx="18" ry="24" fill="${['#F27B9A','#C3A0E0','#F6C760'][i]}"/><ellipse cx="16" cy="-6" rx="18" ry="24" fill="${['#F27B9A','#C3A0E0','#F6C760'][i]}"/></g><rect x="-3" y="-20" width="6" height="34" rx="3" fill="#3a2a40"/>`)).join('')}
+   ${g('y_m',200,1800,`<g transform="scale(.78)">${man('ym',{look:1,armR:-14})}</g>`)}
+   ${g('y_kid',400,1810,`<g transform="scale(.66)">${boy('yk',{look:1,headS:1.3})}</g>`)}
+   ${g('y_wo',830,1800,`<g transform="scale(.78)">${woman('yw',{look:-1,armL:-62,armR:62,hold:'babyG',dress:'#7FA8C9',hijab:'#FBE3E8'})}</g>`)}
+   ${g('y_girl',620,1830,`<g>${girl('yg',{headS:1.45})}</g>`,'opacity="0"')}
+   ${g('y_star',540,0,`<circle r="60" fill="#FFE0EC" opacity=".5"/><path d="M0 -40 L11 -12 L40 -12 L17 6 L25 36 L0 18 L-25 36 L-17 6 L-40 -12 L-11 -12Z" fill="#FF9EC4"/>`,'opacity="0"')}
+   ${hearts('yh',12,['#F27B9A','#FF9EC4','#fff'])}
+   ${wtext('y_t1',540,300,104,'ru','#9B1B3F','وكمّلت الفرحة')}
+   ${ftext('y_name',540,540,200,'ru','url(#pink)','لي لي')}
+   ${ftext('y_sub',540,680,60,'ca','#9B1B3F','نوّرت الدنيا','font-weight="900"')}
+   ${ftext('y_age',540,780,56,'ca','#B5406A','','font-weight="900" id="y_agetx"')}`);
+  /* 9 FINALE */
+  sc.push(`<rect width="1080" height="1920" fill="url(#gFinale)"/>
+   ${g('f_big',540,1260,`<use href="#hp" fill="url(#rgHeart)" transform="scale(17)"/>`,'opacity="0"')}
+   ${[0,1,2,3,4,5].map(k=>g('f_fw'+k,0,0,Array.from({length:10},(_,j)=>`<use href="#hp" fill="${['#FFE08A','#F27B9A','#fff'][j%3]}" id="f_fw${k}_${j}"/>`).join(''))).join('')}
+   <ellipse cx="540" cy="1790" rx="520" ry="50" fill="#5A2A4A" opacity=".5"/>
+   ${g('f_m',290,1780,`<g transform="scale(.82)">${man('fm',{look:1,armR:20})}</g>`,'opacity="0"')}
+   ${g('f_kid',450,1800,`<g transform="scale(.7)">${boy('fk',{look:1,headS:1.3,armR:-20,armL:-25})}</g>`,'opacity="0"')}
+   ${g('f_wo',800,1780,`<g transform="scale(.82)">${woman('fw',{look:-1,armL:-20})}</g>`,'opacity="0"')}
+   ${g('f_girl',630,1810,`<g transform="scale(.6)">${girl('fg',{headS:1.45,look:-1})}</g>`,'opacity="0"')}
+   ${wtext('f_t1',540,360,150,'ru','url(#gold)','١٠ سنين…')}
+   ${ftext('f_t2',540,500,66,'ca','#fff','والحب لسه بيكبر','font-weight="900"')}
+   ${ftext('f_t3',540,1890,40,'ca','#FBE3E8','أسامة • مروة • عُمر • لي لي','font-weight="700"')}
+   ${hearts('fh',18,['#FFE08A','#F27B9A','#fff'])}`);
+  /* 10 OUTRO */
+  sc.push(`<rect width="1080" height="1920" fill="url(#gIntro)"/>
+   ${hearts('xh',14,['#F27B9A','#F6C760','#F9C6D3'])}
+   ${g('x_h',540,720,`<path id="x_hpath" d="M0 90 C-120 10 -110 -120 0 -70 C110 -120 120 10 0 90Z" fill="none" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/><use href="#hp" id="x_hf" fill="#E9476F" opacity="0" transform="scale(2.6)"/>`)}
+   ${wtext('x_t1',540,960,100,'ru','url(#gold)','كل سنة وإنتو مع بعض')}
+   ${ftext('x_t2',540,1090,62,'ca','#FBE3E8','عيد جواز سعيد يا أسامة ومروة','font-weight="900"')}
+   ${ftext('x_t3',540,1240,104,'gv','#F6C760','Happy 10th Anniversary','direction="ltr"')}
+   ${ftext('x_t4',540,1340,44,'ca','#F27B9A','٢٠١٦ — ٢٠٢٦','font-weight="700"')}
+   <rect id="x_black" width="1080" height="1920" fill="#000" opacity="0"/>`);
+  return sc;
+}
+
+function defs(){
+  const lg=(id,stops,x2=0,y2=1)=>`<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}">${stops.map(([o,c])=>`<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>`;
+  return `<defs>
+  <path id="hp" d="${HEART}"/>
+  <filter id="tsh" x="-20%" y="-40%" width="140%" height="180%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#2a0f22" flood-opacity=".45"/></filter>
+  <filter id="blur"><feGaussianBlur stdDeviation="5"/></filter>
+  <radialGradient id="gIntro" cx=".5" cy=".45" r=".75"><stop offset="0" stop-color="#6B3466"/><stop offset=".6" stop-color="#3A1B40"/><stop offset="1" stop-color="#1A0B20"/></radialGradient>
+  <radialGradient id="rgHeart"><stop offset="0" stop-color="#FFD3DD" stop-opacity=".9"/><stop offset="1" stop-color="#F27B9A" stop-opacity=".35"/></radialGradient>
+  ${lg('gold',[[0,'#FFF0C2'],[.5,'#F6C760'],[1,'#D98E3A']],0,1)}
+  ${lg('blue',[[0,'#4F8FD0'],[1,'#1F4A78']])}
+  ${lg('pink',[[0,'#FF9EC4'],[1,'#D6336C']])}
+  ${lg('gSunset',[[0,'#F28C82'],[.35,'#F7B58C'],[.52,'#FBDDB5']])}
+  ${lg('gSea',[[0,'#6E9CC6'],[1,'#3B6995']])}
+  ${lg('gDusk',[[0,'#24183F'],[.5,'#6B3D78'],[1,'#E88FA0']])}
+  ${lg('gHome',[[0,'#FFF1E0'],[1,'#F8C9C4']])}
+  ${lg('gNight',[[0,'#141B3A'],[1,'#3B3F75']])}
+  ${lg('gBaby',[[0,'#CFE8FF'],[1,'#FFE4EC']])}
+  ${lg('gGarden',[[0,'#FFE9D6'],[1,'#FFD1DC']])}
+  ${lg('gFinale',[[0,'#2E1A40'],[.5,'#A8456F'],[1,'#F7A072']])}
+  <radialGradient id="gWed" cx=".5" cy=".6" r=".8"><stop offset="0" stop-color="#FFF6EC"/><stop offset=".7" stop-color="#F8D3DC"/><stop offset="1" stop-color="#EBA7BA"/></radialGradient>
+  </defs>`;
+}
+
+const cache={};
+function $(id){return cache[id]||(cache[id]=document.getElementById(id))}
+function set(id,{x=0,y=0,s=1,sx=null,r=0,o=null}={}){
+  const e=$(id); if(!e) return;
+  const bx=+e.dataset.x||0, by=+e.dataset.y||0;
+  e.setAttribute('transform',`translate(${bx+x} ${by+y}) rotate(${r}) scale(${sx??s} ${s})`);
+  if(o!==null) e.setAttribute('opacity',clamp(o));
+}
+function wipe(id,u,a,d=1.2){const p=eio(P(u,a,d)); const r=$(id+'_cr'); r.setAttribute('x',W*(1-p)-10); r.setAttribute('width',W*p+20); set(id,{y:(1-eo(P(u,a,d)))*20});}
+function fadeUp(id,u,a,d=.7,dy=40){const p=eo(P(u,a,d)); set(id,{y:(1-p)*dy,o:p});}
+function popS(id,u,a,d=.5,extra={}){const p=pop(u,a,d); set(id,{s:p,o:clamp(P(u,a,.15)),...extra});}
+
+/* ---------------- build ---------------- */
+const svg=document.getElementById('v');
+const SCN=sceneMarkup();
+svg.innerHTML=defs()+SCN.map((m,i)=>`<g id="scene${i}" style="display:none"><g id="cam${i}">${m}</g></g>`).join('')+
+  `<g id="bokeh" filter="url(#blur)">${Array.from({length:22},(_,i)=>`<circle id="bk${i}" r="${8+rnd(i,11)*22}" fill="${i%3?'#FFF3D6':'#F9C6D3'}"/>`).join('')}</g>`+
+  `<rect id="vig" width="1080" height="1920" fill="url(#vg)" pointer-events="none"/>`;
+svg.querySelector('defs').insertAdjacentHTML('beforeend',`<radialGradient id="vg" cx=".5" cy=".5" r=".75"><stop offset=".65" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient>`);
+const HL={};
+for(const id of ['i_hpath','x_hpath','w_arch']){const e=$(id);HL[id]=e.getTotalLength();e.setAttribute('stroke-dasharray',HL[id]);}
+function draw(id,p){$(id).setAttribute('stroke-dashoffset',HL[id]*(1-p));}
+
+function wavePath(y,amp,len,ph){let d=`M0 ${y}`;for(let x=0;x<=1080;x+=20)d+=` L${x} ${y+Math.sin(x/len+ph)*amp}`;return d+` L1080 1330 L0 1330Z`;}
+function steam(ph){let d='';for(let k=0;k<3;k++){const x=-10+k*10;d+=`M${x} -48 q${8*Math.sin(ph+k)} -15 0 -30 q${-8*Math.sin(ph+k)} -15 0 -30 `;}return d;}
+
+/* ---------------- render ---------------- */
+function render(t){
+  // scene visibility
+  for(let i=0;i<10;i++){
+    const a=S[i],b=S[i+1];
+    const o=Math.min(P(t,a-0.25,0.5), i===9?1:1-P(t,b-0.25,0.5));
+    const el=$('scene'+i);
+    if(o<=0){el.style.display='none';continue}
+    el.style.display='';el.setAttribute('opacity',o);
+    const pr=(t-a)/(b-a);
+    $('cam'+i).setAttribute('transform',`translate(540 1000) scale(${1+0.035*pr}) translate(-540 -1000)`);
+  }
+  // bokeh
+  for(let i=0;i<22;i++){
+    const sp=20+rnd(i,12)*40, y=((rnd(i,13)*2200 - t*sp)%2200+2200)%2200-140;
+    const x=rnd(i,14)*1080+Math.sin(t*.4+i)*40;
+    const e=$('bk'+i);e.setAttribute('cx',x);e.setAttribute('cy',y);
+    e.setAttribute('opacity',(.12+.18*Math.sin(t*1.3+i*2)**2)*(t>79.5?1:.8));
+  }
+  const bp=beatPulse(t);
+  let u;
+  /* 1 */ if(t<S[1]+.3){u=t;
+    set('i_t0',{o:eo(P(u,.2,.8))*(1-P(u,8.4,.8)),y:(1-eo(P(u,.2,.8)))*20});
+    draw('i_hpath',eio(P(u,.4,2.4)));
+    set('i_frame',{s:1+.035*bp*P(u,2.4,.5)});
+    const pc=eo(P(u,2.0,1.4)); set('i_cpl',{y:(1-pc)*80,o:pc});
+    set('im_h',{r:6*Math.sin(u*1.2)*.5+4}); set('iw_h',{r:-4-3*Math.sin(u*1.2)});
+    $('i_hfill').setAttribute('opacity',.18+.1*bp);
+    wipe('i_t1',u,4.0,1.3); fadeUp('i_t2',u,5.6);
+    updHearts('ih',14,u,140,940,700,1900,6.4,3.2);
+  }
+  /* 2 CAFE */ if(t>S[1]-.3&&t<S[2]+.3){u=t-S[1];
+    $('c_w1').setAttribute('d',wavePath(1060,8,60,u*1.5));$('c_w2').setAttribute('d',wavePath(1150,10,80,-u*1.2));
+    for(let i=0;i<5;i++)set('c_sh'+i,{x:Math.sin(u*2+i)*14});
+    set('c_gull1',{x:-80+u*150,y:640+Math.sin(u*3)*14,sx:1,s:1});set('c_gull2',{x:-200+u*130,y:700+Math.sin(u*3+1)*10});
+    $('c_cup1').setAttribute('d',steam(u*3));$('c_cup2').setAttribute('d',steam(u*3+1.5));
+    const look=eio(P(u,3.2,.8));
+    set('cm_h',{r:lerp(14,-4,look)});set('cw_h',{r:lerp(-14,4,look)});
+    set('c_m',{y:-6*eo(P(u,3.2,.4))*(1-P(u,3.6,.4))});
+    const hp=pop(u,4.0,.6); set('c_heart',{s:hp*(1+.12*bp),o:P(u,4.0,.15)});
+    updHearts('ch',12,u,380,700,700,1250,4.4,2.4);
+    wipe('c_t1',u,.3,1.1); fadeUp('c_t2',u,1.2); fadeUp('c_t3',u,4.8);
+  }
+  /* 3 PROPOSAL */ if(t>S[2]-.3&&t<S[3]+.3){u=t-S[2];
+    for(let i=0;i<40;i++)$('p_st'+i).setAttribute('opacity',.3+.7*Math.abs(Math.sin(u*2+i)));
+    for(let i=0;i<14;i++)$('p_b'+i).setAttribute('opacity',.55+.45*((Math.floor(u/0.4)+i)%2));
+    const ra=eio(P(u,.8,.8)); set('pm_ar',{r:lerp(-20,-98,ra)}); set('pm_hold',{r:lerp(20,98,ra)});
+    set('ringlid',{r:-115*eo(P(u,1.6,.4))});
+    const sp=P(u,2.4,.8); set('ringsp',{s:.3+sp*1.2,o:Math.sin(sp*Math.PI)});
+    const sur=eio(P(u,2.4,.5)); set('pw_al',{r:lerp(6,-27,sur)}); set('pw_ar',{r:lerp(-6,27,sur)});
+    set('pw_h',{r:-6*sur+(u>4.4?Math.sin((u-4.4)*7.85)*5:0)}); set('p_wo',{y:u>4.4&&u<6?-Math.abs(Math.sin((u-4.4)*7.85))*30:0});
+    set('p_q1',{s:pop(u,3.2,.5),o:P(u,3.2,.15)*(1-P(u,4.6,.3))});
+    popS('p_q2',u,4.4,.5);
+    const bu=pop(u,4.8,.7); set('p_burst',{s:bu*(1+.06*bp),o:P(u,4.8,.2)});
+    updHearts('ph',16,u,200,880,500,1500,4.8,2.0);
+    wipe('p_t1',u,.2,1.2);
+  }
+  /* 4 HOME */ if(t>S[3]-.3&&t<S[4]+.3){u=t-S[3];
+    set('h_cl1',{x:u*14});set('h_cl2',{x:-u*10});
+    popS('h_rings',u,.4,.6); set('h_rings',{s:pop(u,.4,.6)*(1+.05*bp),o:P(u,.4,.2),r:Math.sin(u*1.5)*4});
+    const st=(id,a)=>{const p=pop(u,a,.5);set(id,{s:p,y:(1-clamp(P(u,a,.4)))*-120,o:P(u,a,.15)})};
+    st('h_f',1.6);st('h_wall',2.4);st('h_roof',3.2);st('h_door',4.0);st('h_win1',4.4);st('h_win2',4.8);st('h_chim',5.2);
+    const lp=P(u,7.2,.4);$('h_l1').setAttribute('opacity',lp*.9);$('h_l2').setAttribute('opacity',P(u,7.6,.4)*.9);
+    updHearts('hh',6,u,640,720,800,1110,5.6,2.4);
+    const mi=eo(P(u,5.6,.8)); set('h_m',{x:(1-mi)*-300,o:mi,y:-Math.abs(Math.sin(u*7))*12*(1-P(u,6.4,.1))});
+    const wi=eo(P(u,6.0,.8)); set('h_wo',{x:(1-wi)*300,o:wi});
+    popS('h_bx1',u,6.4);popS('h_bx2',u,6.8);popS('h_plant',u,7.2);
+    const tl=eio(P(u,8.0,.6)); set('hm_h',{r:8*tl}); set('hw_h',{r:-8*tl});
+    wipe('h_t1',u,.2,1.1); fadeUp('h_t2',u,1.0);
+  }
+  /* 5 WEDDING */ if(t>S[4]-.3&&t<S[5]+.3){u=t-S[4];
+    $('w_flash').setAttribute('opacity',1-P(u,0,.7));
+    draw('w_arch',eio(P(u,.3,1.4)));
+    for(let i=0;i<26;i++){const a=.5+i*.055;set('w_fl'+i,{s:pop(u,a,.4)*(1+.08*bp*P(u,3,1)),o:P(u,a,.1)});}
+    const cp=eo(P(u,.4,1)); set('w_cpl',{y:(1-cp)*120,o:cp});
+    set('w_glow',{s:1+.04*bp});
+    popS('w_d1',u,2.4,.45);popS('w_s1',u,2.6,.4);popS('w_d2',u,2.8,.45);popS('w_s2',u,3.0,.4);popS('w_d3',u,3.2,.5);
+    fadeUp('w_t2',u,4.0);
+    const tl=eio(P(u,5.6,.8)); set('wm_h',{r:8*tl}); set('ww_h',{r:-8*tl});
+    set('w_heart',{s:pop(u,6.4,.6)*(1+.15*bp),o:P(u,6.4,.15)});
+    updConfetti('wc',70,u,.6);
+    wipe('w_t1',u,1.2,1.1);
+  }
+  /* 6 LIFE */ if(t>S[5]-.3&&t<S[6]+.3){u=t-S[5];
+    const nt=eio(P(u,2.6,1.4)); $('l_night').setAttribute('opacity',nt);
+    const sa=Math.PI*(1-clamp(u/3.6)); set('l_sun',{x:540+480*Math.cos(sa),y:1350-450*Math.sin(sa)});
+    const ma=Math.PI*(1-clamp((u-3)/5)); set('l_moon',{x:lerp(1080,780,eo(P(u,3,2))),y:lerp(1300,980,eo(P(u,3,2))),o:P(u,3,.5)});
+    $('l_mc').setAttribute('fill',nt>.5?'#2A3563':'#3B3F75');
+    document.querySelectorAll('.l_st').forEach((e,i)=>e.setAttribute('opacity',nt*(.4+.6*Math.abs(Math.sin(u*2+i)))));
+    document.querySelectorAll('.l_cw').forEach((e,i)=>e.setAttribute('fill',nt>.4&&(i*7)%3?'#FFD66B':'#DDE8F7'));
+    $('l_hw').setAttribute('fill',nt>.5?'#FFD66B':'#9CC9F2');$('l_hw2').setAttribute('fill',nt>.6?'#FFD66B':'#9CC9F2');
+    const wk=clamp(u/3.2); const walking=u<3.2;
+    set('l_m',{x:lerp(-120,540,eio(wk)),y:walking?-Math.abs(Math.sin(u*7.85))*14:0});
+    set('lm_al',{r:walking?10+Math.sin(u*7.85)*16:10});
+    const tl=eio(P(u,4.0,.6)); set('lm_h',{r:8*tl}); set('lw_h',{r:-8*tl});
+    set('lw_al',{r:lerp(20,-40,eio(P(u,3.0,.6)))});
+    set('l_heart',{s:pop(u,4.4,.6)*(1+.12*bp),o:P(u,4.4,.15)});
+    [.4,1.2,2.0,3.6,4.4].forEach((a,i)=>set('l_i'+(i+1),{s:pop(u,a,.5),o:P(u,a,.15)}));
+    fadeUp('l_t1',u,.2); fadeUp('l_t2',u,3.2);
+    $('l_t1').querySelector('text').setAttribute('fill',nt>.5?'#FFF3C4':'#2B2D42');
+  }
+  /* 7 OMAR */ if(t>S[6]-.3&&t<S[7]+.3){u=t-S[6];
+    set('o_cl1',{x:u*10});set('o_cl2',{x:-u*12});set('o_cl3',{x:u*6});
+    const sf=eio(P(u,.8,.8)); set('o_star',{y:lerp(-80,1250,sf),r:u*120,s:1+P(u,1.6,.4)*2,o:P(u,.8,.1)*(1-P(u,1.6,.4))});
+    set('o_name',{s:pop(u,2.0,.6)*(1+.05*bp),o:P(u,2.0,.15)});
+    const bg=1-P(u,4.8,.5); set('ow_hold',{o:bg});
+    if(u>4.8){const l=eio(P(u,4.8,.6)); set('ow_al',{r:lerp(-62,10,l)}); set('ow_ar',{r:lerp(62,-10,l)});}
+    const age=u<4.8?0:Math.min(10,1+Math.floor((u-4.8)/0.4));
+    const kp=eo(P(u,4.8,.5)); const gs=lerp(.42,.74,clamp((u-4.8)/3.6));
+    set('o_kid',{s:gs*(kp)+0.0001,o:kp,y:-Math.abs(Math.sin(u*7.85))*6*kp});
+    $('o_agetx').textContent=age?`عمره دلوقتي ${AR(age)} ${age>=3&&age<=10?'سنين':'سنة'}`:'';
+    set('o_age',{o:P(u,4.8,.2),s:1+.08*Math.exp(-(((u-4.8)%0.4)/0.4)*4)*(age<10||u<8.6?1:0)});
+    for(let i=0;i<7;i++){const a=5.6+i*.25;set('o_bl'+i,{y:lerp(2100,800+rnd(i,4)*400,eo(P(u,a,2.5))),x:Math.sin(u*1.5+i)*14,o:P(u,a,.1)});}
+    set('om_h',{r:6*eio(P(u,2.4,.6))}); set('ow_h',{r:-6*eio(P(u,2.4,.6))});
+    updHearts('oh',12,u,300,780,900,1500,2.0,2.4);
+    wipe('o_t1',u,.1,1.1);
+  }
+  /* 8 LILY */ if(t>S[7]-.3&&t<S[8]+.3){u=t-S[7];
+    set('y_cl1',{x:u*10});set('y_cl2',{x:-u*8});
+    for(let i=0;i<16;i++)set('y_f'+i,{s:pop(u,.2+i*.08,.4),o:P(u,.2+i*.08,.1),r:Math.sin(u*2+i)*6});
+    for(let i=0;i<3;i++){set('y_bf'+i,{x:150+i*330+Math.sin(u*.9+i*2)*120,y:900+i*120+Math.cos(u*1.3+i)*80,r:Math.sin(u*2+i)*15});set('y_bw'+i,{sx:Math.abs(Math.cos(u*14+i))*.8+.2,s:1});}
+    const sf=eio(P(u,1.6,.8)); set('y_star',{y:lerp(-80,1280,sf),r:u*120,s:1+P(u,2.4,.4)*2,o:P(u,1.6,.1)*(1-P(u,2.4,.4))});
+    const hb=P(u,2.4,.3); set('yw_hold',{o:hb*(1-P(u,4.8,.5)),s:.6+.4*eo(hb)});
+    const arms=eio(P(u,1.8,.6))*(1-eio(P(u,4.8,.6)));
+    set('yw_al',{r:lerp(8,-62,arms)}); set('yw_ar',{r:lerp(-8,62,arms)});
+    set('y_name',{s:pop(u,2.4,.6)*(1+.05*bp),o:P(u,2.4,.15)*(1-P(u,4.6,.3))});
+    fadeUp('y_sub',u,3.2); set('y_sub',{o:P(u,3.2,.4)*(1-P(u,4.6,.3)),y:(1-eo(P(u,3.2,.7)))*40});
+    const age=u<4.8?0:Math.min(3,1+Math.floor((u-4.8)/0.8));
+    $('y_agetx').textContent=age?`ولي لي دلوقتي ${AR(age)} ${age===3?'سنين':age===2?'سنتين':'سنة'}`:'';
+    set('y_age',{o:P(u,4.8,.2),y:-240*P(u,4.6,.01),s:1+.1*Math.exp(-(((u-4.8)%0.8)/0.8)*4)});
+    const gp=eo(P(u,4.8,.5)); set('y_girl',{s:lerp(.3,.6,clamp((u-4.8)/1.8))*gp+.0001,o:gp});
+    set('ym_h',{r:6*eio(P(u,6.4,.6))}); set('yw_h',{r:-6*eio(P(u,6.4,.6))}); set('yk_h',{r:Math.sin(u*3)*5});
+    updHearts('yh',12,u,350,800,950,1500,2.4,2.4);
+    wipe('y_t1',u,.2,1.1);
+  }
+  /* 9 FINALE */ if(t>S[8]-.3&&t<S[9]+.3){u=t-S[8];
+    set('f_big',{s:pop(u,.2,.9)*(1+.05*bp),o:P(u,.2,.4)});
+    const ent=(id,a,dx)=>{const p=eo(P(u,a,.6));set(id,{x:(1-p)*dx,o:p,y:-Math.abs(Math.sin(u*7.85))*8*(1-P(u,a+.8,.2))})};
+    ent('f_m',.4,-260);ent('f_kid',.8,-260);ent('f_girl',1.2,260);ent('f_wo',1.6,260);
+    const tl=eio(P(u,4.0,.8)); set('fm_h',{r:6*tl}); set('fw_h',{r:-6*tl}); set('fk_h',{r:Math.sin(u*2)*4}); set('fg_h',{r:Math.sin(u*2+1)*5});
+    for(let k=0;k<6;k++){const a=2.4+k*1.2;const cx=[270,800,540,330,760,540][k],cy=[780,700,640,900,860,760][k];const lp=(u-a);
+      for(let j=0;j<10;j++){const e=$(`f_fw${k}_${j}`);if(lp<0||lp>1.6){e.setAttribute('opacity',0);continue}
+        const ang=j/10*Math.PI*2, r=eo(clamp(lp/1.2))*200; e.setAttribute('transform',`translate(${cx+Math.cos(ang)*r} ${cy+Math.sin(ang)*r+lp*lp*40}) scale(${.8})`);e.setAttribute('opacity',1-clamp(lp/1.6));}}
+    updHearts('fh',18,u,100,980,600,1900,2.0,3.0);
+    wipe('f_t1',u,2.4,1.2); fadeUp('f_t2',u,3.6); fadeUp('f_t3',u,4.8);
+  }
+  /* 10 OUTRO */ if(t>S[9]-.3){u=t-S[9];
+    draw('x_hpath',eio(P(u,.1,1.5)));
+    $('x_hf').setAttribute('opacity',P(u,1.6,.4)); set('x_h',{s:1+.08*bp*P(u,1.6,.4)});
+    wipe('x_t1',u,.8,1.3); fadeUp('x_t2',u,2.0); fadeUp('x_t3',u,3.2); fadeUp('x_t4',u,4.0);
+    updHearts('xh',14,u,140,940,500,1900,1.6,3.2);
+    $('x_black').setAttribute('opacity',eio(P(u,8.2,1.6)));
+  }
+}
+window.render=render;
+const q=new URLSearchParams(location.search); if(q.has('t')) document.fonts.ready.then(()=>render(+q.get('t')));
+</script>
+</body></html>
