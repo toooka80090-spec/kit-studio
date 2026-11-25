@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>*{margin:0;padding:0}html,body{overflow:hidden;background:#000}canvas{display:block}</style></head>
+<body><canvas id="out"></canvas>
+<!--
+  空骨架。先按 SKILL.md 写好 storyboard.md（母题 + 分镜表），再在这里逐个实现镜头。
+  - 每个镜头从这个题材自己的视觉元素长出来；优先用 drawOn / noise1 / stg / cjk / word / blobs 等基础零件新写画法。
+  - FX.* 是现成镜头配方，全片最多用一半镜头、每个配方最多用一次，并且要改造成贴合题材的样子。
+  - 不要打开 examples/showreel 照抄；它只用来查某个函数怎么调用。
+-->
+<script>window.KCONF={W:1920,H:1080,FPS:60,
+  palette:{ /* 按题材定：ink 深底, paper 浅底, accent 强调色, accentHi, warm, deep, shade, mute, gray, cool */ },
+  fonts:{ /* serif / sans / mono，先用 fc-list 确认存在且有粗字重。英文/混排：英文字体在前、中文兜底，如 sans:'"Inter Display","Noto Sans CJK SC"' */ },
+  /* 后期质感按 brief 定：干净 → caBase:0, flash:.12；胶片 → vignette:.45；强冲击 → caHit:16, punch:.07 */
+  caBase:1.6, caHit:13, flash:.3, punch:.05, vignette:.34};</script>
+<script src="engine.js"></script>
+<script>
+const {ink:INK,paper:PAPER,accent:ACC,accentHi:ACCHI,warm:WARM,deep:DEEP,shade:SHADE,mute:MUTE,gray:GRAY}=PAL;
+
+/* 镜头函数签名：(g, t 绝对秒, u 镜头内秒)。画面只能依赖 t/u；随机用 rng(seed)。 */
+const shot01=(g,t,u)=>{
+  fillAll(g,INK);
+  T(g,'SHOT 01',`400 28px ${FONT.mono}`,CX,CY-40,MUTE,1);
+  T(g,'按 storyboard.md 写第一个镜头',`700 64px ${FONT.sans}`,CX,CY+50,PAPER,ex(P(u,0,.4)));
+};
+
+K.start({duration:2, hud:{show:false /* 装饰层按 brief 定；取景框+时间码只是其中一种 */, title:''},
+  shots:[ [0,2.01,shot01,{label:'01 — NAME',bloom:.5}] ],
+  /* [时间, 强度, 震屏px]：每个切点一条；全片最重的 1–2 处 1.3–1.4 并加震屏 */
+  hits:[ ]});
+</script></body></html>
