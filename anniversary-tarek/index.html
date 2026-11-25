@@ -1,0 +1,708 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="fonts/local.css">
+<style>
+html,body{margin:0;padding:0;background:#000;overflow:hidden}
+svg{display:block}
+.ru{font-family:'Aref Ruqaa',serif;font-weight:700}
+.ca{font-family:'Cairo',sans-serif}
+.gv{font-family:'Great Vibes',cursive}
+</style></head>
+<body>
+<svg id="v" xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script>
+const W=1080,BEAT=60/68;
+const S=[0.0,7.56,20.73,30.74,39.14,59.28,68.74,79.64,87.33,95.73,102.76,114.59,119.96,133.94,150.79,158.7,171.45];
+const NS=S.length-1;
+const LAND=new URLSearchParams(location.search).has('land');
+const RX=r=>LAND?-1300+r*2400:r*1080;
+const AR=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const P=(t,a,d)=>clamp((t-a)/d);
+const eo=x=>1-Math.pow(1-x,3);
+const eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const back=x=>{const c1=1.9,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const pop=(t,a,d=.5)=>{const p=P(t,a,d);return p<=0?0:back(p)};
+const lerp=(a,b,p)=>a+(b-a)*p;
+const beatPulse=t=>Math.exp(-((t%BEAT)/BEAT)*5);
+const rnd=(i,k=0)=>{const x=Math.sin(i*127.1+k*311.7)*43758.5453;return x-Math.floor(x)};
+const SKIN='#F0C3A0', SKIN_T='#D9A27E', HAIR='#22170F';
+const g=(id,x,y,inner,extra='')=>`<g id="${id}" data-x="${x}" data-y="${y}" transform="translate(${x} ${y})" ${extra}>${inner}</g>`;
+const HEART='M0 18 C-6 12 -22 2 -22 -9 C-22 -19 -14 -24 -7 -24 C-3 -24 0 -21 0 -17 C0 -21 3 -24 7 -24 C14 -24 22 -19 22 -9 C22 2 6 12 0 18Z';
+
+/* ============ characters ============ */
+function eyes(r,look,cy,glass,gcol){
+  const ex=r*.36,ey=cy-r*.04,lx=look*r*.16;
+  let s=`<ellipse cx="${-ex+lx}" cy="${ey}" rx="${r*.075}" ry="${r*.105}" fill="#2a1c1c"/><ellipse cx="${ex+lx}" cy="${ey}" rx="${r*.075}" ry="${r*.105}" fill="#2a1c1c"/>`;
+  if(glass){const w=r*.42,h=r*.3,sw=glass==='thin'?r*.05:r*.085;
+    s+=`<rect x="${-ex-w/2}" y="${ey-h/2}" width="${w}" height="${h}" rx="${glass==='thin'?h*.45:h*.2}" fill="#fff" fill-opacity=".12" stroke="${gcol}" stroke-width="${sw}"/>
+        <rect x="${ex-w/2}" y="${ey-h/2}" width="${w}" height="${h}" rx="${glass==='thin'?h*.45:h*.2}" fill="#fff" fill-opacity=".12" stroke="${gcol}" stroke-width="${sw}"/>
+        <path d="M${-ex+w/2} ${ey-h*.1} Q0 ${ey-h*.4} ${ex-w/2} ${ey-h*.1}" stroke="${gcol}" stroke-width="${sw}" fill="none"/>
+        <path d="M${-ex-w/2} ${ey-h*.2} L${-r*.95} ${ey-h*.35} M${ex+w/2} ${ey-h*.2} L${r*.95} ${ey-h*.35}" stroke="${gcol}" stroke-width="${sw}"/>`;}
+  return s;
+}
+function mouth(r,look,cy,id){
+  const lx=look*r*.16;
+  return `<circle cx="${-r*.36*1.35+lx}" cy="${cy+r*.27}" r="${r*.14}" fill="#F27B86" opacity=".45" class="blush"/>
+  <circle cx="${r*.36*1.35+lx}" cy="${cy+r*.27}" r="${r*.14}" fill="#F27B86" opacity=".45" class="blush"/>
+  <path d="M${-r*.2+lx} ${cy+r*.32} Q${lx} ${cy+r*.5} ${r*.2+lx} ${cy+r*.32}" stroke="#8a3b3b" stroke-width="${r*.065}" fill="none" stroke-linecap="round"/>`;
+}
+function arm(id,side,ang,color,hold=''){
+  const x=side*58;
+  return `<g id="${id}" data-x="${x}" data-y="-300" transform="translate(${x} -300) rotate(${ang})">
+   <rect x="-15" y="-6" width="30" height="156" rx="15" fill="${color}"/>
+   <circle cx="0" cy="152" r="16" fill="${SKIN}"/>${hold}</g>`;
+}
+function holdItem(id,kind){
+  if(kind==='case') return g(id,0,160,`<rect x="-10" y="-6" width="20" height="14" rx="5" fill="none" stroke="#5A3A22" stroke-width="5"/><rect x="-40" y="6" width="80" height="58" rx="8" fill="#7A4A2A"/><rect x="-40" y="24" width="80" height="5" fill="#5A3A22"/>`);
+  if(kind==='bag') return g(id,0,150,`<rect x="-42" y="-10" width="84" height="70" rx="12" fill="#3C6E71"/><rect x="-42" y="10" width="84" height="8" fill="#2B5154"/><path d="M-20 -10 Q0 -36 20 -10" stroke="#2B5154" stroke-width="7" fill="none"/>`);
+  if(kind==='crutch') return g(id,0,0,`<rect x="-6" y="-40" width="12" height="380" rx="6" fill="#9AA4AE"/><rect x="-30" y="-48" width="60" height="16" rx="8" fill="#6C7780"/><rect x="-14" y="150" width="28" height="12" rx="6" fill="#6C7780"/><rect x="-9" y="330" width="18" height="16" rx="5" fill="#333"/>`);
+  if(kind==='seeds') return g(id,0,160,`<path d="M-22 -10 L22 -10 L0 40Z" fill="#F4E3C1" stroke="#C9A86A" stroke-width="3"/>${[[-10,-14],[0,-18],[10,-13],[-4,-22],[6,-24]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="5" ry="3" fill="#fff" stroke="#888" stroke-width="1"/>`).join('')}`);
+  if(kind==='phone') return g(id,0,150,`<rect x="-18" y="-34" width="36" height="66" rx="7" fill="#222"/><rect x="-14" y="-28" width="28" height="52" rx="4" fill="#7FC8F8"/>`);
+  if(kind==='tray') return g(id,0,150,`<rect x="-60" y="-6" width="120" height="12" rx="6" fill="#C99A62"/><path d="M-30 -6 Q0 -50 30 -6Z" fill="#fff"/><path d="M-6 -40 q8 -10 0 -20 q-8 -10 0 -20" stroke="#fff" stroke-width="4" fill="none" opacity=".7"/>`);
+  if(kind==='mug') return g(id,0,150,`<rect x="-18" y="-26" width="36" height="40" rx="6" fill="#F2A541"/><path d="M18 -18 q14 0 12 12 q-2 9 -14 7" stroke="#F2A541" stroke-width="6" fill="none"/>`);
+  if(kind==='spoon') return g(id,0,150,`<rect x="-4" y="-80" width="8" height="90" rx="4" fill="#8A5A3B"/><ellipse cx="0" cy="-86" rx="14" ry="18" fill="#8A5A3B"/>`);
+  return '';
+}
+function man(id,o={}){
+  const {look=0,outfit='casual',pose='stand',armL=6,armR=-6,holdL='',holdR='',headS=1,hair=HAIR,glass='thick',gcol='#2B2B33',beard=true,mustache=false,kid=false,knee=false,pants='#2B2D42'}=o;
+  let top='url(#plaid)', leg=pants, deco='';
+  if(outfit==='wedding'){top='#1E1F2B';leg='#1E1F2B';deco=`<path d="M-20 -312 L0 -250 L20 -312Z" fill="#fff"/><path d="M-16 -300 L0 -292 L-16 -284Z M16 -300 L0 -292 L16 -284Z" fill="#B3264C"/><circle cx="0" cy="-292" r="5" fill="#B3264C"/><path d="M-20 -312 L-6 -230 M20 -312 L6 -230" stroke="#0f1018" stroke-width="5"/><path d="M30 -270 l16 0" stroke="#F3C6CF" stroke-width="8" stroke-linecap="round"/>`;}
+  else if(outfit==='blazer'){top='#2C3E66';deco=`<path d="M-20 -312 L0 -252 L20 -312Z" fill="#fff"/><path d="M-20 -312 L-6 -230 M20 -312 L6 -230" stroke="#1d2a47" stroke-width="5"/><rect x="-6" y="-300" width="12" height="40" fill="#8E2B4A"/>`;}
+  else if(outfit==='uniform'){top='#1F2A44';deco=`<path d="M-58 -232 L58 -232 L58 -165 L-58 -165Z" fill="#2E9E6B"/><rect x="-60" y="-246" width="120" height="10" fill="#fff"/><rect x="-60" y="-232" width="120" height="5" fill="#1F2A44"/>
+     <path d="M-18 -314 L-8 -250 L8 -250 L18 -314" stroke="#2D6CDF" stroke-width="5" fill="none"/><rect x="-16" y="-252" width="32" height="40" rx="4" fill="#fff" stroke="#2D6CDF" stroke-width="3"/><rect x="-10" y="-246" width="12" height="14" fill="#9CC9F2"/>`;}
+  else if(outfit==='galabeya'){top='#8C7B62';leg='#8C7B62';}
+  else if(outfit==='apron'){deco=`<path d="M-40 -270 L40 -270 L46 -165 L-46 -165Z" fill="#fff"/><path d="M-40 -270 Q0 -300 40 -270" stroke="#E9476F" stroke-width="5" fill="none"/><rect x="-46" y="-205" width="92" height="8" fill="#E9476F"/>`;}
+  if(outfit==='casual'||outfit==='apron') deco=`<path d="M-18 -314 L0 -288 L18 -314Z" fill="${SKIN}"/><path d="M-24 -316 L-4 -292 L-12 -316Z M24 -316 L4 -292 L12 -316Z" fill="#fff"/>`+deco;
+  let legs='';
+  if(pose==='stand') legs=`<rect x="-46" y="-180" width="38" height="175" rx="16" fill="${leg}"/><rect x="8" y="-180" width="38" height="175" rx="16" fill="${leg}"/>
+    ${knee?`<rect x="6" y="-110" width="42" height="40" rx="10" fill="#fff"/><path d="M8 -98 h38 M8 -84 h38" stroke="#ddd" stroke-width="3"/>`:''}
+    <ellipse cx="-30" cy="-6" rx="30" ry="12" fill="#1a1a1a"/><ellipse cx="30" cy="-6" rx="30" ry="12" fill="#1a1a1a"/>`;
+  if(outfit==='galabeya') legs=`<path d="M-60 -200 L-66 -10 L66 -10 L60 -200Z" fill="${leg}"/><ellipse cx="-26" cy="-6" rx="26" ry="10" fill="#5a3a22"/><ellipse cx="26" cy="-6" rx="26" ry="10" fill="#5a3a22"/>`;
+  const hairPath=`<path d="M-53 -2 Q-60 -58 -30 -66 Q-20 -78 -2 -70 Q12 -80 28 -68 Q56 -64 53 -2 Q48 -32 26 -40 Q10 -30 -6 -38 Q-26 -30 -42 -36 Q-50 -22 -53 -2Z" fill="${hair}"/>
+     ${[-34,-14,8,30].map((x,i)=>`<circle cx="${x}" cy="${-62+(i%2)*4}" r="11" fill="${hair}"/>`).join('')}`;
+  const beardP=beard?`<path d="M-44 14 Q-40 56 0 62 Q40 56 44 14 Q36 40 0 44 Q-36 40 -44 14Z" fill="#3a2a20" opacity=".55"/><path d="M-16 34 Q0 28 16 34" stroke="#3a2a20" stroke-width="5" opacity=".6" fill="none"/>`:'';
+  const must=mustache?`<path d="M-20 30 Q0 20 20 30 Q0 26 -20 30Z" fill="${hair}" stroke="${hair}" stroke-width="5"/>`:'';
+  return `<g id="${id}">${legs}
+    ${arm(id+'_al',-1,armL,top,holdL?holdItem(id+'_holdL',holdL):'')}
+    <path d="M-64 -296 Q-66 -314 -46 -316 L46 -316 Q66 -314 64 -296 L58 -165 L-58 -165Z" fill="${top}"/>${deco}
+    <rect x="-15" y="-336" width="30" height="28" fill="${SKIN}"/>
+    ${arm(id+'_ar',1,armR,top,holdR?holdItem(id+'_hold',holdR):'')}
+    <g id="${id}_h" data-x="0" data-y="-382" transform="translate(0 -382)"><g transform="scale(${headS})">
+      <ellipse cx="-50" cy="4" rx="9" ry="13" fill="${SKIN}"/><ellipse cx="50" cy="4" rx="9" ry="13" fill="${SKIN}"/>
+      <circle r="50" fill="${SKIN}"/>${hairPath}${beardP}${must}
+      ${eyes(50,look,4,glass,gcol)}${mouth(50,look,4)}
+      <g id="${id}_tears" opacity="0"><ellipse cx="${-18+look*8}" cy="22" rx="4" ry="7" fill="#9CD3FF"/><ellipse cx="${18+look*8}" cy="22" rx="4" ry="7" fill="#9CD3FF"/></g>
+    </g></g></g>`;
+}
+const zeyad=(id,o={})=>man(id,{outfit:'uniform',pants:'#1a1a1a',glass:'thick',gcol:'#B3263A',beard:false,headS:1.32,hair:'#2a1a12',...o});
+function woman(id,o={}){
+  const {look=0,outfit='casual',armL=6,armR=-6,dress='#33506B',hijab='#1E9E96',hold='',headS=1,armsFront=false,holdR='',preg=false}=o;
+  const wed=outfit==='wedding';
+  const d=wed?'#FFFFFF':dress, hj=wed?'#FFFBFB':hijab;
+  const skirt=wed?`M-62 -298 Q-66 -316 -46 -318 L46 -318 Q66 -316 62 -298 L145 -8 Q0 18 -145 -8Z`:`M-60 -298 Q-64 -316 -46 -318 L46 -318 Q64 -316 60 -298 L80 -10 Q0 4 -80 -10Z`;
+  const veil=wed?`<path d="M-34 -440 Q-170 -220 -160 -8 L160 -8 Q170 -220 34 -440Z" fill="#fff" opacity=".45"/>`:'';
+  const wdeco=wed?`<path d="M-40 -230 Q0 -210 40 -230" stroke="#F1D9A0" stroke-width="6" fill="none"/>${[[-90,-60],[-40,-30],[20,-50],[80,-70],[-110,-150],[100,-160]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="#F3C6CF"/>`).join('')}`
+     :`<path d="M-50 -250 Q0 -232 50 -250" stroke="${hijab}" stroke-width="6" fill="none" opacity=".6"/>`;
+  let holdM='';
+  if(hold==='baby'){holdM=g(id+'_hold',0,-205,`<ellipse cx="0" cy="0" rx="74" ry="40" fill="#9CC9F2"/><path d="M-74 0 Q-40 30 30 30" stroke="#fff" stroke-width="5" fill="none" opacity=".7"/>
+      <circle cx="-38" cy="-12" r="27" fill="#9CC9F2"/><circle cx="-38" cy="-8" r="21" fill="${SKIN}"/>
+      <path d="M-46 -8 q4 3 8 0 M-36 -8 q4 3 8 0" stroke="#2a1c1c" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <circle cx="-48" cy="1" r="4" fill="#F27B86" opacity=".5"/><circle cx="-26" cy="1" r="4" fill="#F27B86" opacity=".5"/>`);}
+  const bouquet=wed?`<g transform="translate(0 -170)">${[[-18,0,'#F27B9A'],[16,-4,'#F9C6D3'],[0,-20,'#E9476F'],[-4,14,'#fff'],[22,14,'#F27B9A'],[-24,18,'#F9C6D3']].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="15" fill="${c}"/>`).join('')}<path d="M-6 30 L0 70 L6 30" fill="#6FA36A"/></g>`:'';
+  const pg=preg?g(id+'_baby',0,-200,`<circle r="46" fill="#FFE3A0" opacity=".35"/><use href="#hp" fill="#F27B9A" transform="scale(1.1)"/>`,'opacity="0"'):'';
+  const arms=arm(id+'_al',-1,armL,d)+arm(id+'_ar',1,armR,d,holdR?holdItem(id+'_hr',holdR):'');
+  return `<g id="${id}">${veil}
+    <ellipse cx="-26" cy="-6" rx="24" ry="10" fill="#3a2a3a"/><ellipse cx="26" cy="-6" rx="24" ry="10" fill="#3a2a3a"/>
+    ${armsFront?'':arm(id+'_al',-1,armL,d)}
+    <path d="${skirt}" fill="${d}"/>${wdeco}${pg}
+    ${armsFront?'':arm(id+'_ar',1,armR,d,holdR?holdItem(id+'_hr',holdR):'')}
+    ${holdM}${bouquet}
+    <g id="${id}_h" data-x="0" data-y="-380" transform="translate(0 -380)"><g transform="scale(${headS})">
+      <path d="M-62 0 Q-74 74 -64 104 L64 104 Q74 74 62 0Z" fill="${hj}"/>
+      <circle r="60" fill="${hj}"/>
+      <ellipse cx="0" cy="8" rx="40" ry="44" fill="${SKIN}"/>
+      <path d="M-44 34 Q0 76 44 34 L58 92 Q0 116 -58 92Z" fill="${hj}"/>
+      <path d="M-44 -22 Q0 -46 44 -22" stroke="${wed?'#EEE':'#17837C'}" stroke-width="6" fill="none" opacity=".7"/>
+      ${wed?`<g transform="translate(0 -56)"><path d="M-30 6 L-18 -10 L-8 2 L0 -16 L8 2 L18 -10 L30 6Z" fill="#F1C96B"/><circle cx="0" cy="-14" r="4" fill="#fff"/></g>`:''}
+      ${eyes(42,look,10,'thin','#6B6F78')}${mouth(42,look,10)}
+      <g id="${id}_tears" opacity="0"><ellipse id="${id}_t1" cx="${-15+look*7}" cy="24" rx="4" ry="7" fill="#7CC4FF"/><ellipse id="${id}_t2" cx="${15+look*7}" cy="24" rx="4" ry="7" fill="#7CC4FF"/></g>
+    </g></g>
+    ${armsFront?arms:''}
+  </g>`;
+}
+
+/* ============ text ============ */
+function wtext(id,x,y,size,cls,fill,txt,extra=''){
+  return `<g class="tx"><clipPath id="${id}_cp"><rect id="${id}_cr" x="-400" y="${y-size*1.4}" width="0" height="${size*2.1}"/></clipPath>
+   <g clip-path="url(#${id}_cp)">${g(id,0,0,`<text x="${x}" y="${y}" class="${cls}" font-size="${size}" fill="${fill}" text-anchor="middle" direction="rtl" filter="url(#tsh)" ${extra}>${txt}</text>`)}</g></g>`;
+}
+function ftext(id,x,y,size,cls,fill,txt,extra=''){
+  return '<g class="tx">'+g(id,x,y,`<text x="0" y="0" class="${cls}" font-size="${size}" fill="${fill}" text-anchor="middle" direction="rtl" filter="url(#tsh)" ${extra}>${txt}</text>`,'opacity="0"')+'</g>';
+}
+function chip(id,x,y,txt,col='#fff',bg='#00000040'){
+  return '<g class="tx">'+g(id,x,y,`<rect x="-190" y="-44" width="380" height="72" rx="36" fill="${bg}" stroke="url(#gold)" stroke-width="3"/><text x="0" y="8" class="ca" font-size="44" font-weight="900" fill="${col}" text-anchor="middle" letter-spacing="2">${txt}</text>`,'opacity="0"')+'</g>';
+}
+
+/* ============ particles ============ */
+function hearts(pre,n,colors){let s='';for(let i=0;i<n;i++) s+=`<use id="${pre}${i}" href="#hp" fill="${colors[i%colors.length]}" opacity="0"/>`;return s;}
+function updHearts(pre,n,u,x0,x1,y0,y1,start=0,period=3.2){
+  for(let i=0;i<n;i++){const e=$(pre+i); if(!e) continue;
+    const lt=u-start-rnd(i,1)*period*.6; if(lt<0){e.setAttribute('opacity',0);continue}
+    const ph=(lt%period)/period;
+    const x=((LAND&&x1-x0>600)?RX(rnd(i,2)):lerp(x0,x1,rnd(i,2)))+Math.sin(lt*2+i)*22, y=lerp(y1,y0,ph);
+    e.setAttribute('transform',`translate(${x} ${y}) scale(${.5+rnd(i,3)*.9})`);
+    e.setAttribute('opacity',Math.sin(ph*Math.PI)*.9);}
+}
+function confetti(pre,n){const C=['#F27B9A','#F6C760','#FFFFFF','#E9476F','#9CC9F2','#F9C6D3'];let s='';
+  for(let i=0;i<n;i++) s+= i%3===0?`<use id="${pre}${i}" href="#hp" fill="${C[i%6]}"/>`:`<rect id="${pre}${i}" x="-9" y="-5" width="18" height="10" rx="${i%2?5:1}" fill="${C[i%6]}"/>`;return s;}
+function updConfetti(pre,n,u,start){
+  for(let i=0;i<n;i++){const e=$(pre+i); const lt=u-start; if(lt<0){e.setAttribute('opacity',0);continue}
+    const sp=180+rnd(i,4)*220, y=-60+((lt*sp+rnd(i,5)*2000)%2050), x=RX(rnd(i,6))+Math.sin(lt*1.6+i)*50;
+    e.setAttribute('transform',`translate(${x} ${y}) rotate(${lt*120*(rnd(i,7)-.5)*4}) scale(${i%3===0?.6:1} ${Math.cos(lt*4+i)})`);
+    e.setAttribute('opacity',clamp(lt*2)*.95);}
+}
+const sun=(x,y,r,c)=>`<circle cx="${x}" cy="${y}" r="${r*1.8}" fill="${c}" opacity=".25"/><circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+const cloud=(id,x,y,s)=>g(id,x,y,`<g transform="scale(${s})" fill="#fff" opacity=".9"><ellipse rx="90" ry="40"/><ellipse cx="-50" cy="10" rx="60" ry="32"/><ellipse cx="55" cy="12" rx="60" ry="30"/><ellipse cx="10" cy="-25" rx="55" ry="40"/></g>`);
+const icon=(id,x,y,inner,bg='#fff')=>g(id,x,y,`<circle r="70" fill="${bg}" opacity=".95"/><circle r="70" fill="none" stroke="#F6C760" stroke-width="5"/>${inner}`,'opacity="0"');
+const star5=(c)=>`<circle r="60" fill="${c}" opacity=".35"/><path d="M0 -40 L11 -12 L40 -12 L17 6 L25 36 L0 18 L-25 36 L-17 6 L-40 -12 L-11 -12Z" fill="${c}"/>`;
+const calendar=(id,x,y)=>g(id,x,y,`<rect x="-90" y="-80" width="180" height="170" rx="16" fill="#fff"/><rect x="-90" y="-80" width="180" height="48" rx="16" fill="#E9476F"/><rect x="-90" y="-50" width="180" height="18" fill="#E9476F"/><circle cx="-45" cy="-84" r="8" fill="#555"/><circle cx="45" cy="-84" r="8" fill="#555"/><text id="${id}_n" x="0" y="60" class="ca" font-size="84" font-weight="900" fill="#33506B" text-anchor="middle"></text><text id="${id}_l" x="0" y="-44" class="ca" font-size="28" font-weight="900" fill="#fff" text-anchor="middle"></text>`,'opacity="0"');
+
+/* ============ scenes ============ */
+function sceneMarkup(){
+ const sc=[];
+ /* 0 INTRO */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gIntro)"/>
+  <clipPath id="heartClip"><path d="M540 1290 C110 1000 170 520 540 690 C910 520 970 1000 540 1290Z"/></clipPath>
+  <path id="i_hfill" d="M540 1290 C110 1000 170 520 540 690 C910 520 970 1000 540 1290Z" fill="#9EE0D8" opacity=".16"/>
+  <g clip-path="url(#heartClip)">${g('i_cpl',0,0,`<g transform="translate(540 1500) scale(1.3)">`+g('i_m',-105,0,man('im',{look:1}))+g('i_w',105,0,woman('iw',{look:-1}))+`</g>`,'opacity="0"')}</g>
+  ${g('i_frame',540,960,`<path id="i_hpath" d="M0 330 C-430 40 -370 -440 0 -270 C370 -440 430 40 0 330Z" fill="none" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>`)}
+  ${ftext('i_t0',540,440,54,'ca','#F6C760','إلى أميرة… من طارق','font-weight="700"')}
+  ${wtext('i_t1',540,1490,124,'ru','url(#gold)','طارق <tspan fill="#F27B9A">♥</tspan> أميرة')}
+  ${ftext('i_t2',540,1600,50,'ca','#E7FBF8','١٠ سنين حب  •  ٧ سنين جواز','font-weight="700"')}
+  ${hearts('ih',14,['#F27B9A','#F6C760','#9EE0D8'])}`);
+ /* 1 OFFICE */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gOffice)"/>
+  <g id="o_win"><rect x="560" y="720" width="420" height="380" rx="14" fill="#BFE3F7"/><g fill="#9CB8D4">${[[590,940,70,160],[670,880,80,220],[760,960,60,140],[830,900,90,200],[930,980,40,120]].map(([x,y,w,h])=>`<rect x="${x}" y="${y}" width="${w}" height="${h}"/>`).join('')}</g><rect x="560" y="720" width="420" height="380" rx="14" fill="none" stroke="#fff" stroke-width="14"/><path d="M770 720 V1100" stroke="#fff" stroke-width="10"/></g>
+  ${g('o_clock',230,820,`<circle r="70" fill="#fff" stroke="#33506B" stroke-width="8"/><line id="o_hh" x1="0" y1="0" x2="0" y2="-36" stroke="#33506B" stroke-width="8" stroke-linecap="round"/><line id="o_mh" x1="0" y1="0" x2="0" y2="-54" stroke="#E9476F" stroke-width="5" stroke-linecap="round"/>`)}
+  <rect x="-1400" y="1560" width="3800" height="400" fill="#C9D6E3"/>
+  ${g('o_m',300,1700,man('om',{look:1,armR:-40,armL:-30}))}
+  ${g('o_wo',780,1700,woman('ow',{look:-1,armL:40,armR:30}))}
+  <g><rect x="80" y="1420" width="420" height="30" rx="6" fill="#8A6A4E"/><rect x="100" y="1450" width="380" height="200" fill="#7A5B42"/>
+     <rect x="150" y="1290" width="200" height="130" rx="10" fill="#2B2D42"/><rect x="162" y="1302" width="176" height="104" rx="4" fill="#7FC8F8"/><rect x="235" y="1420" width="30" height="8" fill="#2B2D42"/></g>
+  <g><rect x="580" y="1420" width="420" height="30" rx="6" fill="#8A6A4E"/><rect x="600" y="1450" width="380" height="200" fill="#7A5B42"/>
+     <rect x="730" y="1290" width="200" height="130" rx="10" fill="#2B2D42"/><rect x="742" y="1302" width="176" height="104" rx="4" fill="#F7C6D9"/><rect x="815" y="1420" width="30" height="8" fill="#2B2D42"/>
+     <g transform="translate(650 1405)"><path d="M-16 -36 L16 -36 L13 0 L-13 0Z" fill="#fff"/><rect x="-16" y="-26" width="32" height="7" fill="#1E9E96"/></g>
+     <g transform="translate(960 1420)"><path d="M-22 0 L-28 -50 L28 -50 L22 0Z" fill="#E07A5F"/><path d="M0 -50 Q-40 -100 -20 -140 Q0 -100 0 -50 Q8 -120 34 -150 Q34 -90 0 -50" fill="#5FA05B"/></g></g>
+  ${g('o_bub',330,1080,`<path d="M-190 -70 Q-190 -130 -130 -130 L130 -130 Q190 -130 190 -70 Q190 -10 130 -10 L20 -10 L-20 40 L-10 -10 L-130 -10 Q-190 -10 -190 -70Z" fill="#fff"/><text x="0" y="-48" class="ca" font-size="58" font-weight="900" fill="#E9476F" text-anchor="middle">هتوحشيني</text>`,'opacity="0"')}
+  <path id="o_spark" d="" stroke="#FFD34D" stroke-width="10" fill="none" stroke-linejoin="round" stroke-linecap="round" opacity="0" filter="url(#glow)"/>
+  ${g('o_heart',540,1170,`<use href="#hp" fill="#E9476F" transform="scale(2.6)"/>`,'opacity="0"')}
+  ${hearts('oh',12,['#E9476F','#F27B9A','#F6C760'])}
+  ${wtext('o_t1',540,290,110,'ru','#33506B','البداية… في الشغل')}
+  ${chip('o_d',540,440,'٩ / ٩ / ٢٠١٦','#33506B','#ffffffcc')}
+  ${ftext('o_t2',540,590,52,'ca','#E9476F','ومن هنا… ابتدت الحكاية','font-weight="900"')}`);
+ /* 2 FATIHA */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gWarm)"/>
+  <rect x="140" y="760" width="300" height="220" rx="10" fill="#E8C9A0"/><rect x="160" y="780" width="260" height="180" fill="#B88A5A" opacity=".5"/>
+  <g transform="translate(860 860)"><rect x="-60" y="-40" width="120" height="150" rx="8" fill="#C9A06A"/><circle cy="-60" r="44" fill="#F6C760" opacity=".6"/></g>
+  <rect x="-1400" y="1580" width="3800" height="380" fill="#B07A52"/><rect x="-1400" y="1580" width="3800" height="16" fill="#8E5E3C"/>
+  <rect x="120" y="1420" width="840" height="170" rx="40" fill="#8C3B4E"/><rect x="100" y="1330" width="880" height="120" rx="50" fill="#A3485F"/>
+  ${g('f_dad',540,1700,`<g transform="scale(.95)">${man('fd',{outfit:'galabeya',hair:'#BDBDBD',beard:false,mustache:true,glass:false,armL:-150,armR:150})}</g>`)}
+  ${g('f_m',250,1720,`<g transform="scale(.85)">${man('fm',{look:1,armL:-150,armR:150})}</g>`)}
+  ${g('f_wo',830,1720,`<g transform="scale(.85)">${woman('fw',{look:-1,armL:-150,armR:150,armsFront:true})}</g>`)}
+  ${g('f_bub',540,1010,`<path d="M-330 -90 Q-330 -160 -260 -160 L260 -160 Q330 -160 330 -90 Q330 -20 260 -20 L30 -20 L0 40 L-20 -20 L-260 -20 Q-330 -20 -330 -90Z" fill="#fff"/><text x="0" y="-74" class="ca" font-size="52" font-weight="900" fill="#8C3B4E" text-anchor="middle" direction="rtl">هنحط طوبة ونحجزها!</text>`,'opacity="0"')}
+  ${g('f_brick',830,0,`<rect x="-110" y="-60" width="220" height="110" rx="8" fill="#C4553A"/><rect x="-110" y="-60" width="220" height="18" rx="8" fill="#D9714F"/><path d="M-110 -5 H110 M-40 -60 V-5 M40 -5 V50" stroke="#A2432C" stroke-width="5"/>`,'opacity="0"')}
+  ${g('f_stamp',830,0,`<g transform="rotate(-10)"><rect x="-150" y="-50" width="300" height="100" rx="12" fill="none" stroke="#E9476F" stroke-width="9"/><text x="0" y="18" class="ca" font-size="50" font-weight="900" fill="#E9476F" text-anchor="middle" direction="rtl">محجوزة ♥</text></g>`,'opacity="0"')}
+  ${g('f_dust',830,0,[0,1,2,3,4,5].map(i=>`<circle id="f_du${i}" r="18" fill="#E8D3B8"/>`).join(''))}
+  ${wtext('f_t1',540,290,116,'ru','#8C3B4E','قرينا الفاتحة')}
+  ${chip('f_d',540,440,'٢٣ / ٥ / ٢٠١٧','#8C3B4E','#ffffffcc')}
+  ${ftext('f_t2',540,590,52,'ca','#8C3B4E','واتحجزتِ ليّا','font-weight="900"')}`);
+ /* 3 ENGAGEMENT */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gEng)"/>
+  ${Array.from({length:60},(_,i)=>`<circle class="e_st" cx="${RX(rnd(i,9))}" cy="${700+rnd(i,8)*700}" r="${2+rnd(i,7)*4}" fill="#FFE8A8"/>`).join('')}
+  <path d="M120 1720 L120 1080 Q540 760 960 1080 L960 1720" fill="none" stroke="#F6C760" stroke-width="10" opacity=".7"/>
+  ${Array.from({length:30},(_,i)=>{const a=Math.PI-(i/29)*Math.PI;const x=540+420*Math.cos(a),y=1100-300*Math.sin(a);return `<circle class="e_b" cx="${x}" cy="${y}" r="11" fill="#FFE08A"/>`}).join('')}
+  <rect x="-1400" y="1700" width="3800" height="260" fill="#3E2342"/>
+  ${g('e_m',400,1740,`<g transform="scale(.9)">${man('em',{look:1,outfit:'blazer',armR:-20})}</g>`)}
+  ${g('e_wo',680,1740,`<g transform="scale(.9)">${woman('ew',{look:-1,dress:'#B784C9',hijab:'#F6DDEB',armL:20})}</g>`)}
+  ${g('e_r1',0,0,`<circle r="64" fill="none" stroke="#F6C760" stroke-width="18"/><path d="M0 -92 l14 16 -14 16 -14 -16Z" fill="#E8F7FF"/>`,'opacity="0"')}
+  ${g('e_r2',0,0,`<circle r="64" fill="none" stroke="#E9A84C" stroke-width="18"/>`,'opacity="0"')}
+  ${confetti('ec',40)}
+  ${wtext('e_t1',540,290,120,'ru','url(#gold)','اتخطبنا')}
+  ${chip('e_d',540,440,'١٨ / ٨ / ٢٠١٧','#FFE8A8')}
+  ${ftext('e_t2',540,590,54,'ca','#fff','خطوبة حلوة وجامدة… زيّك بالظبط','font-weight="900"')}`);
+ /* 4 FIVE POUNDS + BIR MASOUD */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gSunset)"/>
+  ${sun(780,1010,120,'#FFE08A')}
+  <rect y="1010" width="1080" height="420" fill="url(#gSea)"/>
+  <path id="b_w1" fill="#8EB8DC" opacity=".6"/><path id="b_w2" fill="#2F5E8C" opacity=".5"/>
+  <path d="M-1400 1380 L-200 1380 Q60 1330 200 1350 Q360 1300 520 1360 Q700 1320 860 1370 Q980 1340 2400 1380 L2400 1960 L-1400 1960Z" fill="#8B7F73"/>
+  <path d="M-1400 1470 Q100 1440 540 1470 Q900 1450 2400 1480 L2400 1960 L-1400 1960Z" fill="#6E655C"/>
+  <g transform="translate(860 1420)"><ellipse rx="120" ry="34" fill="#4E4740"/><ellipse rx="96" ry="24" fill="#1E2E3E"/><path d="M-120 0 V-70 M120 0 V-70 M-120 -70 H120" stroke="#E8E1D6" stroke-width="10"/><path d="M-80 -70 V-10 M-40 -70 V-10 M0 -70 V-10 M40 -70 V-10 M80 -70 V-10" stroke="#E8E1D6" stroke-width="5"/></g>
+  ${g('b_spray',860,1380,[0,1,2,3,4,5,6,7].map(i=>`<circle id="b_sp${i}" r="${10+i%3*5}" fill="#fff" opacity="0"/>`).join(''))}
+  ${g('b_m',360,1600,`<g transform="scale(.9)">${man('bm',{look:1,armR:-60,armL:-10,holdR:'seeds'})}</g>`)}
+  ${g('b_wo',600,1600,`<g transform="scale(.9)">${woman('bw',{look:-1,armL:40})}</g>`)}
+  <g id="b_shells">${Array.from({length:40},(_,i)=>`<ellipse id="b_sh${i}" cx="${470+(rnd(i,3)-.5)*170}" cy="${1600-rnd(i,4)*30}" rx="7" ry="4" fill="${i%2?'#fff':'#ddd'}" stroke="#999" stroke-width="1" opacity="0" transform="rotate(${rnd(i,5)*180} ${470+(rnd(i,3)-.5)*170} ${1600-rnd(i,4)*30})"/>`).join('')}</g>
+  ${Array.from({length:6},(_,i)=>`<ellipse id="b_fly${i}" rx="7" ry="4" fill="#fff" stroke="#999" stroke-width="1" opacity="0"/>`).join('')}
+  ${g('b_clock',870,820,`<circle r="80" fill="#fff" stroke="#33506B" stroke-width="8"/><line id="b_hh" y2="-40" stroke="#33506B" stroke-width="9" stroke-linecap="round"/><line id="b_mh" y2="-60" stroke="#E9476F" stroke-width="6" stroke-linecap="round"/><text id="b_hrs" y="140" class="ca" font-size="50" font-weight="900" fill="#fff" text-anchor="middle" filter="url(#tsh)"></text>`,'opacity="0"')}
+  <rect id="b_dim" x="-2200" width="3800" height="1920" fill="#2a1a2a" opacity="0"/>
+  ${g('b_note',540,1150,`<g transform="rotate(-6)"><rect x="-300" y="-145" width="600" height="290" rx="22" fill="#E9B98B"/><rect x="-282" y="-127" width="564" height="254" rx="14" fill="none" stroke="#B5703F" stroke-width="5" stroke-dasharray="14 8"/>
+     <circle cx="-170" cy="0" r="92" fill="#D69A68"/><circle cx="-170" cy="0" r="70" fill="none" stroke="#B5703F" stroke-width="5"/><path d="M-200 -20 Q-170 -60 -140 -20 L-150 40 L-190 40Z" fill="#B5703F" opacity=".6"/>
+     <text x="110" y="40" class="ca" font-size="170" font-weight="900" fill="#8A4B22" text-anchor="middle">٥</text><text x="110" y="100" class="ca" font-size="44" font-weight="900" fill="#8A4B22" text-anchor="middle">جنيه</text></g>`,'opacity="0"')}
+  ${g('b_cone',540,1150,`<path d="M-120 -110 L120 -110 L0 170Z" fill="#F4E3C1" stroke="#C9A86A" stroke-width="6"/><path d="M-120 -110 L120 -110" stroke="#C9A86A" stroke-width="10"/>${Array.from({length:22},(_,i)=>`<ellipse cx="${(rnd(i,1)-.5)*200}" cy="${-118-rnd(i,2)*50}" rx="13" ry="8" fill="#fff" stroke="#999" stroke-width="2" transform="rotate(${rnd(i,3)*180} ${(rnd(i,1)-.5)*200} ${-118-rnd(i,2)*50})"/>`).join('')}<text x="0" y="40" class="ca" font-size="50" font-weight="900" fill="#8A4B22" text-anchor="middle" direction="rtl">لب سوري</text>`,'opacity="0"')}
+  ${wtext('b_t1',540,290,116,'ru','#fff','خمسة جنيه بس…')}
+  ${ftext('b_t2',540,420,54,'ca','#fff','عند بير مسعود… في ميامي','font-weight="900"')}
+  ${ftext('b_t3',540,520,58,'ca','#FFE08A','أحلى خروجة في حياتنا','font-weight="900"')}
+  ${ftext('b_t4',540,1760,46,'ca','#fff','السعادة معاكِ… ما بتتشريش بفلوس','font-weight="900"')}`);
+ /* 5 TRAIN */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gTrain)"/>
+  ${g('t_board',780,820,`<rect x="-150" y="-60" width="300" height="120" rx="10" fill="#1A2233"/><text x="0" y="-8" class="ca" font-size="36" font-weight="900" fill="#FFC24B" text-anchor="middle">القاهرة</text><text x="0" y="40" class="ca" font-size="28" fill="#FFC24B" text-anchor="middle">رصيف ٣</text><rect x="-4" y="-160" width="8" height="100" fill="#555"/>`)}
+  ${Array.from({length:5},(_,i)=>`<g transform="translate(${-200+i*320} 760)"><rect x="-8" y="0" width="16" height="840" fill="#5A6578"/><path d="M-60 0 L60 0" stroke="#5A6578" stroke-width="14"/></g>`).join('')}
+  <rect x="-1400" y="1560" width="3800" height="400" fill="#8E96A3"/><rect x="-1400" y="1560" width="3800" height="20" fill="#F6C760"/>
+  ${g('t_train',-300,1360,`<rect x="-1300" y="-260" width="1450" height="300" rx="40" fill="#C8D3E0"/><rect x="-1300" y="-60" width="1450" height="40" fill="#2F5E8C"/>${[0,1,2,3,4].map(i=>`<rect x="${-1240+i*270}" y="-220" width="200" height="120" rx="14" fill="#9CC9F2"/>`).join('')}
+    <rect x="80" y="-240" width="60" height="270" rx="8" fill="#9CB0C6"/>${[-1100,-800,-500,-200,60].map(x=>`<circle cx="${x}" cy="50" r="34" fill="#333"/>`).join('')}`)}
+  ${g('t_m',-170,1520,`<g transform="scale(.8)">${man('tm',{look:1,armL:-150,holdR:'bag'})}</g>`)}
+  ${g('t_wo',760,1750,`<g transform="scale(.9)">${woman('tw',{look:-1,armL:-150,armR:-10})}</g>`)}
+  ${Array.from({length:8},(_,i)=>`<ellipse id="t_dr${i}" rx="5" ry="9" fill="#7CC4FF" opacity="0"/>`).join('')}
+  ${wtext('t_t1',540,290,116,'ru','#fff','سافرت القاهرة…')}
+  ${chip('t_d',540,440,'٥ / ٧ / ٢٠١٨','#fff')}
+  ${ftext('t_cnt',540,620,110,'ca','#FFC24B','','font-weight="900" id="t_cnttx"')}`);
+ /* 6 DISTANCE */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gNight)"/>
+  ${Array.from({length:50},(_,i)=>`<circle class="d_st" cx="${RX(rnd(i,3))}" cy="${650+rnd(i,4)*600}" r="${1.5+rnd(i,5)*3}" fill="#fff"/>`).join('')}
+  <line x1="540" y1="700" x2="540" y2="1920" stroke="#ffffff30" stroke-width="4" stroke-dasharray="20 16"/>
+  ${g('d_l1',290,850,`<text class="ca" font-size="44" font-weight="900" fill="#FFE08A" text-anchor="middle">القاهرة</text>`,'opacity="0"')}${g('d_l2',790,850,`<text class="ca" font-size="44" font-weight="900" fill="#9EE0D8" text-anchor="middle">إسكندرية</text>`,'opacity="0"')}
+  ${g('d_p1',290,1170,`<rect x="-150" y="-260" width="300" height="520" rx="40" fill="#1A1A22"/><rect x="-132" y="-230" width="264" height="460" rx="22" fill="#DDEBF7"/><g transform="translate(0 210) scale(.62)">${man('dpm',{look:0})}</g><circle cy="-246" r="6" fill="#444"/>`,'opacity="0"')}
+  ${g('d_p2',790,1170,`<rect x="-150" y="-260" width="300" height="520" rx="40" fill="#1A1A22"/><rect x="-132" y="-230" width="264" height="460" rx="22" fill="#F7E1EA"/><g transform="translate(0 210) scale(.62)">${woman('dpw',{look:0})}</g><circle cy="-246" r="6" fill="#444"/>`,'opacity="0"')}
+  ${[0,1,2,3,4].map(i=>`<use id="d_h${i}" href="#hp" fill="#F27B9A" opacity="0"/>`).join('')}
+  ${calendar('d_cal',540,1560)}
+  ${icon('d_i1',290,1640,`<path d="M-44 10 Q-22 -10 0 10 Q22 30 44 10 L44 40 L-44 40Z" fill="#3B82C4"/><circle cx="-10" cy="-22" r="18" fill="#FFD34D"/>`)}
+  ${icon('d_i2',540,1640,`<path d="M-26 -24 L26 -24 L22 24 L-22 24Z" fill="#8A5A3B"/><path d="M26 -14 q18 0 14 16 q-3 9 -18 6" stroke="#8A5A3B" stroke-width="6" fill="none"/><path d="M-8 -34 q6 -8 0 -16 M8 -34 q6 -8 0 -16" stroke="#aaa" stroke-width="4" fill="none"/>`)}
+  ${icon('d_i3',790,1640,`<rect x="-36" y="-14" width="72" height="44" rx="6" fill="#333"/><path d="M-36 -14 L-28 -38 L36 -38 L36 -14Z" fill="#fff"/><path d="M-20 -38 L-28 -14 M0 -38 L-8 -14 M20 -38 L12 -14" stroke="#333" stroke-width="6"/>`)}
+  ${wtext('d_t1',540,290,112,'ru','#FFE08A','عمرنا ما بِعِدنا')}
+  ${ftext('d_t2',540,430,52,'ca','#fff','مكالمة فيديو كل ليلة','font-weight="900"')}
+  ${ftext('d_t3',540,1430,52,'ca','#fff','وكل شهر… ٤ أيام أجازة','font-weight="900"')}`);
+ /* 7 KATB EL KETAB */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gCream)"/>
+  ${g('k_paper',540,1020,`<rect x="-300" y="-200" width="600" height="400" rx="16" fill="#fff" stroke="#E5C9A8" stroke-width="6"/><text x="0" y="-120" class="ru" font-size="60" fill="#8C3B4E" text-anchor="middle">وثيقة عقد زواج</text>${[0,1,2,3].map(i=>`<rect x="-230" y="${-70+i*44}" width="${460-i*40}" height="12" rx="6" fill="#E8DCCF"/>`).join('')}<path id="k_sig1" d="M-240 150 q20 -40 40 0 q20 40 40 -10 q14 -30 30 6 q10 20 30 -6" stroke="#2F5E8C" stroke-width="6" fill="none" stroke-linecap="round"/><path id="k_sig2" d="M80 150 q14 -36 34 -4 q16 30 34 -6 q18 -30 36 4 q12 18 36 -8" stroke="#E9476F" stroke-width="6" fill="none" stroke-linecap="round"/>`,'opacity="0"')}
+  ${g('k_jar',300,1560,`<path d="M-90 -170 L90 -170 L100 -140 L100 60 Q100 90 70 90 L-70 90 Q-100 90 -100 60 L-100 -140Z" fill="#DCEFF7" opacity=".7" stroke="#9CC9F2" stroke-width="6"/><rect id="k_fill" x="-96" y="86" width="192" height="0" fill="#F6C760" opacity=".9"/><rect x="-60" y="-196" width="120" height="30" rx="8" fill="#B08968"/>`,'opacity="0"')}
+  ${Array.from({length:9},(_,i)=>`<g id="k_c${i}" opacity="0"><circle r="22" fill="#F6C760" stroke="#D99A2B" stroke-width="4"/></g>`).join('')}
+  ${calendar('k_cal',780,1500)}
+  ${[['k_f1',640,1760,`<rect x="-90" y="-40" width="180" height="60" rx="18" fill="#1E9E96"/><rect x="-100" y="-80" width="200" height="50" rx="20" fill="#2BB3A9"/><rect x="-90" y="20" width="12" height="20" fill="#555"/><rect x="78" y="20" width="12" height="20" fill="#555"/>`],
+     ['k_f2',900,1760,`<rect x="-6" y="-120" width="12" height="120" fill="#555"/><path d="M-40 -120 L40 -120 L24 -170 L-24 -170Z" fill="#F6C760"/><ellipse cy="0" rx="40" ry="10" fill="#555"/>`],
+     ['k_f3',140,1780,`<path d="M-30 0 L-38 -60 L38 -60 L30 0Z" fill="#E07A5F"/><path d="M0 -60 Q-50 -120 -30 -170 Q0 -120 0 -60 Q10 -150 40 -180 Q40 -110 0 -60" fill="#5FA05B"/>`]].map(([id,x,y,s])=>g(id,x,y,s,'opacity="0"')).join('')}
+  ${wtext('k_t1',540,290,116,'ru','#8C3B4E','كتبنا الكتاب')}
+  ${chip('k_d',540,440,'٢٢ / ٢ / ٢٠١٩','#8C3B4E','#ffffffcc')}
+  ${ftext('k_t2',540,590,52,'ca','#33506B','وحوّشنا حتة حتة… لعشنا','font-weight="900"')}`);
+ /* 8 WEDDING */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gWed)"/>
+  ${g('w_glow',540,1350,`<circle r="430" fill="#FFF6D8" opacity=".55"/>`)}
+  <path id="w_arch" d="M70 1760 A470 470 0 0 1 1010 1760" fill="none" stroke="#7FB27A" stroke-width="22" stroke-linecap="round"/>
+  ${Array.from({length:26},(_,i)=>{const a=Math.PI-(i/25)*Math.PI;const x=540+470*Math.cos(a),y=1760-470*Math.sin(a);const c=['#F27B9A','#fff','#E9476F','#F9C6D3'][i%4];return g('w_fl'+i,x,y,`<circle r="${22+(i%3)*6}" fill="${c}"/><circle r="8" fill="#F6C760"/>`,'opacity="0"')}).join('')}
+  <ellipse cx="540" cy="1770" rx="420" ry="40" fill="#E9B9C6"/>
+  ${g('w_cpl',0,0,g('w_m',450,1760,`<g transform="scale(.9)">${man('wm',{look:1,outfit:'wedding',armR:-30})}</g>`)+g('w_wo',640,1760,`<g transform="scale(.9)">${woman('ww',{look:-1,outfit:'wedding',armL:30,armR:-30})}</g>`),'opacity="0"')}
+  ${g('w_heart',545,1130,`<use href="#hp" fill="#E9476F" transform="scale(2.4)"/>`,'opacity="0"')}
+  ${wtext('w_t1',540,290,112,'ru','#9B1B3F','أحلى يوم في عمري')}
+  <g class="tx"><g class="ca" font-weight="900" font-size="110" fill="url(#gold)" text-anchor="middle" filter="url(#tsh)">
+   ${g('w_d1',830,470,`<text>٢٦</text>`,'opacity="0"')}${g('w_s1',725,470,`<text font-size="84" fill="#E9476F">/</text>`,'opacity="0"')}
+   ${g('w_d2',620,470,`<text>١١</text>`,'opacity="0"')}${g('w_s2',515,470,`<text font-size="84" fill="#E9476F">/</text>`,'opacity="0"')}
+   ${g('w_d3',340,470,`<text>٢٠١٩</text>`,'opacity="0"')}</g></g>
+  ${ftext('w_t2',540,600,58,'ca','#9B1B3F','يوم ما بقيتِ مراتي','font-weight="900"')}
+  ${confetti('wc',70)}
+  <rect id="w_flash" x="-2200" width="3800" height="1920" fill="#fff" opacity="0"/>`);
+ /* 9 SHARM */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gSharm)"/>
+  ${g('s_sun',820,820,sun(0,0,90,'#FFD34D'))}
+  <path d="M-1400 1180 L-800 980 L-500 1100 L-100 900 L200 1060 L420 930 L700 1080 L960 940 L1300 1100 L2400 1000 L2400 1260 L-1400 1260Z" fill="#C9713F"/>
+  <path d="M-1400 1220 L-600 1100 L-200 1180 L300 1080 L650 1170 L1000 1090 L2400 1180 L2400 1280 L-1400 1280Z" fill="#A5552F"/>
+  <rect y="1260" width="1080" height="280" fill="url(#gRed)"/><path id="s_w1" fill="#7EE0E0" opacity=".5"/>
+  ${[0,1,2].map(i=>g('s_f'+i,0,0,`<path d="M-30 0 Q0 -24 30 0 Q0 24 -30 0Z M30 0 L50 -16 L50 16Z" fill="${['#FF8C42','#FFD34D','#F27B9A'][i]}"/><circle cx="-14" cy="-4" r="4" fill="#222"/>`,'opacity="0"')).join('')}
+  <path d="M-1400 1530 Q540 1490 2400 1530 L2400 1960 L-1400 1960Z" fill="#F3D9A4"/>
+  <g transform="translate(150 1560)"><path d="M0 0 Q-10 -180 20 -320" stroke="#8A5A3B" stroke-width="22" fill="none"/>${[-60,-20,20,60,100].map(a=>`<path d="M20 -320 Q${20+Math.cos(a*Math.PI/180)*90} ${-320-Math.sin(a*Math.PI/180)*40} ${20+Math.cos(a*Math.PI/180)*170} ${-300+Math.abs(a)}" stroke="#3F9E5B" stroke-width="22" fill="none" stroke-linecap="round"/>`).join('')}</g>
+  ${g('s_m',460,1720,`<g transform="scale(.85)">${man('sm',{look:1,armR:-30})}</g>`)}
+  ${g('s_wo',690,1720,`<g transform="scale(.85)">${woman('sw',{look:-1,armL:30,dress:'#F27B9A',hijab:'#FFE3A0'})}</g>`)}
+  ${hearts('sh',10,['#F27B9A','#FFD34D','#fff'])}
+  ${wtext('s_t1',540,290,108,'ru','#fff','شهر العسل… شرم الشيخ')}
+  ${chip('s_d',540,440,'٢٩ / ١١ / ٢٠١٩','#fff')}
+  ${ftext('s_t2',540,590,54,'ca','#fff','بحر… وشمس… وإنتِ','font-weight="900"')}`);
+ /* 10 CORONA */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gHomeIn)"/>
+  <g><rect x="90" y="720" width="460" height="420" rx="16" fill="#9ED3F0"/>${Array.from({length:7},(_,i)=>g('c_v'+i,0,0,`<circle r="${26+i%3*8}" fill="#7DCB6A"/>${[0,45,90,135,180,225,270,315].map(a=>`<g transform="rotate(${a})"><line y1="${-(26+i%3*8)}" y2="${-(40+i%3*8)}" stroke="#5DAA4C" stroke-width="5"/><circle cy="${-(42+i%3*8)}" r="6" fill="#E9476F"/></g>`).join('')}<circle cx="-8" cy="-4" r="4" fill="#222"/><circle cx="8" cy="-4" r="4" fill="#222"/>`)).join('')}
+   <rect x="90" y="720" width="460" height="420" rx="16" fill="none" stroke="#fff" stroke-width="16"/><path d="M320 720 V1140 M90 930 H550" stroke="#fff" stroke-width="10"/></g>
+  <rect x="-1400" y="1600" width="3800" height="360" fill="#C8A27A"/>
+  <rect x="160" y="1370" width="760" height="230" rx="40" fill="#1E9E96"/><rect x="130" y="1300" width="820" height="110" rx="50" fill="#2BB3A9"/>
+  ${g('c_m',420,1640,`<g transform="scale(.82)">${man('cm',{look:1,armR:-50,holdR:'mug'})}</g>`)}
+  ${g('c_wo',660,1640,`<g transform="scale(.82)">${woman('cw',{look:-1,armL:50})}</g>`)}
+  ${g('c_case',860,0,`<rect x="-90" y="-60" width="180" height="120" rx="14" fill="#7A4A2A"/><rect x="-30" y="-86" width="60" height="30" rx="10" fill="none" stroke="#5A3A22" stroke-width="8"/><rect x="-90" y="-10" width="180" height="10" fill="#5A3A22"/><g transform="rotate(-12)"><rect x="-80" y="-24" width="160" height="48" rx="8" fill="#E9476F"/><text y="14" class="ca" font-size="34" font-weight="900" fill="#fff" text-anchor="middle">القاهرة ✕</text></g>`,'opacity="0"')}
+  ${g('c_pin',830,900,`<path d="M0 60 C-50 0 -50 -60 0 -60 C50 -60 50 0 0 60Z" fill="#E9476F"/><circle cy="-20" r="18" fill="#fff"/><text y="130" class="ca" font-size="44" font-weight="900" fill="#33506B" text-anchor="middle">إسكندرية</text>`,'opacity="0"')}
+  ${g('c_heart',540,1150,`<use href="#hp" fill="#E9476F" transform="scale(2.4)"/>`,'opacity="0"')}
+  ${wtext('c_t1',540,290,116,'ru','#33506B','وجت كورونا…')}
+  ${chip('c_d',540,440,'٢٠٢٠','#33506B','#ffffffcc')}
+  ${ftext('c_t2',540,590,56,'ca','#E9476F','والحظر جمعنا','font-weight="900"')}`);
+ /* 11 ZEYAD */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gBaby)"/>
+  ${cloud('z_cl1',180,860,.8)}${cloud('z_cl2',900,1000,.6)}
+  <path d="M-1400 1740 L-200 1740 Q540 1640 1280 1740 L2400 1740 L2400 1960 L-1400 1960Z" fill="#BFE3B5"/>
+  ${g('z_m',330,1790,`<g transform="scale(.82)">${man('zm',{look:1,armR:-24})}</g>`)}
+  ${g('z_wo',720,1790,`<g transform="scale(.82)">${woman('zw',{look:-1,armL:-62,armR:62,hold:'baby'})}</g>`)}
+  ${g('z_star',540,0,star5('#FFE08A'),'opacity="0"')}
+  ${hearts('zh',12,['#9CC9F2','#F6C760','#fff'])}
+  ${wtext('z_t1',540,290,104,'ru','#2F5E8C','وربنا كرمنا بـ')}
+  ${ftext('z_name',540,560,230,'ru','url(#blue)','زيدو')}
+  ${chip('z_d',540,700,'٢ / ٥ / ٢٠٢١','#2F5E8C','#ffffffcc')}`);
+ /* 12 SURGERY */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gSoft)"/>
+  <rect x="-1400" y="1620" width="3800" height="340" fill="#D8C7B5"/>
+  ${calendar('g_cal',840,860)}
+  <g id="g_mcrutch">${g('g_cr1',0,0,holdItem('g_c1i','crutch'))}${g('g_cr2',0,0,holdItem('g_c2i','crutch'))}</g>
+  ${g('g_m',400,1700,man('gm',{look:1,knee:true,armL:4,armR:-4}))}
+  ${g('g_wo',700,1700,woman('gw',{look:-1,armL:-50,armR:-30,holdR:'tray'}))}
+  ${hearts('gh',14,['#F27B9A','#F6C760','#fff'])}
+  ${wtext('g_t1',540,290,108,'ru','#33506B','كنتِ سندي')}
+  ${chip('g_d',540,440,'٢٣ / ٣ / ٢٠٢٣','#33506B','#ffffffcc')}
+  ${ftext('g_t2',540,590,52,'ca','#E9476F','لحد ما وقفت على رجلي تاني','font-weight="900"')}`);
+ /* 13 NOW */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gNow)"/>
+  ${g('n_school',800,1300,`<rect x="-200" y="-200" width="400" height="300" fill="#F7E6C4"/><path d="M-230 -200 L0 -320 L230 -200Z" fill="#D9534F"/><rect x="-40" y="-20" width="80" height="120" rx="8" fill="#8A5A3B"/>${[-130,130].map(x=>`<rect x="${x-40}" y="-150" width="80" height="70" rx="6" fill="#9CC9F2"/>`).join('')}<rect x="-90" y="-300" width="180" height="50" rx="10" fill="#fff"/><text y="-264" class="ca" font-size="32" font-weight="900" fill="#2E9E6B" text-anchor="middle">المدرسة</text>`,'opacity="0"')}
+  ${g('n_kitchen',300,1300,`<rect x="-220" y="0" width="440" height="200" fill="#E8DCCF"/><rect x="-220" y="-10" width="440" height="20" fill="#B08968"/><rect x="-200" y="-260" width="160" height="140" rx="8" fill="#DDE8F7"/><rect x="40" y="-270" width="160" height="150" rx="8" fill="#F7E1EA"/>`,'opacity="0"')}
+  <rect x="-1400" y="1680" width="3800" height="280" fill="#A9D6A0"/>
+  ${g('n_m',300,1760,`<g transform="scale(.85)">${man('nm',{look:1,outfit:'apron',armR:-40,holdR:'spoon'})}</g>`)}
+  ${g('n_pot',470,1500,`<path d="M-70 -40 L70 -40 L60 40 L-60 40Z" fill="#555"/><rect x="-80" y="-50" width="160" height="16" rx="8" fill="#777"/>${[0,1,2].map(i=>`<path id="n_st${i}" d="" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>`).join('')}`,'opacity="0"')}
+  ${g('n_dish',150,1520,`<ellipse rx="70" ry="22" fill="#fff" stroke="#9CC9F2" stroke-width="5"/>${[0,1,2,3,4,5].map(i=>`<circle id="n_bb${i}" r="${8+i%3*5}" fill="#DDF3FF" stroke="#9CC9F2" stroke-width="2"/>`).join('')}`,'opacity="0"')}
+  ${g('n_z',600,1780,`<g transform="scale(.62)">${zeyad('nz',{look:1,holdR:'bag',armR:-10})}</g>`)}
+  ${g('n_wo',870,1760,`<g transform="scale(.85)">${woman('nw',{look:-1,preg:true,armL:30})}</g>`)}
+  ${g('n_glow',870,1580,`<circle r="70" fill="#FFE3A0" opacity=".45"/>`,'opacity="0"')}
+  ${hearts('nh',12,['#F27B9A','#F6C760','#fff'])}
+  ${wtext('n_t1',540,290,104,'ru','#9B1B3F','بيبي جديد في الطريق')}
+  ${chip('n_d',540,440,'١٣ / ٩ / ٢٠٢٦','#2E9E6B','#ffffffcc')}
+  ${ftext('n_t2',540,590,56,'ca','#33506B','والدور عليّا… وبكل حب','font-weight="900"')}`);
+ /* 14 FINALE */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gFinale)"/>
+  ${g('fi_big',540,1250,`<use href="#hp" fill="url(#rgHeart)" transform="scale(17)"/>`,'opacity="0"')}
+  ${[0,1,2,3,4,5].map(k=>g('fi_fw'+k,0,0,Array.from({length:10},(_,j)=>`<use href="#hp" fill="${['#FFE08A','#F27B9A','#9EE0D8'][j%3]}" id="fi_fw${k}_${j}"/>`).join(''))).join('')}
+  <ellipse cx="540" cy="1790" rx="520" ry="50" fill="#3A1F3A" opacity=".5"/>
+  ${g('fi_m',310,1780,`<g transform="scale(.85)">${man('fim',{look:1,armR:20})}</g>`,'opacity="0"')}
+  ${g('fi_z',530,1800,`<g transform="scale(.64)">${zeyad('fiz',{look:1,armR:-20,armL:-25})}</g>`,'opacity="0"')}
+  ${g('fi_wo',770,1780,`<g transform="scale(.85)">${woman('fiw',{look:-1,armL:-20,preg:true})}</g>`,'opacity="0"')}
+  ${wtext('fi_t1',540,300,104,'ru','url(#gold)','١٠ سنين حب… و٧ جواز')}
+  ${ftext('fi_t2',540,440,62,'ca','#fff','ولسه بحبك أكتر من أول يوم','font-weight="900"')}
+  ${ftext('fi_t3',540,1700,40,'ca','#FBE3E8','طارق • أميرة • زيدو • والبيبي الجاي ♥','font-weight="700"')}
+  ${hearts('fih',18,['#FFE08A','#F27B9A','#fff'])}`);
+ /* 15 OUTRO */
+ sc.push(`<rect width="1080" height="1920" fill="url(#gIntro)"/>
+  ${hearts('xh',14,['#F27B9A','#F6C760','#9EE0D8'])}
+  <g class="tx">${g('x_h',540,720,`<path id="x_hpath" d="M0 90 C-120 10 -110 -120 0 -70 C110 -120 120 10 0 90Z" fill="none" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/><use href="#hp" id="x_hf" fill="#E9476F" opacity="0" transform="scale(2.6)"/>`)}</g>
+  ${wtext('x_t1',540,960,96,'ru','url(#gold)','كل سنة وإنتِ حبيبتي')}
+  ${ftext('x_t2',540,1080,62,'ca','#FBE3E8','يا أميرة… كل سنة وإنتِ عمري','font-weight="900"')}
+  ${ftext('x_t3',540,1230,100,'gv','#F6C760','Happy 7th Anniversary','direction="ltr"')}
+  ${ftext('x_t4',540,1350,52,'ca','#F27B9A','مع كل حبي… طارق ♥','font-weight="700"')}
+  ${ftext('x_t5',540,1440,40,'ca','#E7FBF8','٢٦ • ١١ • ٢٠١٩  —  ٢٦ • ١١ • ٢٠٢٦','font-weight="700"')}
+  <rect id="x_black" x="-2200" width="3800" height="1920" fill="#000" opacity="0"/>`);
+ return sc;
+}
+function defs(){
+  const lg=(id,stops)=>`<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">${stops.map(([o,c])=>`<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>`;
+  return `<defs><path id="hp" d="${HEART}"/>
+  <pattern id="plaid" width="36" height="36" patternUnits="userSpaceOnUse"><rect width="36" height="36" fill="#F2F4F8"/><rect width="36" height="9" y="10" fill="#4A5F8C" opacity=".75"/><rect width="9" height="36" x="10" fill="#4A5F8C" opacity=".75"/><rect width="36" height="3" y="28" fill="#2B3A5C" opacity=".6"/><rect width="3" height="36" x="28" fill="#2B3A5C" opacity=".6"/></pattern>
+  <filter id="tsh" x="-20%" y="-40%" width="140%" height="180%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#1a0f22" flood-opacity=".45"/></filter>
+  <filter id="blur"><feGaussianBlur stdDeviation="5"/></filter>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <radialGradient id="gIntro" cx=".5" cy=".45" r=".75"><stop offset="0" stop-color="#1F5E66"/><stop offset=".55" stop-color="#2A2546"/><stop offset="1" stop-color="#140D22"/></radialGradient>
+  <radialGradient id="rgHeart"><stop offset="0" stop-color="#FFD3DD" stop-opacity=".9"/><stop offset="1" stop-color="#F27B9A" stop-opacity=".35"/></radialGradient>
+  <radialGradient id="gWed" cx=".5" cy=".6" r=".8"><stop offset="0" stop-color="#FFF6EC"/><stop offset=".7" stop-color="#F8D3DC"/><stop offset="1" stop-color="#EBA7BA"/></radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF0C2"/><stop offset=".5" stop-color="#F6C760"/><stop offset="1" stop-color="#D98E3A"/></linearGradient>
+  <linearGradient id="blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4F8FD0"/><stop offset="1" stop-color="#1F4A78"/></linearGradient>
+  ${lg('gOffice',[[0,'#F4F7FB'],[1,'#DCE6F0']])}
+  ${lg('gWarm',[[0,'#FFF1DE'],[1,'#F6D3B3']])}
+  ${lg('gEng',[[0,'#2C1838'],[.6,'#5A2D5E'],[1,'#8E4A7A']])}
+  ${lg('gSunset',[[0,'#E9767A'],[.35,'#F7AE86'],[.53,'#FBDDB5']])}
+  ${lg('gSea',[[0,'#6E9CC6'],[1,'#3B6995']])}
+  ${lg('gTrain',[[0,'#3A4A6B'],[.6,'#6F7FA0'],[1,'#B9A6B6']])}
+  ${lg('gNight',[[0,'#121836'],[1,'#2E3470']])}
+  ${lg('gCream',[[0,'#FFF8EE'],[1,'#F7E2D0']])}
+  ${lg('gSharm',[[0,'#7EC8F0'],[.6,'#CDEBFA'],[1,'#FFE9C9']])}
+  ${lg('gRed',[[0,'#24B5C2'],[1,'#137A8C']])}
+  ${lg('gHomeIn',[[0,'#FCEFE3'],[1,'#F4D9C2']])}
+  ${lg('gBaby',[[0,'#CFE8FF'],[1,'#FFE4EC']])}
+  ${lg('gSoft',[[0,'#EEF3F8'],[1,'#F6E3E8']])}
+  ${lg('gNow',[[0,'#FFF4E6'],[1,'#FFE0EA']])}
+  ${lg('gFinale',[[0,'#1E2347'],[.5,'#8E3E6E'],[1,'#F29E72']])}
+  <radialGradient id="vg" cx=".5" cy=".5" r=".75"><stop offset=".65" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient>
+  </defs>`;
+}
+const cache={};
+function $(id){return cache[id]||(cache[id]=document.getElementById(id))}
+function set(id,{x=0,y=0,s=1,sx=null,r=0,o=null}={}){
+  const e=$(id); if(!e) return;
+  const bx=+e.dataset.x||0, by=+e.dataset.y||0;
+  e.setAttribute('transform',`translate(${bx+x} ${by+y}) rotate(${r}) scale(${sx??s} ${s})`);
+  if(o!==null) e.setAttribute('opacity',clamp(o));
+}
+function wipe(id,u,a,d=1.2){const p=eio(P(u,a,d)); const r=$(id+'_cr'); r.setAttribute('x',-400+1880*(1-p)); r.setAttribute('width',1880*p+20); set(id,{y:(1-eo(P(u,a,d)))*20});}
+function fadeUp(id,u,a,d=.7,dy=40){const p=eo(P(u,a,d)); set(id,{y:(1-p)*dy,o:p});}
+function popS(id,u,a,d=.5){set(id,{s:pop(u,a,d),o:P(u,a,.15)});}
+
+/* ============ build ============ */
+const svg=document.getElementById('v');
+let SCN=sceneMarkup();
+if(LAND){
+  SCN=SCN.map(m=>m.replace(/<rect width="1080" height="1920"/g,'<rect x="-2200" width="3800" height="1920"')
+    .replace(/<rect y="(\d+)" width="1080"/g,'<rect x="-1400" y="$1" width="2600"'));
+  svg.setAttribute('width',1920);svg.setAttribute('height',1080);svg.setAttribute('viewBox','-1300 560 2400 1350');
+}
+svg.innerHTML=defs()+SCN.map((m,i)=>`<g id="scene${i}" style="display:none"><g id="cam${i}">${m}</g></g>`).join('')+
+  `<g id="bokeh" filter="url(#blur)">${Array.from({length:22},(_,i)=>`<circle id="bk${i}" r="${8+rnd(i,11)*22}" fill="${i%3?'#FFF3D6':'#F9C6D3'}"/>`).join('')}</g>`+
+  `<rect id="vig" ${LAND?'x="-1300" y="560" width="2400" height="1350"':'width="1080" height="1920"'} fill="url(#vg)" pointer-events="none"/>`;
+const HL={};
+for(const id of ['i_hpath','x_hpath','w_arch','k_sig1','k_sig2']){const e=$(id);HL[id]=e.getTotalLength();e.setAttribute('stroke-dasharray',HL[id]+' '+HL[id]);e.setAttribute('stroke-dashoffset',HL[id]);}
+function draw(id,p){$(id).setAttribute('stroke-dashoffset',HL[id]*(1-p));}
+function wavePath(y,amp,len,ph,yb){const a=LAND?-1400:0,b=LAND?1200:1080;let d=`M${a} ${y}`;for(let x=a;x<=b;x+=20)d+=` L${x} ${y+Math.sin(x/len+ph)*amp}`;return d+` L${b} ${yb} L${a} ${yb}Z`;}
+function steam(ph,x0=0,y0=-48){let d='';for(let k=0;k<3;k++){const x=x0-14+k*14;d+=`M${x} ${y0} q${8*Math.sin(ph+k)} -15 0 -30 q${-8*Math.sin(ph+k)} -15 0 -30 `;}return d;}
+
+/* safe-area layout */
+function layout(){
+  ['t_cnttx'].forEach(id=>$(id).textContent='٤٠ يوم');
+  for(let i=0;i<NS;i++){
+    const sc=$('scene'+i); sc.style.display='';
+    const cam=$('cam'+i); cam.removeAttribute('transform');
+    const items=[...cam.querySelectorAll(':scope .tx')].filter(e=>!e.parentNode.closest('.tx')).map(e=>{const b=e.getBBox();return {e,b,cy:b.y+b.height/2}}).filter(o=>o.b.height>0);
+    if(!LAND){
+      for(const it of items){ if(it.b.width>860){const k=860/it.b.width, cx=it.b.x+it.b.width/2;
+        const w=document.createElementNS('http://www.w3.org/2000/svg','g');w.setAttribute('transform',`translate(${cx} ${it.cy}) scale(${k}) translate(${-cx} ${-it.cy})`);
+        it.e.parentNode.insertBefore(w,it.e);w.appendChild(it.e);} }
+    } else {
+      const PX=i===15?-100:-640, PY=1235, GAP=30;
+      items.sort((a,b)=>a.cy-b.cy);
+      const kw=it=>Math.min(1,(i===15?1100:800)/it.b.width);
+      let tot=items.reduce((s,it)=>s+it.b.height*kw(it),0)+GAP*(items.length-1);
+      const ks=Math.min(1,1000/tot); tot*=ks;
+      let y=PY-tot/2;
+      if(i===4||i===9){const r=document.createElementNS('http://www.w3.org/2000/svg','rect');Object.entries({x:PX-470,y:y-50,width:940,height:tot+100,rx:50,fill:'#2A1A2E',opacity:.4}).forEach(([k,v])=>r.setAttribute(k,v));items[0].e.parentNode.insertBefore(r,items[0].e);}
+      for(const it of items){const k=kw(it)*ks,h=it.b.height*k;
+        const tx=PX-(it.b.x+it.b.width/2)*k, ty=y+h/2-it.cy*k;
+        const w=document.createElementNS('http://www.w3.org/2000/svg','g');w.setAttribute('transform',`translate(${tx} ${ty}) scale(${k})`);
+        it.e.parentNode.insertBefore(w,it.e);w.appendChild(it.e);y+=h+GAP;}
+    }
+    sc.style.display='none';
+  }
+  $('t_cnttx').textContent='';
+  for(const id of ['x_black','w_flash']){const e=$(id);e.parentNode.appendChild(e);}
+  // b_note & b_cone above dim
+  for(const id of ['b_note','b_cone']){const e=$(id);e.parentNode.appendChild(e);}
+}
+window.layoutDone=document.fonts.ready.then(layout);
+
+/* ============ render ============ */
+function render(t){
+  for(let i=0;i<NS;i++){
+    const a=S[i],b=S[i+1];
+    const o=Math.min(P(t,a-0.35,0.7), i===NS-1?1:1-P(t,b-0.35,0.7));
+    const el=$('scene'+i);
+    if(o<=0){el.style.display='none';continue}
+    el.style.display='';el.setAttribute('opacity',o);
+    const pr=(t-a)/(b-a);
+    $('cam'+i).setAttribute('transform',(LAND&&i===0?'translate(540 1910) scale(.86) translate(-540 -1910) ':'')+`translate(540 1000) scale(${1+0.035*pr}) translate(-540 -1000)`);
+  }
+  for(let i=0;i<22;i++){
+    const sp=20+rnd(i,12)*40, y=((rnd(i,13)*2200 - t*sp)%2200+2200)%2200-140;
+    const e=$('bk'+i);e.setAttribute('cx',RX(rnd(i,14))+Math.sin(t*.4+i)*40);e.setAttribute('cy',y);
+    e.setAttribute('opacity',(.1+.16*Math.sin(t*1.3+i*2)**2));
+  }
+  const bp=beatPulse(t);
+  const vis=i=>t>S[i]-.4&&t<S[i+1]+.4;
+  let u;
+  if(vis(0)){u=t;
+    fadeUp('i_t0',u,.3,.9);
+    draw('i_hpath',eio(P(u,.4,2.4)));
+    set('i_frame',{s:1+.03*bp*P(u,2.4,.5)});
+    const pc=eo(P(u,1.8,1.4)); set('i_cpl',{y:(1-pc)*80,o:pc});
+    set('im_h',{r:4+3*Math.sin(u*1.2)}); set('iw_h',{r:-4-3*Math.sin(u*1.2)});
+    wipe('i_t1',u,3.4,1.3); fadeUp('i_t2',u,4.6);
+    updHearts('ih',14,u,140,940,700,1900,4.6,3.2);
+  }
+  if(vis(1)){u=t-S[1];
+    const ang=u*40; $('o_mh').setAttribute('transform',`rotate(${ang*6})`); $('o_hh').setAttribute('transform',`rotate(${ang/2})`);
+    set('om_h',{r:lerp(10,-4,eio(P(u,6.6,.5)))}); set('ow_h',{r:lerp(-10,6,eio(P(u,7.6,.6)))});
+    set('o_bub',{s:pop(u,7.0,.5),o:P(u,7.0,.15)*(1-P(u,10.5,.4))});
+    const sp=P(u,8.0,.4)*(1-P(u,9.6,.4)); const sp_=$('o_spark');
+    if(sp>0){let d='M420 1210';for(let k=1;k<=6;k++)d+=` L${420+k*40} ${1210+(k%2?-30:30)*(1+Math.sin(u*40+k))*.7}`;sp_.setAttribute('d',d);} sp_.setAttribute('opacity',sp);
+    set('o_heart',{s:pop(u,8.6,.6)*(1+.12*bp),o:P(u,8.6,.15)});
+    document.querySelectorAll('#scene1 .blush').forEach(e=>e.setAttribute('opacity',.45+.4*P(u,7.6,.6)));
+    updHearts('oh',12,u,380,700,700,1200,9.0,2.4);
+    wipe('o_t1',u,.3,1.1); popS('o_d',u,1.2); fadeUp('o_t2',u,9.2);
+  }
+  if(vis(2)){u=t-S[2];
+    const dua=Math.sin(u*2)*3;
+    set('fd_al',{r:-150+dua});set('fd_ar',{r:150-dua});
+    const ar=1-eio(P(u,5.0,.6));
+    set('fm_al',{r:lerp(6,-150,ar)});set('fm_ar',{r:lerp(-6,150,ar)});
+    set('fw_al',{r:lerp(-25,-150,ar)});set('fw_ar',{r:lerp(25,150,ar)});
+    set('f_bub',{s:pop(u,4.4,.5),o:P(u,4.4,.15)*(1-P(u,8.6,.4))});
+    const bf=P(u,7.0,.55); const by=lerp(300,1640,bf*bf);
+    set('f_brick',{y:by,o:P(u,7.0,.05),r:(1-bf)*-25});
+    const shake=u>7.55&&u<8.0?Math.sin(u*90)*10*(1-P(u,7.55,.45)):0;
+    $('cam2').setAttribute('transform',$('cam2').getAttribute('transform')+` translate(${shake} ${shake*.6})`);
+    for(let i=0;i<6;i++){const lp=P(u,7.55,.8);const a=i/6*Math.PI+Math.PI;$('f_du'+i).setAttribute('transform',`translate(${Math.cos(a)*lp*160} ${1640+Math.sin(a)*lp*50+20})`);$('f_du'+i).setAttribute('opacity',u>7.55?(1-lp)*.9:0);}
+    set('f_stamp',{y:1560,s:u<8.3?0:lerp(2.2,1,eo(P(u,8.3,.25))),o:P(u,8.3,.1)});
+    set('fw_h',{r:-6*eio(P(u,8.4,.5))}); set('fm_h',{r:6*eio(P(u,8.4,.5))});
+    wipe('f_t1',u,.3,1.1); popS('f_d',u,1.1); fadeUp('f_t2',u,8.6);
+  }
+  if(vis(3)){u=t-S[3];
+    document.querySelectorAll('#scene3 .e_st').forEach((e,i)=>e.setAttribute('opacity',.3+.7*Math.abs(Math.sin(u*2+i))));
+    document.querySelectorAll('#scene3 .e_b').forEach((e,i)=>e.setAttribute('opacity',.5+.5*((Math.floor(u/0.44)+i)%2)));
+    const rp=eio(P(u,2.0,1.6)); const ang=u*2.2;
+    const R=lerp(220,34,rp);
+    set('e_r1',{x:540+Math.cos(ang)*R,y:1110+Math.sin(ang)*R*.5,o:P(u,1.6,.4),r:u*40*(1-rp)});
+    set('e_r2',{x:540-Math.cos(ang)*R,y:1110-Math.sin(ang)*R*.5,o:P(u,1.6,.4),r:-u*40*(1-rp)});
+    if(rp>=1){set('e_r1',{x:540+Math.cos(ang)*34,y:1110,o:1,s:1+.06*bp});set('e_r2',{x:540-Math.cos(ang)*34,y:1110,o:1,s:1+.06*bp});}
+    const tl=eio(P(u,4.0,.6)); set('em_h',{r:6*tl}); set('ew_h',{r:-6*tl});
+    updConfetti('ec',40,u,3.6);
+    wipe('e_t1',u,.2,1.1); popS('e_d',u,.9); fadeUp('e_t2',u,2.4);
+  }
+  if(vis(4)){u=t-S[4];
+    $('b_w1').setAttribute('d',wavePath(1050,9,60,u*1.4,1430));$('b_w2').setAttribute('d',wavePath(1170,11,80,-u*1.1,1430));
+    const dim=1-P(u,6.4,.8); $('b_dim').setAttribute('opacity',.82*dim);
+    set('b_note',{s:pop(u,.5,.7)*(1-P(u,4.0,.5)*.9),o:P(u,.5,.2)*(1-P(u,4.0,.5)),r:Math.sin(u*2)*3});
+    set('b_cone',{s:pop(u,4.2,.6)*(1-P(u,6.4,.5)*.8),o:P(u,4.2,.2)*(1-P(u,6.4,.5)),r:Math.sin(u*2)*4});
+    const crack=u>7&&u<18; const cs=crack?Math.sin(u*8):0;
+    set('bm_ar',{r:-60+(crack?20*Math.max(0,cs):0)}); set('bm_h',{r:6+(crack?3*Math.sin(u*8):0)});
+    set('bw_al',{r:40-(crack?18*Math.max(0,Math.sin(u*8+1.5)):0)}); set('bw_h',{r:-6+(crack?3*Math.sin(u*8+1.5):0)});
+    const nsh=Math.floor(clamp((u-7.5)/10)*40);
+    for(let i=0;i<40;i++)$('b_sh'+i).setAttribute('opacity',i<nsh?1:0);
+    for(let i=0;i<6;i++){const ph=((u*1.25+i/6)%1);$('b_fly'+i).setAttribute('opacity',crack?Math.sin(ph*Math.PI):0);
+      $('b_fly'+i).setAttribute('cx',(i%2?395:620)+(i%2?1:-1)*ph*60*(1+i%3*.3));$('b_fly'+i).setAttribute('cy',1340-Math.sin(ph*Math.PI)*90+ph*200);}
+    const hrs=clamp((u-8)/6)*3; set('b_clock',{s:pop(u,7.6,.5),o:P(u,7.6,.2)});
+    $('b_mh').setAttribute('transform',`rotate(${hrs*360})`);$('b_hh').setAttribute('transform',`rotate(${hrs*30})`);
+    $('b_hrs').textContent=u>8?(hrs>2?'٣ ساعات':hrs>1?'ساعتين':'ساعة'):'';
+    for(let i=0;i<8;i++){const ph=((u*.5+i/8)%1);$('b_sp'+i).setAttribute('opacity',ph<.4?Math.sin(ph/.4*Math.PI)*.8:0);$('b_sp'+i).setAttribute('transform',`translate(${(i-3.5)*22} ${-ph*160+ph*ph*200})`);}
+    wipe('b_t1',u,.3,1.1); fadeUp('b_t2',u,7.0); fadeUp('b_t3',u,11.3); fadeUp('b_t4',u,14.8);
+  }
+  if(vis(5)){u=t-S[5];
+    const tr=eio(P(u,3.2,5)); set('t_train',{x:tr*2200});
+    set('t_m',{x:tr*2200}); set('tm_al',{r:-150+Math.sin(u*6)*20});
+    set('tw_al',{r:-150+Math.sin(u*6)*25*(1-P(u,7,1))});
+    set('tw_h',{r:-8});
+    $('tw_tears').setAttribute('opacity',P(u,1.8,.6));
+    for(let i=0;i<8;i++){const ph=((u*.9+i/8)%1);const side=i%2?1:-1;
+      $('t_dr'+i).setAttribute('opacity',u>1.8?Math.sin(ph*Math.PI)*.9:0);
+      $('t_dr'+i).setAttribute('cx',760+side*14-8);$('t_dr'+i).setAttribute('cy',1750-0.9*380+28+ph*160);}
+    const c=u<5.4?0:Math.max(1,Math.round(40*(1-eio(P(u,5.4,3.0)))));
+    $('t_cnttx').textContent=u<5.4?'':(c<=1&&u>8.3?'٤٠ يوم من غير ما نشوف بعض':`${AR(c===1?40:c)} يوم`);
+    if(u>5.4&&u<=8.3) $('t_cnttx').textContent=`${AR(Math.round(lerp(1,40,eio(P(u,5.4,2.8)))))} يوم`;
+    set('t_cnt',{o:P(u,5.4,.3),s:1+.06*bp});
+    wipe('t_t1',u,.2,1.1); popS('t_d',u,.9);
+  }
+  if(vis(6)){u=t-S[6];
+    document.querySelectorAll('#scene6 .d_st').forEach((e,i)=>e.setAttribute('opacity',.3+.7*Math.abs(Math.sin(u*2+i))));
+    set('d_l1',{o:P(u,1.8,.4),y:-160*eio(P(u,4.6,.6))});set('d_l2',{o:P(u,2.1,.4),y:-160*eio(P(u,4.6,.6))});
+    set('d_p1',{s:pop(u,1.8,.6)*(1-.15*P(u,4.6,.5)),o:P(u,1.8,.2),y:-160*eio(P(u,4.6,.6))});
+    set('d_p2',{s:pop(u,2.1,.6)*(1-.15*P(u,4.6,.5)),o:P(u,2.1,.2),y:-160*eio(P(u,4.6,.6))});
+    for(let i=0;i<5;i++){const ph=((u*.6+i/5)%1);const e=$('d_h'+i);e.setAttribute('opacity',u>2.6?Math.sin(ph*Math.PI):0);
+      e.setAttribute('transform',`translate(${LAND?lerp(-1300+1590,1100-310,ph):lerp(440,640,ph)} ${(1170-160*eio(P(u,4.6,.6)))-Math.sin(ph*Math.PI)*60}) scale(1.2)`);}
+    fadeUp('d_t3',u,4.6);
+    const cal=P(u,4.8,2.2); set('d_cal',{s:pop(u,4.8,.4)*(1-P(u,7.4,.3)),o:P(u,4.8,.1)*(1-P(u,7.4,.3))});
+    $('d_cal_n').textContent=AR(Math.max(1,Math.round(cal*30))); $('d_cal_l').textContent='يوم';
+    popS('d_i1',u,7.8);popS('d_i2',u,8.6);popS('d_i3',u,9.4);
+    wipe('d_t1',u,.2,1.1); fadeUp('d_t2',u,2.2);
+  }
+  if(vis(7)){u=t-S[7];
+    set('k_paper',{s:pop(u,.4,.6),o:P(u,.4,.2),y:-120*eio(P(u,2.0,.6))});
+    draw('k_sig1',eio(P(u,.9,.7))); draw('k_sig2',eio(P(u,1.4,.7)));
+    popS('k_jar',u,2.4);
+    const fill=clamp((u-2.6)/3.6); $('k_fill').setAttribute('height',fill*250); $('k_fill').setAttribute('y',86-fill*250);
+    for(let i=0;i<9;i++){const a=2.6+i*.4;const lp=P(u,a,.4);const e=$('k_c'+i);e.setAttribute('opacity',lp>0&&lp<1?1:0);e.setAttribute('transform',`translate(${300+(i%3-1)*30} ${lerp(1150,1500,lp*lp)})`);}
+    set('k_cal',{s:pop(u,2.6,.4),o:P(u,2.6,.1)}); $('k_cal_n').textContent=AR(Math.max(1,Math.min(9,1+Math.floor((u-2.6)/0.4)))); $('k_cal_l').textContent='شهر';
+    popS('k_f1',u,5.2);popS('k_f2',u,5.6);popS('k_f3',u,6.0);
+    wipe('k_t1',u,.2,1.0); popS('k_d',u,.8); fadeUp('k_t2',u,4.4);
+  }
+  if(vis(8)){u=t-S[8];
+    $('w_flash').setAttribute('opacity',1-P(u,0,.8));
+    draw('w_arch',eio(P(u,.3,1.4)));
+    for(let i=0;i<26;i++){const a=.5+i*.05;set('w_fl'+i,{s:pop(u,a,.4)*(1+.08*bp*P(u,3,1)),o:P(u,a,.1)});}
+    const cp=eo(P(u,.4,1)); set('w_cpl',{y:(1-cp)*120,o:cp}); set('w_glow',{s:1+.04*bp});
+    popS('w_d1',u,1.6,.45);popS('w_s1',u,1.8,.4);popS('w_d2',u,2.0,.45);popS('w_s2',u,2.2,.4);popS('w_d3',u,2.4,.5);
+    fadeUp('w_t2',u,3.6);
+    const tl=eio(P(u,4.6,.8)); set('wm_h',{r:8*tl}); set('ww_h',{r:-8*tl});
+    set('w_heart',{s:pop(u,5.4,.6)*(1+.15*bp),o:P(u,5.4,.15)});
+    updConfetti('wc',70,u,.6); wipe('w_t1',u,.8,1.1);
+  }
+  if(vis(9)){u=t-S[9];
+    $('s_w1').setAttribute('d',wavePath(1300,8,50,u*1.6,1540));
+    for(let i=0;i<3;i++){const ph=((u*.45+i/3)%1);const x=200+i*300;set('s_f'+i,{x:x,y:1360-Math.sin(ph*Math.PI)*170,r:lerp(-50,50,ph),o:ph<.95?1:0});}
+    set('s_sun',{s:1+.05*Math.sin(u*2)});
+    const tl=eio(P(u,2.0,.6)); set('sm_h',{r:6*tl}); set('sw_h',{r:-6*tl});
+    set('s_m',{y:-Math.abs(Math.sin(u*3.5))*8});
+    updHearts('sh',10,u,380,700,900,1400,2.4,2.4);
+    wipe('s_t1',u,.2,1.1); popS('s_d',u,.9); fadeUp('s_t2',u,2.6);
+  }
+  if(vis(10)){u=t-S[10];
+    for(let i=0;i<7;i++)set('c_v'+i,{x:150+rnd(i,1)*360+Math.sin(u*.8+i)*30,y:780+rnd(i,2)*320+Math.cos(u*.7+i)*25,r:u*30*(i%2?1:-1),s:.7+rnd(i,3)*.4});
+    const cy=P(u,3.4,.6); set('c_case',{y:lerp(1500,1500,cy),x:eio(P(u,5.0,.8))*900,o:cy*(1-P(u,5.4,.4)),s:pop(u,3.4,.5)||.001});
+    popS('c_pin',u,5.6);
+    const tl=eio(P(u,7.8,.6)); set('cm_h',{r:6*tl}); set('cw_h',{r:-6*tl});
+    set('c_heart',{s:pop(u,8.4,.6)*(1+.12*bp),o:P(u,8.4,.15)});
+    wipe('c_t1',u,.2,1.1); popS('c_d',u,.9); fadeUp('c_t2',u,8.4);
+  }
+  if(vis(11)){u=t-S[11];
+    set('z_cl1',{x:u*10});set('z_cl2',{x:-u*12});
+    const sf=eio(P(u,.2,.7)); set('z_star',{y:lerp(-80,1250,sf),r:u*120,s:1+P(u,.9,.4)*2,o:P(u,.2,.1)*(1-P(u,.9,.4))});
+    set('z_name',{s:pop(u,1.2,.6)*(1+.05*bp),o:P(u,1.2,.15)});
+    set('zm_h',{r:6*eio(P(u,1.6,.6))}); set('zw_h',{r:-6*eio(P(u,1.6,.6))});
+    updHearts('zh',12,u,300,780,900,1500,1.2,2.4);
+    wipe('z_t1',u,.1,.9); popS('z_d',u,2.0);
+  }
+  if(vis(12)){u=t-S[12];
+    const stand=eio(P(u,9.0,.8));
+    // crutches under arms
+    const crO=1-P(u,9.0,.3);
+    set('g_cr1',{x:400-80+lerp(0,-600,eio(P(u,9.0,1.2))),y:1700-0.0-360,r:lerp(6,-80,eio(P(u,9.0,1.2))),o:crO+(u>9?.0:0)});
+    set('g_cr2',{x:400+80+lerp(0,700,eio(P(u,9.0,1.2))),y:1700-360,r:lerp(-6,80,eio(P(u,9.0,1.2))),o:crO});
+    if(u<9){set('g_cr1',{x:320,y:1340,r:4+Math.sin(u*2)*2,o:1});set('g_cr2',{x:480,y:1340,r:-4-Math.sin(u*2)*2,o:1});}
+    set('gm_al',{r:lerp(-12,6,stand)}); set('gm_ar',{r:lerp(12,-6,stand)});
+    set('g_m',{y:(u<9?Math.abs(Math.sin(u*2.2))*-6:0)-Math.sin(P(u,9.0,.6)*Math.PI)*40});
+    set('gm_h',{r:lerp(-4,8,P(u,5.6,.6))*(1-stand)+stand*6});
+    set('gw_h',{r:-8});
+    set('g_wo',{x:-Math.sin(u*1.5)*10});
+    set('g_cal',{s:pop(u,3.0,.4),o:P(u,3.0,.1)*(1-P(u,8.6,.4))}); $('g_cal_n').textContent=AR(Math.max(1,Math.min(3,1+Math.floor((u-3.0)/1.2)))); $('g_cal_l').textContent='شهر';
+    updHearts('gh',14,u,200,880,800,1500,9.4,2.6);
+    wipe('g_t1',u,5.4,1.1); popS('g_d',u,.4); fadeUp('g_t2',u,8.8);
+  }
+  if(vis(13)){u=t-S[13];
+    set('nw_baby',{s:pop(u,.6,.6)*(1+.12*bp),o:P(u,.6,.2)}); set('n_glow',{s:1+.15*bp,o:P(u,.6,.3)});
+    set('n_z',{y:(u<5?-Math.abs(Math.sin(u*5))*30*P(u,1.2,.3):0)});
+    popS('n_school',u,3.6); set('n_school',{s:pop(u,3.6,.5),o:P(u,3.6,.2)*(1-P(u,7.6,.4))});
+    popS('n_kitchen',u,7.6);
+    popS('n_pot',u,8.2); for(let i=0;i<3;i++)$('n_st'+i).setAttribute('d',steam(u*3+i*2,(i-1)*30,-56));
+    set('nm_ar',{r:-40+Math.sin(u*6)*15*(u>8&&u<9.8?1:0)});
+    popS('n_dish',u,9.8); for(let i=0;i<6;i++){const ph=((u*.8+i/6)%1);$('n_bb'+i).setAttribute('transform',`translate(${(i-2.5)*22} ${-ph*90})`);$('n_bb'+i).setAttribute('opacity',u>10?Math.sin(ph*Math.PI):0);}
+    if(u>11.2){const w=eio(P(u,11.2,2.5)); set('n_m',{x:w*180,y:-Math.abs(Math.sin(u*7))*10*(u<13.7?1:0)}); set('n_z',{x:w*120,y:-Math.abs(Math.sin(u*7+1))*10*(u<13.7?1:0)});}
+    set('n_school',{s:u>11?1:pop(u,3.6,.5),o:u>11?P(u,11,.4):P(u,3.6,.2)*(1-P(u,7.6,.4))});
+    if(u>11){set('n_pot',{o:1-P(u,11,.4)});set('n_dish',{o:1-P(u,11,.4)});}
+    if(u>11) set('n_kitchen',{o:1-P(u,11,.4)});
+    updHearts('nh',12,u,300,800,900,1500,13.8,2.6);
+    wipe('n_t1',u,.3,1.1); popS('n_d',u,3.8); fadeUp('n_t2',u,7.4);
+  }
+  if(vis(14)){u=t-S[14];
+    set('fi_big',{s:pop(u,.2,.9)*(1+.05*bp),o:P(u,.2,.4)});
+    const ent=(id,a,dx)=>{const p=eo(P(u,a,.6));set(id,{x:(1-p)*dx,o:p,y:-Math.abs(Math.sin(u*7.1))*8*(1-P(u,a+.8,.2))})};
+    ent('fi_m',.4,-300);ent('fi_z',.8,-300);ent('fi_wo',1.2,300);
+    set('fiw_baby',{s:pop(u,1.8,.5)*(1+.12*bp),o:P(u,1.8,.2)});
+    const tl=eio(P(u,3.0,.8)); set('fim_h',{r:6*tl}); set('fiw_h',{r:-6*tl}); set('fiz_h',{r:Math.sin(u*2)*4});
+    for(let k=0;k<6;k++){const a=1.8+k*.9;const cx=[270,800,540,330,760,540][k],cy=[780,700,640,900,860,760][k];const lp=(u-a);
+      for(let j=0;j<10;j++){const e=$(`fi_fw${k}_${j}`);if(lp<0||lp>1.6){e.setAttribute('opacity',0);continue}
+        const ang=j/10*Math.PI*2, r=eo(clamp(lp/1.2))*200; e.setAttribute('transform',`translate(${(LAND?cx*1.6-800:cx)+Math.cos(ang)*r} ${cy+Math.sin(ang)*r+lp*lp*40}) scale(.8)`);e.setAttribute('opacity',1-clamp(lp/1.6));}}
+    updHearts('fih',18,u,100,980,600,1900,1.6,3.0);
+    wipe('fi_t1',u,2.0,1.2); fadeUp('fi_t2',u,4.2); fadeUp('fi_t3',u,5.4);
+  }
+  if(vis(15)){u=t-S[15];
+    draw('x_hpath',eio(P(u,.1,1.5)));
+    $('x_hf').setAttribute('opacity',P(u,1.6,.4)); set('x_h',{s:1+.08*bp*P(u,1.6,.4)});
+    wipe('x_t1',u,.4,1.3); fadeUp('x_t2',u,2.0); fadeUp('x_t3',u,4.2); fadeUp('x_t4',u,5.6); fadeUp('x_t5',u,6.6);
+    updHearts('xh',14,u,140,940,500,1900,1.6,3.2);
+    $('x_black').setAttribute('opacity',eio(P(u,10.6,2.0)));
+  }
+}
+window.render=render;
+const q=new URLSearchParams(location.search); if(q.has('t')) window.layoutDone.then(()=>render(+q.get('t')));
+</script>
+</body></html>
